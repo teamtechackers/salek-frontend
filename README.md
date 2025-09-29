@@ -1,16 +1,113 @@
-# React + Vite
+# Salek Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React frontend project with Vite, ESLint, and Husky pre-commit hooks for code quality and consistency.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Table of Contents
 
-## React Compiler
+- [Project Setup](#project-setup)
+- [Scripts](#scripts)
+- [Linting & Code Quality](#linting--code-quality)
+- [Pre-commit Hooks](#pre-commit-hooks)
+- [Folder Structure](#folder-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Project Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clone the repository:
+
+```bash
+git clone https://github.com/teamtechackers/salek-frontend.git
+cd salek-frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:5173` in your browser.
+
+---
+
+## Scripts
+
+| Command        | Description                        |
+|----------------|------------------------------------|
+| `npm run dev`  | Start the development server        |
+| `npm run build`| Build the project for production   |
+| `npm run lint` | Run ESLint for code quality checks |
+
+---
+
+## Linting & Code Quality
+
+This project uses **ESLint** with custom rules:
+
+- Enforces camelCase and PascalCase naming  
+- Single quotes for strings  
+- Disallows `var` and encourages `const`/`let`  
+- Checks for unused variables and functions  
+
+ESLint ignores generated files (`dist/`, `build/`) and some specific paths.
+
+---
+
+## Pre-commit Hooks
+
+**Husky** is used for Git hooks:
+
+- **Pre-commit**:  
+  Checks for:
+  - TODO/FIXME comments  
+  - `console.log` statements (excluding `logger.js`)  
+  - Invalid file naming  
+  - Hardcoded strings in code  
+  - Required directory structure (`core` and `ui`)  
+
+- **Commit-msg**:  
+  Enforces conventional commits using **Commitlint**  
+
+> ⚠️ Files excluded from hardcoded string checks:  
+> `App.jsx`, `App.css`, `index.css`, `main.jsx`
+
+---
+
+## Folder Structure
+
+```
+src/
+│
+├── core/             # Core utilities and services
+├── ui/               # UI components
+├── assets/           # Images, logos, fonts
+├── App.jsx           # Main React app component
+├── main.jsx          # Entry point
+└── index.css         # Global styles
+```
+
+---
+
+## Contributing
+
+1. Fork the repo and create a new branch.  
+2. Make changes and run `npm run lint` before committing.  
+3. Commit using **Conventional Commits**.  
+4. Push your branch and open a pull request.
+
+---
+
+## License
+
+MIT License
