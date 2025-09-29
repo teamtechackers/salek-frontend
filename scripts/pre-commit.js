@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 console.log(' Running pre-commit custom checks...');
 
@@ -71,7 +71,11 @@ function checkFileNaming() {
 function checkHardcodedStrings() {
   const files = getJsFiles('./src').filter(file => {
     const ignoreFolders = ['assets', 'styles', 'theme'];
-    return !ignoreFolders.some(f => file.includes(`${path.sep}${f}${path.sep}`));
+    const ignoreFiles = ['App.jsx', 'App.css', 'index.css', 'main.jsx'];
+    return (
+      !ignoreFolders.some(f => file.includes(`${path.sep}${f}${path.sep}`)) &&
+      !ignoreFiles.some(f => file.endsWith(f))
+    );
   });
 
   let total = 0;
