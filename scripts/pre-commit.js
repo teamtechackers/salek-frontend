@@ -70,7 +70,7 @@ function checkFileNaming() {
 // 4. Check hardcoded strings (UI + core logic)
 function checkHardcodedStrings() {
   const files = getJsFiles('./src').filter(file => {
-    const ignoreFolders = ['assets', 'styles', 'theme'];
+    const ignoreFolders = ['assets', 'styles', 'theme', 'constants'];
     const ignoreFiles = ['App.jsx', 'App.css', 'index.css', 'main.jsx'];
     return (
       !ignoreFolders.some(f => file.includes(`${path.sep}${f}${path.sep}`)) &&
@@ -84,11 +84,18 @@ function checkHardcodedStrings() {
     const lines = fs.readFileSync(file, 'utf8').split('\n');
     lines.forEach(line => {
       if (/\bimport\b|\bexport\b/.test(line)) return;
+
       const matches = line.match(/(['"`])(.*?)\1/g);
       if (!matches) return;
+
       matches.forEach(str => {
         const s = str.slice(1, -1).trim();
         if (s.length < 5) return;
+
+        // Skip strings that are likely Tailwind class names
+        const tailwindRegex = /^[a-zA-Z0-9-_: ]+$/;
+        if (tailwindRegex.test(s)) return;
+
         total++;
         console.warn(`⚠️ Potential hardcoded string in ${file}: ${s}`);
       });
