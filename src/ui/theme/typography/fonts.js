@@ -1,6 +1,6 @@
 // src/utils/typography/fonts.js
 import { FONT_FAMILIES, FONT_SIZES } from "../../constants/typoconstants";
-import { COLORS } from "../color";
+import { COLORS } from "../colors/colors";
 
 export const FONTS = {
   // Page title "Log In Account"
@@ -20,13 +20,6 @@ export const FONTS = {
     lineHeight: "100%", // 20px
     color: COLORS.gray700, // ✅ labels are usually medium-dark
   },
-  // inter_600_20_30: {
-  //   fontFamily: FONT_FAMILIES.inter,
-  //   fontSize: FONT_SIZES.lg,
-  //   fontWeight: 600,
-  //   lineHeight: "100%", // 20px
-  //   color: COLORS.blue700, // ✅ labels are usually medium-dark
-  // },
 
   // Terms text
   inter_600_20_20_gray: {

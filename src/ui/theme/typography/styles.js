@@ -1,5 +1,5 @@
-import { COLORS } from "../theme/color"
-import { FONTS } from "../theme/typography/fonts"
+import { COLORS } from "../colors/colors"
+import { FONTS } from "./fonts"
 
 export const STYLES = {
   // Page title "Log In Account"

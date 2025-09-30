@@ -1,5 +1,5 @@
 import Card from "./components/Card";
-import { DASHBOARD_CARDS } from "../../constants/DashboardConstants";
+import { DASHBOARD_CARDS } from "../../constants/pages/DashboardConstants";
 const Dashboard = () => {
   return (
     <div className="w-full p-6 h-screen flex gap-4">

@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import login_labels from "../theme/strings/pages/loginlabels"
-import { ROUTES } from "../constants/SidebarConstants"
-import { STYLES } from "../styles/styles"
-import FormField from "../components/FormFields" // ✅ Import the reusable field
-import { LAYOUT } from "../constants/LayoutsContants"
+import login_labels from "../../constants/pages/loginConstants"
+import { ROUTES } from "../../constants/layout/SidebarConstants"
+import { STYLES } from "../../theme/typography/styles"
+import FormField from "../../components/FormFields" // ✅ Import the reusable field
+import { LAYOUT } from "../../constants/layout/LayoutsContants"
 // import Layout from "../components/Layout"
-import { IMAGES, ICONS } from "../constants/assets"
+import { IMAGES, ICONS } from "../../constants/assets"
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -22,19 +22,19 @@ export default function LoginPage() {
     <div className="flex min-h-screen">
       {/* Left side image */}
       <div className={LAYOUT.leftPanel}>
-  <img src={IMAGES.loginBanner} alt="Medical supplies and vaccine vial" className="w-full h-full" />
-  <div className={LAYOUT.gradientOverlay}></div>
-</div>
+        <img src={IMAGES.loginBanner} alt="Medical supplies and vaccine vial" className="w-full h-full" />
+        <div className={LAYOUT.gradientOverlay}></div>
+      </div>
 
       {/* Right side form */}
       <div className={LAYOUT.rightPanel}>
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
           <div className="text-center">
-  <div className="flex items-center justify-center mb-4">
-    <img src={ICONS.brandLogo} alt="Brand Logo" />
-  </div>
-</div>
+            <div className="flex items-center justify-center mb-4">
+              <img src={ICONS.brandLogo} alt="Brand Logo" />
+            </div>
+          </div>
 
           {/* Form */}
           <div className="space-y-6">

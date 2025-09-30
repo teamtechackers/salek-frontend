@@ -1,4 +1,4 @@
-import reactLogo from "../../assets/react.svg";
+import reactLogo from "../../../assets/icons/Group 1000005703.svg";
 
 export const DASHBOARD_CARDS = [
   {
