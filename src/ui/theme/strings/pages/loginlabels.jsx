@@ -1,5 +1,5 @@
-import { TEXTS } from "../constants/textconstants"
-
+// import { TEXTS } from "../"
+import { TEXTS } from "../../../constants/textconstants";
 const login_labels = {      
   TITLE: TEXTS.LOGIN_TITLE,
   APPTITLE: TEXTS.APP_TITLE,

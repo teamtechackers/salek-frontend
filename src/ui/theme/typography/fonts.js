@@ -1,5 +1,5 @@
 // src/utils/typography/fonts.js
-import { FONT_FAMILIES, FONT_SIZES } from "../constants/typoconstants";
+import { FONT_FAMILIES, FONT_SIZES } from "../../constants/typoconstants";
 import { COLORS } from "../color";
 
 export const FONTS = {
