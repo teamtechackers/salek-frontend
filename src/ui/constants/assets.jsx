@@ -1,7 +1,6 @@
 export const IMAGES = {
     loginBanner: "src/assets/images/logoinbanner.jpg",
-
-
+    delete:"src/assets/images/deletedata.png",
     topbarTempUserImage: "src/assets/images/topbarTempUserImage.jpg",
   }
 
@@ -28,6 +27,8 @@ cross:"src/assets/icons/cross.svg",
   cardUserIcon: "src/assets/icons/cardUserIcon.svg",
   cardVaccineIcon: "src/assets/icons/cardVaccineIcon.svg",
   calender:"src/assets/icons/calendar.svg",
+  paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
+  paginationrightarrow:"src/assets/icons/paginationright.svg",
 }
 
 export const LOGOS = {
