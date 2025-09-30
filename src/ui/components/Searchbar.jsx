@@ -7,7 +7,7 @@ const Searchbar = ({ placeholder , value, onChange }) => {
     <div className="relative w-full">
       {/* Search Icon */}
       <img
-        src={ICONS.search}
+        src={ICONS.topbarSearchIcon}
         alt="search-icon"
         className={STYLES.search_icon.search}
         aria-hidden="true"

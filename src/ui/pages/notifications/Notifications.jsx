@@ -30,7 +30,7 @@ export default function Notification() {
           aria-haspopup="dialog"
           aria-label={dashboardlabels.selectDate}
         >
-          <img src={ICONS.calendar} alt="calendar-icon" className="h-4 w-4" />
+          <img src={ICONS.calender} alt="calendar-icon" className="h-4 w-4" />
           <span>{dashboardlabels.dateValue}</span>
           <svg
             className="h-4 w-4"
