@@ -73,7 +73,7 @@ export default function LoginPage() {
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                 />
                 <label htmlFor="terms" style={STYLES.terms_text}>
-                  {login_labels.FORM.FIELDS_LABELS.TERMS},{" "}
+                  {login_labels.FORM.FIELDS_LABELS.TERMS}{" "}
                   <a href="#" style={STYLES.link_text}>
                     {login_labels.FORM.FIELDS_LABELS.CONDITIONS}
                   </a>

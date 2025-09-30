@@ -23,13 +23,13 @@ export const STYLES = {
   // Terms + conditions text
   terms_text: {
     color: COLORS.darkGray,
-    ...FONTS.inter_600_20_20_gray,
+    ...FONTS.inter_600_20_30_gray,
   },
 
   // Link (Terms & Conditions link specifically)
   link_text: {
-    color: COLORS.blue, // or COLORS.primary if you have that defined
-    ...FONTS.inter_600_20_20,
+    color: COLORS.blue600, // or COLORS.primary if you have that defined
+    ...FONTS.inter_600_20_30,
   },
 
   // Submit button text
