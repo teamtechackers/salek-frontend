@@ -1,33 +1,37 @@
 export const IMAGES = {
-    loginBanner: "src/assets/images/logoinbanner.jpg", 
-    delete:"src/assets/images/deletedata.png",
-    tickmark:"src/assets/images/tickmark.png",
+    loginBanner: "src/assets/images/logoinbanner.jpg",
 
+
+    topbarTempUserImage: "src/assets/images/topbarTempUserImage.jpg",
   }
-  export const ICONS = {
-    brandLogo: "src/assets/icons/logintitle.svg",
-    appicon: "src/assets/icons/apptitle.svg",
-    dashboad:"src/assets/icons/magedashboardfill.svg",
-    user:"src/assets/icons/solar_user-bold.svg",
-    vaccine:"src/assets/icons/dashboardinjection.svg",
-    allnotification:"src/assets/icons/allnotification.svg",
-    bell:"src/assets/icons/bell.svg",
-    calendar:"src/assets/icons/calendar.svg",
-    cross:"src/assets/icons/cross.svg",
-    delete:"src/assets/icons/delete.svg",
-    edit:"src/assets/icons/edit.svg",
-    edituser:"src/assets/icons/edituser.svg",
-    editfieldbutton:"src/assets/icons/editbuttonforfilds.svg",
-    family:"src/assets/icons/family.svg",
-    inactivestatus:"src/assets/icons/inactivestatus.svg",
-    mdidelete:"src/assets/icons/mdidelete.svg",
-    notication:"src/assets/icons/notification.svg",
-    shield:"src/assets/icons/shield.svg",
-    statusactive:"src/assets/icons/statusactive.svg",
-    totaluser:"src/assets/icons/totaluser.svg",
-    vaccinlogged:"src/assets/icons/vaccinlogged.svg",
-    search:"src/assets/icons/search.svg",
-    deletenotification:"src/assets/icons/deletenotification.svg", 
-  paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
-  paginationright:"src/assets/icons/paginationright.svg",
-  }
+
+export const ICONS = {
+  brandLogo: "src/assets/icons/logintitle.svg",
+  appicon: "src/assets/icons/apptitle.svg",
+  dashboad:"src/assets/icons/magedashboardfill .svg",
+  notication:"src/assets/icons/notificationdashboard.svg",
+  user:"src/assets/icons/solar_user-bold.svg",
+  vaccine:"src/assets/icons/dashboardinjection.svg",
+
+
+  dashboardIconWhite: "src/assets/icons/sidebarDashboardIconWhite.svg",
+  dashboardIconBlue: "src/assets/icons/sidebarDashboardIconBlue.svg",
+  userIconWhite: "src/assets/icons/sidebarUserIconWhite.svg",
+  userIconBlue: "src/assets/icons/sidebarUserIconBlue.svg",
+  vaccineIconWhite: "src/assets/icons/sidebarVaccineIconWhite.svg",
+  vaccineIconBlue: "src/assets/icons/sidebarVaccineIconBlue.svg",
+  notificationIconWhite: "src/assets/icons/sidebarNotificationIconWhite.svg",
+  notificationIconBlue: "src/assets/icons/sidebarNotificationIconBlue.svg",
+
+  topbarSearchIcon: "src/assets/icons/topbarSearchIcon.svg",
+  topbarNotificationIcon: "src/assets/icons/topbarNotificationIcon.svg",
+
+  cardNotificationIcon: "src/assets/icons/cardNotificationIcon.svg",
+  cardUserIcon: "src/assets/icons/cardUserIcon.svg",
+  cardVaccineIcon: "src/assets/icons/cardVaccineIcon.svg",
+}
+
+export const LOGOS = {
+  appLogoWhite: "src/assets/icons/appLogoWhite.svg",
+  appLogoBlue: "src/assets/icons/appLogoBlue.svg",
+}

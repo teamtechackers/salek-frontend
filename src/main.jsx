@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
-import Layout from "./ui/layouts/Layout";
+import Layout from "./ui/layouts/layout/Layout";
 import Login from "./ui/pages/login/Login";
 import Dashboard from "./ui/pages/dashboard/Dashboard";
 import User from "./ui/pages/user/User";
