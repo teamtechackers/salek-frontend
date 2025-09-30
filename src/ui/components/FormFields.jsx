@@ -1,4 +1,4 @@
-import { STYLES } from "../../core/utils/typography/styles"
+import { STYLES } from "../styles/styles"
 
 export default function FormField({
   id,

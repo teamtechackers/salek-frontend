@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import login_labels from "../../core/utils/strings/pages/loginlabels"
+import login_labels from "../theme/strings/pages/loginlabels"
 import { ROUTES } from "../constants/SidebarConstants"
-import { STYLES } from "../../core/utils/typography/styles"
+import { STYLES } from "../styles/styles"
 import FormField from "../components/FormFields" // ✅ Import the reusable field
 import { LAYOUT } from "../constants/LayoutsContants"
 // import Layout from "../components/Layout"
-import { IMAGES, ICONS } from "../../core/utils/constants/assets"
+import { IMAGES, ICONS } from "../constants/assets"
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
