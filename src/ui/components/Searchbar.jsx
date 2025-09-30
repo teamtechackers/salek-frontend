@@ -1,14 +1,15 @@
 import React from "react"
 
 import { ICONS } from "../constants/assets"
-const Searchbar = ({ placeholder = "Search...", value, onChange }) => {
+import { STYLES } from "../theme/typography/styles"
+const Searchbar = ({ placeholder , value, onChange }) => {
   return (
     <div className="relative w-full">
       {/* Search Icon */}
       <img
         src={ICONS.search}
         alt="search-icon"
-        className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+        className={STYLES.search_icon.search}
         aria-hidden="true"
       />
 

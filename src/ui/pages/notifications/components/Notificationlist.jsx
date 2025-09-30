@@ -2,8 +2,8 @@
 
 import Pagination from "../../../components/Pagination"
 import { ICONS } from "../../../constants/assets"
-import NotificationItem from "./Notification-itme"
-import { data } from "./data"
+import NotificationItem from "./Notificationitme"
+import { data } from "../../../constants/pages/data"
 import { useState } from "react"
 
 export default function NotificationsList() {

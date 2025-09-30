@@ -7,8 +7,7 @@ export const IMAGES = {
   export const ICONS = {
     brandLogo: "src/assets/icons/logintitle.svg",
     appicon: "src/assets/icons/apptitle.svg",
-    dashboad:"src/assets/icons/magedashboardfill .svg",
-    notication:"src/assets/icons/notificationdashboard.svg",
+    dashboad:"src/assets/icons/magedashboardfill.svg",
     user:"src/assets/icons/solar_user-bold.svg",
     vaccine:"src/assets/icons/dashboardinjection.svg",
     allnotification:"src/assets/icons/allnotification.svg",
@@ -28,9 +27,7 @@ export const IMAGES = {
     totaluser:"src/assets/icons/totaluser.svg",
     vaccinlogged:"src/assets/icons/vaccinlogged.svg",
     search:"src/assets/icons/search.svg",
-    deletenotification:"src/assets/icons/deletenotification.svg",
-  cross:"src/assets/icons/cross.svg",
-  allnotification:"src/assets/icons/allnotification.svg",
+    deletenotification:"src/assets/icons/deletenotification.svg", 
   paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
   paginationright:"src/assets/icons/paginationright.svg",
   }

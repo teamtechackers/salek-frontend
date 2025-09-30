@@ -64,7 +64,7 @@ export function ConfirmDeleteModal({
           </h2>
           <button
             aria-label="Close"
-            className="grid h-8 w-8 place-items-center rounded-full text-white/90 hover:bg-white/20"
+            className={STYLES.delete_model}
             onClick={onClose}
           >
             {/* X icon */}
