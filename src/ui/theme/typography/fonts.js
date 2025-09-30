@@ -1,6 +1,6 @@
 // src/utils/typography/fonts.js
 import { FONT_FAMILIES, FONT_SIZES } from "../constants/typoconstants";
-import { COLORS } from "../theme/color";
+import { COLORS } from "../color";
 
 export const FONTS = {
   // Page title "Log In Account"
