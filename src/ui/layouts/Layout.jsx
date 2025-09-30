@@ -10,7 +10,7 @@ const Layout = () => {
       <div className="flex-1 flex flex-col">
         <Topbar />
 
-        <main className="flex-1 bg-gray-100 p-6 overflow-auto w-full">
+        <main className="flex-1 overflow-auto w-full">
           <Outlet />
         </main>
       </div>

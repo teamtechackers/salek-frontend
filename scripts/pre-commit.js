@@ -93,7 +93,7 @@ function checkHardcodedStrings() {
         if (s.length < 5) return;
 
         // Skip strings that are likely Tailwind class names
-        const tailwindRegex = /^[a-zA-Z0-9-_: ]+$/;
+        const tailwindRegex = /^[a-zA-Z0-9-_:%\[\]\s]+$/;
         if (tailwindRegex.test(s)) return;
 
         total++;

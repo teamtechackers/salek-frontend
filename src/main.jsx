@@ -4,10 +4,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import Layout from "./ui/layouts/Layout";
 import Login from "./ui/pages/Login";
-import Dashboard from "./ui/pages/dashboard";
-import User from "./ui/pages/user";
-import VaccineLibrary from "./ui/pages/VaccineLibrary";
-import Notifications from "./ui/pages/notifications";
+import Dashboard from "./ui/pages/dashboard/Dashboard";
+import User from "./ui/pages/user/User";
+import VaccineLibrary from "./ui/pages/vaccineLibrary/VaccineLibrary";
+import Notifications from "./ui/pages/notifications/Notifications";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
