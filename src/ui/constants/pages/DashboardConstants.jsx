@@ -1,28 +1,28 @@
-import reactLogo from "../../../assets/icons/Group 1000005703.svg";
+import { ICONS } from "../assets";
 
 export const DASHBOARD_CARDS = [
   {
     title: "Total Users",
     value: "1,234",
     name: "Users",
-    icon: reactLogo,
+    icon: ICONS.appicon,
   },
   {
     title: "Vaccine Logged",
     value: "30",
     name: "Vaccines",
-    icon: reactLogo,
+    icon: ICONS.vaccine,
   },
   {
     title: "Active Users",
     value: "1,23",
     name: "Users",
-    icon: reactLogo,
+    icon: ICONS.user,
   },
   {
     title: "Notifications",
     value: "123",
     name: "Notification",
-    icon: reactLogo,
+    icon: ICONS.notication,
   },
 ];
