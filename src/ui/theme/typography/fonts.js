@@ -9,7 +9,7 @@ export const FONTS = {
     fontSize: FONT_SIZES.xl,
     fontWeight: 500,
     lineHeight: "100%", // 38px
-    color: COLORS.gray700, // ✅ titles usually use dark gray
+    color: COLORS.gray, // ✅ titles usually use dark gray
   },
 
   // Labels (Email, Password, Terms)
@@ -18,7 +18,7 @@ export const FONTS = {
     fontSize: FONT_SIZES.lg,
     fontWeight: 600,
     lineHeight: "100%", // 20px
-    color: COLORS.gray700, // ✅ labels are usually medium-dark
+    color: COLORS.gray, // ✅ labels are usually medium-dark
   },
 
   // Terms text
@@ -27,7 +27,7 @@ export const FONTS = {
     fontSize: FONT_SIZES.lg,
     fontWeight: 600,
     lineHeight: "100%", // 20px
-    color: COLORS.gray600, // ✅ muted gray
+    color: COLORS.gray, // ✅ muted gray
   },
 
   // Button text
@@ -54,6 +54,6 @@ export const FONTS = {
     fontSize: FONT_SIZES.base,
     fontWeight: 400,
     lineHeight: "24px",
-    color: COLORS.gray400, // ✅ muted gray for disabled state
+    color: COLORS.gray700, // ✅ muted gray for disabled state
   },
 };

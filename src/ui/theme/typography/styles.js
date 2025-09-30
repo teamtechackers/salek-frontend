@@ -28,7 +28,7 @@ export const STYLES = {
 
   // Link (Terms & Conditions link specifically)
   link_text: {
-    color: COLORS.blue600, // or COLORS.primary if you have that defined
+    color: COLORS.blue, // or COLORS.primary if you have that defined
     ...FONTS.inter_600_20_30,
   },
 
