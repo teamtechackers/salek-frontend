@@ -12,7 +12,7 @@ module.exports = {
       2,
       'always',
       [
-        'auth','user','ui','core','routes','services','store','components','pages','layouts','utils','login'
+        'auth','user','ui','core','routes','services','store','components','pages','layouts','utils'
       ]
     ],
     'header-max-length': [2, 'always', 72]
