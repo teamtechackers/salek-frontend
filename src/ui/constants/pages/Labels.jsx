@@ -12,6 +12,3 @@ export const dashboardlabels = {
     avatarAlt: (name) => `${name} avatar`,
     deleteNotificationLabel: (name) => `Delete notification from ${name}`,
   }
-  
- 
-  
