@@ -20,5 +20,6 @@ export const dashboardlabels = {
     route: "Route",
     site: "Site",
     action: "Action",
-   
+    add: "+ Add New",
+    Totalvacine:"Total Vaccine"
   }
