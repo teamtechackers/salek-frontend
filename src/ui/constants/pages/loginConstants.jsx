@@ -1,4 +1,3 @@
-// import { TEXTS } from "../"
 import { TEXTS } from "../textconstants";
 const login_labels = {      
   TITLE: TEXTS.LOGIN_TITLE,

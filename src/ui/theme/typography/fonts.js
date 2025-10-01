@@ -1,7 +1,8 @@
-// src/utils/typography/fonts.js
 import { FONT_FAMILIES, FONT_SIZES } from "../../constants/typoconstants";
 import { COLORS } from "../colors/colors";
+
 export const FONTS = {
+
   // Page title "Log In Account"
   inter_500_38_38: {
     fontFamily: FONT_FAMILIES.inter,
@@ -21,27 +22,28 @@ export const FONTS = {
   },
 
   inter_600_20_20_red: {
-  fontFamily: FONT_FAMILIES.inter,
-  fontSize: FONT_SIZES.lg,
-  fontWeight: 600,
-  lineHeight: "100%", // 20px
-  color: COLORS.white, // text color
-  backgroundColor: COLORS.red, // 👈 add bg color
-  border: "none",
-  borderRadius: "8px",
-  padding: "10px 16px",
-},
-inter_600_20_20_gray: {
-  fontFamily: FONT_FAMILIES.inter,
-  fontSize: FONT_SIZES.lg,
-  fontWeight: 600,
-  lineHeight: "100%",
-  color: COLORS.black,
-  backgroundColor: COLORS.grayDark, // 👈 bg gray
-  border: "none",
-  borderRadius: "8px",
-  padding: "10px 16px",
-},
+    fontFamily: FONT_FAMILIES.inter,
+    fontSize: FONT_SIZES.lg,
+    fontWeight: 600,
+    lineHeight: "100%", // 20px
+    color: COLORS.white, // text color
+    backgroundColor: COLORS.red, // 👈 add bg color
+    border: "none",
+    borderRadius: "8px",
+    padding: "10px 16px",
+  },
+
+  inter_600_20_20_gray: {
+    fontFamily: FONT_FAMILIES.inter,
+    fontSize: FONT_SIZES.lg,
+    fontWeight: 600,
+    lineHeight: "100%",
+    color: COLORS.black,
+    backgroundColor: COLORS.grayDark, // 👈 bg gray
+    border: "none",
+    borderRadius: "8px",
+    padding: "10px 16px",
+  },
 
   // Terms text
   inter_600_20_20_gray: {

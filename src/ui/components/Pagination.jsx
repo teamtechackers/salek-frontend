@@ -1,9 +1,6 @@
-"use client"
-
 import { ICONS } from "../constants/assets"
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-  // Hide pagination only if there are 0 pages
   if (totalPages === 0) return null;
 
   return (
@@ -11,7 +8,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       className="mt-6 flex flex-wrap items-center justify-center gap-2  md:justify-end lg:justify-end"
       aria-label="Pagination"
     >
-      {/* Prev button */}
       <button
         type="button"
         aria-label="Previous page"
@@ -26,7 +22,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         />
       </button>
 
-      {/* Page numbers */}
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
         <button
           key={page}
@@ -41,7 +36,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         </button>
       ))}
 
-      {/* Next button */}
       <button
         type="button"
         aria-label="Next page"

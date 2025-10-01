@@ -1,9 +1,6 @@
-"use client"
-
 import Pagination from "../../../components/Pagination"
-import { ICONS } from "../../../constants/assets"
-import NotificationItem from "./Notificationitme"
-import { data } from "../../../constants/pages/data"
+import NotificationItem from "./NotificationItme"
+import { data } from "../../../constants/data/notificationJson"
 import { useState } from "react"
 
 export default function NotificationsList() {
@@ -18,7 +15,6 @@ export default function NotificationsList() {
   const handleDelete = (id) => {
     setItems((prev) => {
       const updated = prev.filter((n) => n.id !== id)
-      // auto-adjust if last item on page is deleted
       if ((currentPage - 1) * itemsPerPage >= updated.length && currentPage > 1) {
         setCurrentPage(currentPage - 1)
       }
@@ -43,6 +39,7 @@ export default function NotificationsList() {
       </ul>
 
       {/* Pagination */}
+<<<<<<< HEAD
       
  
     <Pagination
@@ -50,6 +47,13 @@ export default function NotificationsList() {
       totalPages={totalPages}
       onPageChange={setCurrentPage}
     />
+=======
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+>>>>>>> dc5a48a22da05eb0fe9cafb91c87c07bbcc016ae
 
     </section>
   )

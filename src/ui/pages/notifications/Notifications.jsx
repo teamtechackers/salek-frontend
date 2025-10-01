@@ -1,20 +1,17 @@
-"use client"
-
-import NotificationsList from "./components/Notificationlist"
+import NotificationsList from "./components/NotificationList"
 import { ICONS } from "../../constants/assets"
 import { useState } from "react"
 import Searchbar from "../../components/Searchbar"
 import { STYLES } from "../../theme/typography/styles"
-// import notificationLabels from "../../utils/strings/pages/notificationLabels"
 import { dashboardlabels } from "../../constants/pages/Labels"
+
 export default function Notification() {
   const [query, setQuery] = useState("")
 
   return (
     <main className="max-w-5xl mx-auto p-6 ">
-      {/* Top toolbar */}
       <div className="mb-6 flex items-center justify-between gap-3">
-        {/* Search */}
+
         <div className="relative flex-1 max-w-md">
           <Searchbar
             placeholder={dashboardlabels.searchPlaceholder}
@@ -23,7 +20,6 @@ export default function Notification() {
           />
         </div>
 
-        {/* Date selector (static) */}
         <button
           type="button"
           className="inline-flex items-center gap-2 rounded-lg border bg-card px-4 py-2 text-sm text-foreground hover:bg-muted"
@@ -49,7 +45,6 @@ export default function Notification() {
         </button>
       </div>
 
-      {/* Section header */}
       <div className="mb-4 flex items-baseline justify-between">
         <h2 style={STYLES.dashboard_title}>
           {dashboardlabels.notificationsTitle}
@@ -59,7 +54,6 @@ export default function Notification() {
         </span>
       </div>
 
-      {/* List */}
       <NotificationsList />
     </main>
   )

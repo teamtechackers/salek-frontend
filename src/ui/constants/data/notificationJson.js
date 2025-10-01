@@ -1,4 +1,5 @@
 import { IMAGES } from "../assets";
+
 export const data = [
   { id: "1", name: "Ayesha Khan", message: "Rescheduled Influenza vaccine appointment", time: "12:15 AM", avatarUrl: IMAGES.loginBanner, selected: true },
   { id: "2", name: "Imran Ali", message: "Marked Hepatitis B vaccine as Completed", time: "12:20 AM", avatarUrl: IMAGES.loginBanner },
