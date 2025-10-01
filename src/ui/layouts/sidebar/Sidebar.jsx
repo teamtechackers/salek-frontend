@@ -1,6 +1,6 @@
 import { SIDEBAR_LINKS } from "../../constants/layout/SidebarConstants";
 import NavItem from "./components/NavItem";
-import { ICONS } from "../../constants/assets";
+// import { ICONS } from "../../constants/assets";
 import { LOGOS } from "../../constants/assets";
 
 const Sidebar = () => {

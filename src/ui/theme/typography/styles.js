@@ -7,7 +7,10 @@ export const STYLES = {
     color: COLORS.black,
     ...FONTS.inter_500_38_38,
   },
-
+dashboard_title: {
+    color: COLORS.black,
+    ...FONTS.inter_500_38_38,
+  },
   // Field labels (Email, Password, Terms)
   field_label: {
     color: COLORS.darkGray,
@@ -31,10 +34,25 @@ export const STYLES = {
     color: COLORS.blue, // or COLORS.primary if you have that defined
     ...FONTS.inter_600_20_30,
   },
-
+delete_button: {
+    color: COLORS.white,
+    ...FONTS.inter_600_20_20_red,
+  },
+  cancel_button: {
+    color: COLORS.white,
+    ...FONTS.inter_600_20_20_gray,
+  },
   // Submit button text
   button_text: {
     color: COLORS.white,
     ...FONTS.inter_600_20_20_white,
   },
+  delete_model: {
+   // ...existing styles
+   icon_button: "grid h-8 w-8 place-items-center rounded-full text-white/90 hover:bg-white/20",
+  }
+,
+  search_icon:{
+    search:"absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+  }
 }

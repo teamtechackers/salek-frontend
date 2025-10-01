@@ -1,6 +1,7 @@
 // utils/typography/constants.js
 export const FONT_FAMILIES = {
     inter: '"Inter", sans-serif',
+    fantsans: "font-sans",
   };
   
   export const FONT_SIZES = {
@@ -9,8 +10,4 @@ export const FONT_FAMILIES = {
     base: "16px",
   };
   
-  export const COLORS = {
-    gray600: "#4B5563",
-    white: "#FFFFFF",
-  };
   
