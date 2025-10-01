@@ -1,7 +1,7 @@
-import NotificationsList from "./components/NotificationList"
+import NotificationsList from "./components/Notificationlist"
 import { ICONS } from "../../constants/assets"
 import { useState } from "react"
-import Searchbar from "../../components/Searchbar"
+import SearchBar from "../../layouts/topbar/components/SearchBar";
 import { STYLES } from "../../theme/typography/styles"
 import { dashboardlabels } from "../../constants/pages/Labels"
 
@@ -9,14 +9,11 @@ export default function Notification() {
   const [query, setQuery] = useState("")
 
   return (
-    <main className="max-w-5xl mx-auto p-6 ">
+    <main className=" w-full p-6 top-[145px] left-[355px] gap-[19px] ">
       <div className="mb-6 flex items-center justify-between gap-3">
 
         <div className="relative flex-1 max-w-md">
-          <Searchbar
-            placeholder={dashboardlabels.searchPlaceholder}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+          <SearchBar
           />
         </div>
 

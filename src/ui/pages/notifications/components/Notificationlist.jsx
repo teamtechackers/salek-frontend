@@ -48,11 +48,7 @@ export default function NotificationsList() {
       onPageChange={setCurrentPage}
     />
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      
 
 
     </section>
