@@ -92,9 +92,18 @@ function checkHardcodedStrings() {
         const s = str.slice(1, -1).trim();
         if (s.length < 5) return;
 
-        // Skip strings that are likely Tailwind class names
+        // 🚫 Skip Tailwind classes (already handled)
         const tailwindRegex = /^[a-zA-Z0-9-_:%\[\]\s]+$/;
         if (tailwindRegex.test(s)) return;
+
+        // 🚫 Skip HEX colors (#fff, #4C6FFF, etc.)
+        if (/^#([A-Fa-f0-9]{3,8})$/.test(s)) return;
+
+        // 🚫 Skip RGB/RGBA/HSL colors
+        if (/^(rgb|rgba|hsl|hsla)\(/.test(s)) return;
+
+        // 🚫 Skip inline size units (like w-3, h-3, px-4, etc.)
+        if (/^[whpm]-\d+/.test(s)) return;
 
         total++;
         console.warn(`⚠️ Potential hardcoded string in ${file}: ${s}`);
