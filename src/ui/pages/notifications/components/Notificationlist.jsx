@@ -50,7 +50,6 @@ export default function NotificationsList() {
       totalPages={totalPages}
       onPageChange={setCurrentPage}
     />
- {console.log("currentItems",Pagination)}
 
     </section>
   )
