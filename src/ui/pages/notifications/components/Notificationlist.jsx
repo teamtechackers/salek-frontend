@@ -39,7 +39,7 @@ export default function NotificationsList() {
       </ul>
 
       {/* Pagination */}
-<<<<<<< HEAD
+
       
  
     <Pagination
@@ -47,13 +47,13 @@ export default function NotificationsList() {
       totalPages={totalPages}
       onPageChange={setCurrentPage}
     />
-=======
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
->>>>>>> dc5a48a22da05eb0fe9cafb91c87c07bbcc016ae
+
 
     </section>
   )
