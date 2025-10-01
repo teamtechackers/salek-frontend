@@ -3,9 +3,12 @@
 import { ICONS } from "../constants/assets"
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
+  // Hide pagination only if there are 0 pages
+  if (totalPages === 0) return null;
+
   return (
     <nav
-      className="mt-6 flex items-center justify-center gap-2"
+      className="mt-6 flex flex-wrap items-center justify-center gap-2  md:justify-end lg:justify-end"
       aria-label="Pagination"
     >
       {/* Prev button */}
@@ -14,9 +17,13 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         aria-label="Previous page"
         onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted disabled:opacity-50"
       >
-        <img className="h-4 w-4" src={ICONS.paginationleftarrow} alt="prev" />
+        <img
+          className="h-4 w-4"
+          src={ICONS.paginationleftarrow}
+          alt="prev"
+        />
       </button>
 
       {/* Page numbers */}
@@ -26,10 +33,8 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
           type="button"
           aria-current={page === currentPage ? "page" : undefined}
           onClick={() => onPageChange(page)}
-          className={`rounded-md px-3 py-1.5 text-sm ${
-            page === currentPage
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 hover:bg-gray-300"
+          className={`rounded-md px-3 py-1.5 text-sm hover:bg-muted ${
+            page === currentPage ? "bg-primary text-primary-foreground" : ""
           }`}
         >
           {page}
@@ -42,9 +47,14 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         aria-label="Next page"
         onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted disabled:opacity-50"
       >
-        <img className="h-4 w-4" src={ICONS.paginationrightarrow} alt="next" />
+        <img
+          className="h-4 w-4"
+          src={ICONS.paginationrightarrow}
+          alt="next"
+          aria-hidden="true"
+        />
       </button>
     </nav>
   )
