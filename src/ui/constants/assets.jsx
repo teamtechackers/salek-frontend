@@ -29,6 +29,8 @@ cross:"src/assets/icons/cross.svg",
   calender:"src/assets/icons/calendar.svg",
   paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
   paginationrightarrow:"src/assets/icons/paginationright.svg",
+  editvacine:"src/assets/icons/editvacinelib.svg",
+  deletevacine:"src/assets/icons/deletevacine.svg"
 }
 
 export const LOGOS = {
