@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react"
 import { ICONS, IMAGES } from "../constants/assets"
 import { dashboardlabels } from "../constants/pages/Labels"
-import { STYLES } from "../theme/typography/styles"
+import { BUTTON_BASE, BUTTON_SIZE, STYLES } from "./Styles/buttonstyling"
+import { COLORS } from "../theme/colors/colors"
 
 export function ConfirmDeleteModal({
   open,
@@ -76,20 +77,22 @@ export function ConfirmDeleteModal({
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
-            <button
-              ref={confirmRef}
-              onClick={onConfirm}
-              className={` flex items-center justify-center w-[249px] h-[60px] rounded-[14px] gap-[10px] bg-[#D32220] text-white`}
-            >
-             {dashboardlabels.delete}
-            </button>
-            <button
-              onClick={onClose}
-              class={`flex items-center justify-center w-[249px] h-[60px] rounded-[14px] gap-[10px] bg-[#1843b929] text-white`}
-            >
-            {dashboardlabels.cancel}
-            </button>
-          </div>
+  <button
+    ref={confirmRef}
+    onClick={onConfirm}
+    className={STYLES.deleteButton}
+  >
+    {dashboardlabels.delete}
+  </button>
+
+  <button
+    onClick={onClose}
+    className={STYLES.cancelButton}
+  >
+    {dashboardlabels.cancel}
+  </button>
+</div>
+
         </div>
       </div>
     </div>
