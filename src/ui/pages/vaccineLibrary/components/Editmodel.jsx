@@ -5,7 +5,7 @@ import { STYLES } from "../../../components/Styles/buttonstyling";
 import { FONTS } from "../../../theme/typography/fonts";
 import { vaccineLabels } from "../../../constants/data/EditVaccinelabels";
 import { COLORS } from "../../../theme/colors/colors";
-import { GlobalStyles, Subheader } from "../../../components/Styles/GlobalStyles";
+import { GlobalStyles } from "../../../components/Styles/GlobalStyles";
 
 export default function EditModel({ open, onClose }) {
   const closeRef = useRef(null);
