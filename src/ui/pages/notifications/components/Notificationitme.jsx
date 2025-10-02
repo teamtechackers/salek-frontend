@@ -1,4 +1,4 @@
-import { ConfirmDeleteModal } from "../../../components/ConfirmDeleteDialogBox"
+import  ConfirmDeleteModal  from "../../../../ui/components/ConfirmDeleteDialogBox"
 import { ICONS } from "../../../constants/assets"
 import { useState } from "react"
 import { dashboardlabels } from "../../../constants/pages/Labels"

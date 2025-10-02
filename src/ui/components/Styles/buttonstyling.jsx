@@ -7,10 +7,12 @@ import { COLORS } from "../../theme/colors/colors";
 
 export const BUTTON_COLORS = {
   delete: "bg-red-500 hover:bg-red-600",
+  edit: "bg-green-500 hover:bg-green-600",
   cancel: "bg-gray-400 hover:bg-gray-500"
 };
 
 export const STYLES = {
   deleteButton: [BUTTON_BASE, BUTTON_SIZE, BUTTON_COLORS.delete].join(" "),
+  editButton: [BUTTON_BASE, BUTTON_SIZE, BUTTON_COLORS.edit].join(" "),
   cancelButton: [BUTTON_BASE, BUTTON_SIZE, BUTTON_COLORS.cancel].join(" "),
 };

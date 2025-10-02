@@ -4,7 +4,7 @@ import { dashboardlabels } from "../constants/pages/Labels"
 import { BUTTON_BASE, BUTTON_SIZE, STYLES } from "./Styles/buttonstyling"
 import { COLORS } from "../theme/colors/colors"
 
-export function ConfirmDeleteModal({
+export default function ConfirmDeleteModal({
   open,
   title = dashboardlabels.title,
   description = dashboardlabels.description,
