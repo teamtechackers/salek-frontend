@@ -6,6 +6,7 @@ import { FONTS } from "../../../theme/typography/fonts";
 import { vaccineLabels } from "../../../constants/data/EditVaccinelabels";
 import { COLORS } from "../../../theme/colors/colors";
 import { GlobalStyles } from "../../../components/Styles/GlobalStyles";
+import { FONT_FAMILIES } from "../../../constants/typoconstants";
 
 export default function EditModel({ open, onClose }) {
   const closeRef = useRef(null);
@@ -53,8 +54,8 @@ export default function EditModel({ open, onClose }) {
         
         {/* Header */}
         <div className="flex items-center justify-between h-[84px] px-[40px] py-[19px]  rounded-t-[39px]"style={{background:COLORS.blue}}>
-          <h2 id="edit-model-title" className="text-lg font-semibold "style={{color:COLORS.blue}}>
-            {dashboardlabels.editVaccine || vaccineLabels.header}
+          <h2 id="edit-model-title" className="text-lg font-semibold "style={{fontFamily:FONTS.inter_600_20_20_white}}>
+            { vaccineLabels.header}
           </h2>
           <button
             aria-label="Close"
@@ -62,7 +63,7 @@ export default function EditModel({ open, onClose }) {
             ref={closeRef}
             className="hover:opacity-80 transition"
           >
-            <img src={ICONS.cross} alt="close" className="h-5 w-5" />
+            <img src={ICONS.cross} alt="close" className="h-[35px] w-[33px]" />
           </button>
         </div>
 
