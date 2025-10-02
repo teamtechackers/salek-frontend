@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
-import { dashboardlabels } from "../../../../ui/constants/pages/Labels";
+import { dashboardlabels } from "../../../constants/pages/Labels";
 import { ICONS } from "../../../constants/assets";
 import { STYLES } from "../../../components/Styles/buttonstyling";
 import { FONTS } from "../../../theme/typography/fonts";
-import { vaccineLabels } from "./EditVaccinelabels";
+import { vaccineLabels } from "../../../constants/data/EditVaccinelabels";
+import { COLORS } from "../../../theme/colors/colors";
+import { GlobalStyles, Subheader } from "../../../components/Styles/GlobalStyles";
 
 export default function EditModel({ open, onClose }) {
   const closeRef = useRef(null);
@@ -44,14 +46,14 @@ export default function EditModel({ open, onClose }) {
       }}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 " />
 
       {/* Modal Card */}
-      <div className="relative flex flex-col w-[613px] h-[762px] rounded-[39px] bg-white shadow-xl overflow-hidden">
+      <div className="relative flex flex-col w-[613px] h-[762px] rounded-[39px]  shadow-xl overflow-hidden" style={{background:COLORS.white}}>
         
         {/* Header */}
-        <div className="flex items-center justify-between h-[84px] px-[40px] py-[19px] bg-blue-600 rounded-t-[39px]">
-          <h2 id="edit-model-title" className="text-lg font-semibold text-white">
+        <div className="flex items-center justify-between h-[84px] px-[40px] py-[19px]  rounded-t-[39px]"style={{background:COLORS.blue}}>
+          <h2 id="edit-model-title" className="text-lg font-semibold "style={{color:COLORS.blue}}>
             {dashboardlabels.editVaccine || vaccineLabels.header}
           </h2>
           <button
@@ -68,7 +70,7 @@ export default function EditModel({ open, onClose }) {
         <div className="flex flex-col gap-6 px-10 py-6 text-gray-700 overflow-y-auto">
           
           {/* Sub Header */}
-          <div className="flex items-center w-full h-[76px] rounded-lg px-5 py-2.5 gap-3 shadow bg-gray-50">
+          <div className={GlobalStyles.Subheader}>
             <h3 className="text-lg font-bold">{vaccineLabels.subHeader}</h3>
           </div>
 
