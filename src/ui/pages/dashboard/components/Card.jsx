@@ -10,8 +10,8 @@ const Card = ({ title, value, name, icon }) => {
         </p>
       </div>
 
-      <div className="w-16 h-16 flex items-center justify-center rounded-full shadow-sm">
-        <img src={icon} alt="icon" className="w-10 h-10 object-contain" />
+      <div className="flex items-center justify-center rounded-full">
+        <img src={icon} alt="icon"/>
       </div>
     </div>
   );
