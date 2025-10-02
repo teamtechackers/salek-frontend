@@ -19,16 +19,19 @@ export const ICONS = {
   vaccineIconBlue: "src/assets/icons/sidebarVaccineIconBlue.svg",
   notificationIconWhite: "src/assets/icons/sidebarNotificationIconWhite.svg",
   notificationIconBlue: "src/assets/icons/sidebarNotificationIconBlue.svg",
-deletenotification:"src/assets/icons/ddeletenotification.svg",
+  deletenotification:"src/assets/icons/ddeletenotification.svg",
   topbarSearchIcon: "src/assets/icons/topbarSearchIcon.svg",
   topbarNotificationIcon: "src/assets/icons/topbarNotificationIcon.svg",
-cross:"src/assets/icons/cross.svg",
+  cross:"src/assets/icons/cross.svg",
   cardNotificationIcon: "src/assets/icons/cardNotificationIcon.svg",
   cardUserIcon: "src/assets/icons/cardUserIcon.svg",
   cardVaccineIcon: "src/assets/icons/cardVaccineIcon.svg",
   calender:"src/assets/icons/calendar.svg",
   paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
   paginationrightarrow:"src/assets/icons/paginationright.svg",
+  dropDownArrow:"src/assets/icons/dropdownarrow.svg",
+  edit: "src/assets/icons/edit.svg",
+  delete: "src/assets/icons/delete.svg",
 }
 
 export const LOGOS = {

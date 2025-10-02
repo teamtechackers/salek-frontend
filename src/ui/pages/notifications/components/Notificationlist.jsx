@@ -23,7 +23,7 @@ export default function NotificationsList() {
   }
 
   return (
-    <section aria-label="Notifications">
+    <div aria-label="Notifications">
       <ul className="m-0 list-none p-0">
         {currentItems.map((n) => (
           <NotificationItem
@@ -38,19 +38,11 @@ export default function NotificationsList() {
         ))}
       </ul>
 
-      {/* Pagination */}
-
-      
- 
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      onPageChange={setCurrentPage}
-    />
-
-      
-
-
-    </section>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+    </div>
   )
 }
