@@ -30,7 +30,7 @@ export default function NotificationItem({
         <p className={STYLES.field_label}>{message}</p>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex shrink-0 flex-col items-center gap-3">
         <button
           type="button"
           aria-label={dashboardlabels.deleteNotificationLabel(name)}
@@ -39,6 +39,7 @@ export default function NotificationItem({
         >
           <img src={ICONS.deletenotification} alt="Delete" />
         </button>
+        
         <ConfirmDeleteModal
           open={open}
           title={dashboardlabels.title}
