@@ -1,0 +1,1 @@
+export const GlobalStyles={Subheader:"flex items-center w-full h-[76px] rounded-lg px-5 py-2.5 gap-3 shadow"}

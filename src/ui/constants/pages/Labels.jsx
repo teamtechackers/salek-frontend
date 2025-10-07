@@ -11,4 +11,16 @@ export const dashboardlabels = {
     avatarPlaceholder: "/placeholder.svg?height=48&width=48&query=avatar",
     avatarAlt: (name) => `${name} avatar`,
     deleteNotificationLabel: (name) => `Delete notification from ${name}`,
+    // Table headers
+    vaccine: "Vaccine",
+    category: "Category",
+    Age:"Age",
+    type: "Type",
+    dose: "Dose",
+    route: "Route",
+    site: "Site",
+    action: "Action",
+    add: "+ Add New",
+    Totalvacine:"Total Vaccine",
+    edit:"Edit",
   }

@@ -47,7 +47,10 @@ export const STYLES = {
     color: COLORS.white,
     ...FONTS.inter_600_20_20_gray,
   },
-
+Catogory_button: {
+    color: COLORS.black,
+    ...FONTS.inter_600_20_20_gray,
+  },
   // Submit button text
   button_text: {
     color: COLORS.white,

@@ -1,9 +1,10 @@
 import React from "react";
+import VaccineTable from "./components/vaccinelist";
 
 const VaccineLibrary = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Vaccine Library</h1>
+    <div className="w-full h-screen top-[141px] left-[341px] mx-auto gap-[68px] p-6">
+     <VaccineTable/>
     </div>
   );
 };

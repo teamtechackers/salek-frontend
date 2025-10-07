@@ -29,6 +29,9 @@ export const ICONS = {
   calender:"src/assets/icons/calendar.svg",
   paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
   paginationrightarrow:"src/assets/icons/paginationright.svg",
+  editvacine:"src/assets/icons/editvacinelib.svg",
+  deletevacine:"src/assets/icons/deletevacine.svg",
+  
   dropDownArrow:"src/assets/icons/dropdownarrow.svg",
   edit: "src/assets/icons/edit.svg",
   delete: "src/assets/icons/delete.svg",
