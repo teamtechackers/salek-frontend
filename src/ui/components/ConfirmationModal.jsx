@@ -4,7 +4,7 @@ import { dashboardlabels } from "../constants/pages/Labels"
 import { BUTTON_BASE, BUTTON_SIZE, STYLES } from "./Styles/buttonstyling"
 import { COLORS } from "../theme/colors/colors"
 
-export default function ConfirmDeleteModal({
+export default function ConfirmationModal({
   open,
   
   title = title,
@@ -49,11 +49,11 @@ export default function ConfirmDeleteModal({
     >
       <div className="absolute inset-0 " />
 
-      <div className="relative z-10 w-[92vw] max-w-[500px] overflow-hidden  bg-white rounded-2xl  border-none bg-card shadow-xl">
+      <div className="relative z-10 w-[80vw] max-w-[400px] overflow-hidden  bg-white rounded-2xl  border-none bg-card shadow-xl">
         <div className="flex items-center justify-between bg-blue-600 px-4 py-3 h-[60px]">
 
           <h2 id="confirm-delete-title" className="text-base font-semibold text-white">
-            {title}
+            {title || "Confirm Deletion"}
           </h2>
 
           <button
@@ -70,14 +70,14 @@ export default function ConfirmDeleteModal({
         <div className="px-6 pb-6 pt-5">
           <div className="flex w-full flex-col items-center text-center">
             <img
-              src={IMAGES.delete}
+              src={IMAGES.tickmark}
               alt="Delete confirmation illustration"
               className="mb-5 h-36 w-auto"
             />
             <p className="max-w-[36ch] text-balance text-sm text-muted-foreground">{description}</p>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          {/* <div className="mt-6 grid grid-cols-2 gap-3">
   <button
     ref={confirmRef}
     onClick={onConfirm}
@@ -92,7 +92,7 @@ export default function ConfirmDeleteModal({
   >
     {dashboardlabels.cancel}
   </button>
-</div>
+</div> */}
 
         </div>
       </div>

@@ -1,8 +1,8 @@
 import { ICONS } from "../../../constants/assets";
 
-const UserListItem = ({ user, formatDate }) => {
+const UserListItem = ({ user, formatDate , handleFunction}) => {
   return (
-    <div className="flex items-center min-h-[70px] bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 transition">
+    <div className="flex items-center min-h-[70px] bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 transition cursor-pointer" onClick={handleFunction}>
 
       <div className="flex justify-center items-center w-[14%]">
         <img

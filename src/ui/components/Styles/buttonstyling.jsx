@@ -1,7 +1,9 @@
 // src/ui/components/Styles/buttonstyling.jsx
 
 export const BUTTON_BASE = "flex items-center justify-center rounded-[14px] gap-[10px] text-white";
-export const BUTTON_SIZE = "w-[249px] h-[60px]";
+// export const BUTTON_SIZE = "w-[249px] h-[60px]";
+export const BUTTON_SIZE = "w-[189px] h-[50px] cursor-pointer";
+
 export const Catagory= "flex flex-row w-[167px] h-[49px] rounded-md gap-3 items-center border border-black" 
 import { COLORS } from "../../theme/colors/colors";
 

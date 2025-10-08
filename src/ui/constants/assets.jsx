@@ -1,6 +1,8 @@
 export const IMAGES = {
     loginBanner: "src/assets/images/logoinbanner.jpg",
     delete:"src/assets/images/deletedata.png",
+        tickmark:"src/assets/images/tickmark.png",
+
     topbarTempUserImage: "src/assets/images/topbarTempUserImage.jpg",
   }
 
@@ -30,11 +32,16 @@ export const ICONS = {
   paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
   paginationrightarrow:"src/assets/icons/paginationright.svg",
   editvacine:"src/assets/icons/editvacinelib.svg",
+  edituser:"src/assets/icons/edituser.svg",
+
   deletevacine:"src/assets/icons/deletevacine.svg",
   
   dropDownArrow:"src/assets/icons/dropdownarrow.svg",
   edit: "src/assets/icons/edit.svg",
   delete: "src/assets/icons/delete.svg",
+  status:"src/assets/icons/status.svg",
+  inactiveStatus:"src/assets/icons/inactivation.svg",
+
 }
 
 export const LOGOS = {
