@@ -1,14 +1,18 @@
-import Pagination from "../../../components/Pagination"
+// import Pagination from "../../../components/Pagination" // Pagination is now in Notifications.jsx
 import NotificationItem from "./NotificationItme"
 import { data } from "../../../constants/data/notificationJson"
-import { useState } from "react"
+import { useState, useEffect } from "react" // Import useEffect
+import Pagination from "../../../components/Pagination";
 
-export default function NotificationsList() {
+export default function NotificationsList({ currentPage, itemsPerPage, onTotalItemsChange }) { // Accept onTotalItemsChange prop
   const [items, setItems] = useState(data)
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
+  
+  useEffect(() => {
+    if (onTotalItemsChange) {
+      onTotalItemsChange(items.length); 
+    }
+  }, [items.length, onTotalItemsChange]);
 
-  const totalPages = Math.ceil(items.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const currentItems = items.slice(startIndex, startIndex + itemsPerPage)
 
@@ -16,7 +20,6 @@ export default function NotificationsList() {
     setItems((prev) => {
       const updated = prev.filter((n) => n.id !== id)
       if ((currentPage - 1) * itemsPerPage >= updated.length && currentPage > 1) {
-        setCurrentPage(currentPage - 1)
       }
       return updated
     })
@@ -38,11 +41,7 @@ export default function NotificationsList() {
         ))}
       </ul>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+    
     </div>
   )
 }
