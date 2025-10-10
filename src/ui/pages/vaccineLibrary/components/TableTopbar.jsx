@@ -22,7 +22,6 @@ export default function TableTopBar() {
             {dashboardlabels.add}
           </button>
         </div>
-        <VaccineForm open={openAdd} onClose={() => setOpenAdd(false)} />
       </div>
     );
   }

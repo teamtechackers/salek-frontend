@@ -4,15 +4,15 @@ import { Outlet, useLocation } from "react-router-dom";
 
 const Layout = () => {
   const location = useLocation();
-  const isDashboard = location.pathname === "/dashboard";
 
   return (
-    <div className="flex h-screen bg-white p-4">
+    <div className="flex h-screen bg-white p-2">
       <Sidebar />
 
+
       <div className="flex-1 flex flex-col">
-        {!isDashboard && <Topbar />}
-        <main className="flex-1 w-full overflow-auto lg:overflow-hidden">
+      <Topbar />
+        <main className="flex-1 w-auto overflow-auto lg:overflow-hidden mx-4">
           <Outlet />
         </main>
       </div>

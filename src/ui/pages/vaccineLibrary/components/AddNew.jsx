@@ -79,17 +79,16 @@ export default function VaccineForm({ open, onClose }) {
   };
 
   return (
-    // Modal overlay
     <div className="fixed inset-0 z-50 flex justify-center items-center ">
       {/* Centered form container */}
-      <div className="max-w-4xl w-full mx-4 bg-white rounded-2xl shadow-lg border overflow-y-auto max-h-[90vh]">
+      <div className="max-w-4xl w-full mx-4 bg-white rounded-2xl shadow-lg border-none overflow-y-auto max-h-[90vh]">
         {/* Header */}
         <div className="bg-blue-600 text-white px-6 py-3 rounded-t-2xl flex justify-between items-center">
           <h2 className="text-lg font-semibold">Add Vaccine</h2>
           <button
             ref={closeRef}
             onClick={onClose}
-            className="text-white text-2xl leading-none focus:outline-none"
+            className="text-white text-2xl leading-none focus:outline-none cursor-pointer"
           >
             <img src={ICONS.cross} alt="close" className="w-5 h-5" />
           </button>
