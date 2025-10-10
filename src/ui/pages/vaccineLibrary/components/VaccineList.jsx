@@ -30,7 +30,7 @@ export default function VaccineTable() {
   };
 
   return (
-    <div className="min-h-screen w-full p-6 flex flex-col">
+    <div className="w-full flex flex-col">
       {/* Header Section */}
       <div className="mb-4">
         <TableTopBar />
@@ -44,17 +44,17 @@ export default function VaccineTable() {
       <div className="hidden md:block w-full overflow-x-auto flex-1">
         {/* Header Row */}
         <div
-          className="min-w-[1200px] grid grid-cols-8 bg-blue-600 text-white text-sm rounded-lg px-4 py-2 font-medium"
+          className="min-w-[1200px] grid [grid-template-columns:2fr_1.2fr_1.4fr_1fr_.8fr_1fr_.8fr_.8fr] bg-blue-600 text-white text-sm rounded-lg px-4 py-2 font-medium"
           style={{ fontFamily: FONTS.inter_600_20_20 }}
         >
           <span style={FONTS.inter_400_16_24}>{dashboardlabels.vaccine}</span>
           <span style={FONTS.inter_400_16_24}>{dashboardlabels.category}</span>
           <span style={FONTS.inter_400_16_24}>{dashboardlabels.Age}</span>
           <span style={FONTS.inter_400_16_24}>{dashboardlabels.type}</span>
-          <span style={FONTS.inter_400_16_24}>{dashboardlabels.route}</span>
-          <span style={FONTS.inter_400_16_24}>{dashboardlabels.dose}</span>
-          <span style={FONTS.inter_400_16_24}>{dashboardlabels.site}</span>
-          <span style={FONTS.inter_400_16_24}>{dashboardlabels.action}</span>
+          <span className="text-center" style={FONTS.inter_400_16_24}>{dashboardlabels.dose}</span>
+          <span className="text-center" style={FONTS.inter_400_16_24}>{dashboardlabels.route}</span>
+          <span className="text-center" style={FONTS.inter_400_16_24}>{dashboardlabels.site}</span>
+          <span className="text-center" style={FONTS.inter_400_16_24}>{dashboardlabels.action}</span>
         </div>
 
         {/* Data Rows */}
@@ -65,17 +65,17 @@ export default function VaccineTable() {
               .map((item) => (
                 <div
                   key={item.id}
-                  className="grid grid-cols-8 items-center bg-white rounded-md shadow-sm hover:bg-gray-50 px-4 py-2"
+                  className="grid [grid-template-columns:2fr_1.2fr_1.4fr_1fr_.8fr_1fr_.8fr_.8fr] items-center bg-white rounded-md shadow-sm hover:bg-gray-50 px-4 py-2"
                   style={{ fontFamily: FONTS.inter_600_20_20 }}
                 >
                   <span style={FONTS.inter_400_16_24}>{item.vaccine}</span>
                   <span style={FONTS.inter_400_16_24}>{item.category}</span>
-                  <span style={FONTS.inter_400_16_24}>{item.age}</span>
+                  <span className="truncate" style={FONTS.inter_400_16_24}>{item.age}</span>
                   <span style={FONTS.inter_400_16_24}>{item.type}</span>
-                  <span style={FONTS.inter_400_16_24}>{item.route}</span>
-                  <span style={FONTS.inter_400_16_24}>{item.dose}</span>
-                  <span style={FONTS.inter_400_16_24}>{item.site}</span>
-                  <div className="flex gap-2">
+                  <span className="text-center" style={FONTS.inter_400_16_24}>{item.dose}</span>
+                  <span className="text-center" style={FONTS.inter_400_16_24}>{item.route}</span>
+                  <span className="text-center" style={FONTS.inter_400_16_24}>{item.site}</span>
+                  <div className="flex justify-center gap-2">
                     <button
                       className="p-2 rounded-md hover:bg-blue-100"
                       onClick={() => setOpenEdit(true)}
