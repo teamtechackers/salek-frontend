@@ -1,71 +1,62 @@
-import NotificationsList from "./components/Notificationlist"
+import React, { useState } from "react";
 import SearchBar from "../../components/Searchbar";
-import { ICONS } from "../../constants/assets"
-import { useState } from "react"
-import { STYLES } from "../../theme/typography/styles"
-import { dashboardlabels } from "../../constants/pages/Labels"
-import PageContainer from "../../components/PageContainer"; // Import PageContainer
-import Pagination from "../../components/Pagination"; // Import Pagination
+import DateDropdown from "../user/components/DateDropdown";
+import PaginationDropdown from "../user/components/PaginationDropdown";
+import PageContainer from "../../components/PageContainer";
+import TotalSection from "../../components/TotalSection";
+import Pagination from "../../components/Pagination";
+import NotificationsList from "./components/Notificationlist";
 
-export default function Notification() {
-  const [query, setQuery] = useState("")
+const Notification = () => {
+  // pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalNotifications, setTotalNotifications] = useState(0); // State for total count
-  const itemsPerPage = 5; // Assuming 5 items per page for notifications
-  const totalPages = Math.ceil(totalNotifications / itemsPerPage);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const handleSearch = (searchTerm) => {
-    setQuery(searchTerm);
-    console.log("Searching notifications:", searchTerm);
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    console.log("Page changed to:", page);
-  };
-
-  const handleTotalItemsChange = (total) => {
-    setTotalNotifications(total); 
-  };
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   return (
-    <PageContainer>
-      <div className="flex items-center justify-between mb-6">
-        <div className="relative flex-1 max-w-md">
-          <SearchBar onSearchChange={handleSearch} />
+   <>
+    <PageContainer
+      topSection={
+        <div className="flex w-full">
+          <>
+            <div className="w-1/2 flex items-center justify-start">
+              <SearchBar />
+            </div>
+            <div className="w-1/2 flex items-center justify-end">
+              <DateDropdown />
+            </div>
+          </>
         </div>
+      }
+      totalSection={<TotalSection label="Total Notifications" count={totalItems} />}
+      tableSection={
+        <div className="w-full h-full">
+          <NotificationsList
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onTotalItemsChange={(n) => {
+              setTotalItems(n);
+              const pages = Math.max(1, Math.ceil(n / itemsPerPage));
+              if (currentPage > pages) setCurrentPage(pages);
+            }}
+            onPageChange={(p) => setCurrentPage(p)}
+          />
+        </div>
+      }
+      paginationSection={
 
-        <select
-          className="rounded-lg py-2 p-3 bg-white shadow-sm border border-gray-100 text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-          aria-label={dashboardlabels.selectDate}
-        >
-          <option>15 Oct 2025</option> {/* Placeholder date from image */}
-        </select>
-      </div>
+           <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+      }
+    />
+    
+      </>
+  );
+};
 
-      <div className="mb-4 flex items-baseline justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">
-          Notifications:
-        </h2>
-        <span className="text-xl font-bold text-gray-800">
-          {totalNotifications}
-        </span>
-      </div>
-
-      <NotificationsList
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        onTotalItemsChange={handleTotalItemsChange} // Pass handler
-      />
-
-      {/* Pagination */}
-      <div className="mt-6 flex justify-end"> {/* Aligned to right */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
-    </PageContainer>
-  )
-}
+export default Notification;

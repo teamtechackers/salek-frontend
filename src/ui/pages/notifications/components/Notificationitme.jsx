@@ -17,9 +17,7 @@ export default function NotificationItem({
     <li
       role="listitem"
       aria-selected={selected}
-      className={`flex items-center gap-3 rounded-lg shadow-sm p-3 mb-2 transition-colors ${ // Adjusted styling
-        selected ? "bg-blue-50" : "bg-white hover:bg-gray-50" // Conditional background
-      }`}
+      className={`flex items-center gap-3 rounded-xl shadow-sm p-2 mb-2 `}
     >
       <img
         src={avatarUrl || dashboardlabels.avatarPlaceholder}
@@ -28,29 +26,26 @@ export default function NotificationItem({
       />
 
       <div className="flex-1"> {/* Adjusted flex for message */}
-        <p className="font-semibold text-gray-800">{name}</p> {/* Adjusted styling */}
-        <p className="text-sm text-gray-600">{message}</p> {/* Adjusted styling */}
+        <p className="font-bold text-gray-800">{name}</p> {/* Adjusted styling */}
+        <p className="text-md text-gray-600">{message}</p> {/* Adjusted styling */}
       </div>
 
       <div className="flex flex-col items-end gap-1"> {/* Adjusted layout for time and delete */}
-        <button
-          type="button"
-          aria-label={dashboardlabels.deleteNotificationLabel(name)}
-          onClick={() => setOpen(true)}
-          className="p-1 rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" // Adjusted styling
-        >
-          <img src={ICONS.delete} alt="Delete" className="w-4 h-4" /> {/* Using generic delete icon */}
+        <button  className="p-2 rounded-md hover:bg-red-100 cursor-pointer"          onClick={() => setOpen(true)}
+>
+          <img src={ICONS.delete} alt="Delete" />
         </button>
+
+
         <span className="text-xs text-gray-500">{time}</span> {/* Adjusted styling */}
       </div>
         
-      <ConfirmDeleteModal
+       <ConfirmDeleteModal
         open={open}
         title={dashboardlabels.title}
         description={dashboardlabels.description}
         onClose={() => setOpen(false)}
         onConfirm={async () => {
-          await onDelete()
           setOpen(false)
         }}
       />

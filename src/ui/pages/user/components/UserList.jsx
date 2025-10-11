@@ -140,7 +140,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete}) => {
 
             {/* Tabs */}
             <div className="flex flex-wrap gap-2 mb-5">
-              {(dependentDetails ? tabs.filter((t) => ["Completed", "Overdue"].includes(t)) : tabs).map((tab) => (
+              {  tabs?.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
