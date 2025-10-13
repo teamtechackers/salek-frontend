@@ -47,7 +47,7 @@ export default function VaccineForm({ open, onClose }) {
           type={field.type}
           value={formData[field.key] || ""}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full  border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       );
     } else if (field.type === "select") {
@@ -55,7 +55,7 @@ export default function VaccineForm({ open, onClose }) {
         <select
           value={formData[field.key] || ""}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           <option value="">Select</option>
           {field.options.map((opt) => (
@@ -71,7 +71,7 @@ export default function VaccineForm({ open, onClose }) {
           rows="3"
           value={formData[field.key] || ""}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       );
     }
@@ -81,7 +81,7 @@ export default function VaccineForm({ open, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center ">
       {/* Centered form container */}
-      <div className="max-w-4xl w-full mx-4 bg-white rounded-2xl shadow-lg border-none overflow-y-auto max-h-[90vh]">
+      <div className="max-w-2xl w-full mx-4 bg-white rounded-2xl shadow-lg border-none overflow-y-auto max-h-[80vh]">
         {/* Header */}
         <div className="bg-blue-600 text-white px-6 py-3 rounded-t-2xl flex justify-between items-center">
           <h2 className="text-lg font-semibold">Add Vaccine</h2>
@@ -95,7 +95,7 @@ export default function VaccineForm({ open, onClose }) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 space-y-2">
           {/* Row 1 - Name full width */}
           <div>
             <label className="mb-1 text-sm font-medium text-gray-700">{vaccineFields[0].label}</label>
