@@ -4,11 +4,12 @@ const login_labels = {
   APPTITLE: TEXTS.APP_TITLE,
   FORM: {
     FIELDS_LABELS: {
-      EMAIL: TEXTS.EMAIL, 
+      USERNAME: "Username", // Added USERNAME label
+      EMAIL: TEXTS.EMAIL,
       PASSWORD: TEXTS.PASSWORD,
       TERMS: TEXTS.TERMS,
       CONDITIONS: TEXTS.CONDITIONS,
-    },  
+    },
     BUTTON: TEXTS.BUTTON_LOGIN,
   },
 };

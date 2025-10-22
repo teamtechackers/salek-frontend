@@ -22,7 +22,7 @@ export const ICONS = {
   notificationIconWhite: "src/assets/icons/sidebarNotificationIconWhite.svg",
   notificationIconBlue: "src/assets/icons/sidebarNotificationIconBlue.svg",
   deletenotification:"src/assets/icons/ddeletenotification.svg",
-  topbarSearchIcon: "src/assets/icons/topbarSearchIcon.svg",
+  topbarSearchIcon: "/src/assets/icons/topbarSearchIcon.svg",
   topbarNotificationIcon: "src/assets/icons/topbarNotificationIcon.svg",
   cross:"src/assets/icons/cross.svg",
   cardNotificationIcon: "src/assets/icons/cardNotificationIcon.svg",

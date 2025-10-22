@@ -18,7 +18,7 @@ export default function VaccineList({ items, onEdit, onDelete }) {
         {items.length > 0 ? (
           items.map((item) => (
             <VaccineListItem
-              key={item.id}
+              key={item.vaccine_id}
               item={item}
               onEdit={onEdit}
               onDelete={onDelete}

@@ -49,7 +49,7 @@ const GraphBox = () => {
           />
         </BarChart>
       </ResponsiveContainer>
-      
+
     </div>
   );
 };

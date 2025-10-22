@@ -1,26 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ICONS } from "../../../constants/assets";
 import VaccineTableDisplay from "./VaccineTable";
 import UserListItem from "./UserListItem";
+import { useGetUserDetailsQuery, useGetDependentDetailsQuery } from "/src/core/services/api/userApi";
 
-const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete}) => {
+const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
   const [dependentDetails, setDependentDetails] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedDependentId, setSelectedDependentId] = useState(null);
+
+  const adminId = localStorage.getItem('adminId');
+
+  const { data: userDetailsResponse, isLoading: loadingUserDetails, refetch: refetchUserDetails } = useGetUserDetailsQuery(
+    { user_id: selectedUserId, admin_user_id: adminId },
+    { skip: !selectedUserId || !adminId }
+  );
+  const fullUserDetails = userDetailsResponse?.data;
+
+  const { data: dependentDetailsResponse, isLoading: loadingDependentDetails, refetch: refetchDependentDetails } = useGetDependentDetailsQuery(
+    { dependent_id: selectedDependentId, user_id: selectedUserId, admin_user_id: adminId },
+    { skip: !selectedDependentId || !selectedUserId || !adminId }
+  );
+  const fullDependentDetails = dependentDetailsResponse?.data;
+
+  useEffect(() => {
+    if (selectedUserId) {
+      refetchUserDetails();
+    }
+  }, [selectedUserId, refetchUserDetails]);
+
+  useEffect(() => {
+    if (selectedDependentId && selectedUserId) {
+      refetchDependentDetails();
+    }
+  }, [selectedDependentId, selectedUserId, refetchDependentDetails]);
+
+  const handleUserDetails = (user) => {
+    setSelectedUserId(user.id);
+    setUserDetails(true);
+    setDependentDetails(false); // Ensure dependent details view is off
+    setSelectedDependentId(null); // Clear selected dependent
+  };
+
+  const handleDependentDetails = (dependent) => {
+    setSelectedDependentId(dependent.id);
+    setDependentDetails(true);
+  };
+
+  const handleBackToUserList = () => {
+    setUserDetails(false);
+    setSelectedUserId(null);
+    setDependentDetails(false);
+    setSelectedDependentId(null);
+  };
+
   const [activeTab, setActiveTab] = useState("Completed");
   const tabs = ["Completed", "Upcoming", "Due Soon", "Overdue"];
 
-  const handleUserDetails = () => setUserDetails(true);
-  const handleDependentDetails = () => setDependentDetails(true);
+  const handleBackToUserDetails = () => {
+    setDependentDetails(false);
+    setSelectedDependentId(null);
+  };
 
-  const vaccines = [
-    { vaccine: "Influenza", hospital: "Fortis Hospital", dose: "3 / 3", date: "12 Jan 2025", time: "09:30 AM", certificate: "Uploaded", status: true },
-    { vaccine: "Hepatitis B", hospital: "Lotus Institute", dose: "2 / 3", date: "20 Mar 2025", time: "10:00 AM", certificate: "Not Uploaded", status: false },
-  ];
-
-  const dependents = [
-    { name: "Muhammad Musa", relation: "Son", img: "https://i.pravatar.cc/100?img=1" },
-    { name: "Sarah Imran", relation: "Daughter", img: "https://i.pravatar.cc/100?img=2" },
-    { name: "Ahmad Malik", relation: "Husband", img: "https://i.pravatar.cc/100?img=3" },
-  ];
+  if (loadingUserDetails || loadingDependentDetails) {
+    return <div className="text-center py-8 text-gray-500">Loading details...</div>;
+  }
 
   return (
     <div className="w-full h-full">
@@ -42,7 +86,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete}) => {
                 <UserListItem
                   key={item.id}
                   item={item}
-                  handleFunction={handleUserDetails}
+                  handleFunction={() => handleUserDetails(item)}
                   onEdit={onEdit}
                   onDelete={() => onDelete(item.id)}
                 />
@@ -55,29 +99,33 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete}) => {
       )}
 
       {/* User Detail View */}
-      {userDetails && (
+      {userDetails && fullUserDetails && (
         <div className="flex flex-col gap-6 mt-4">
+          <button onClick={handleBackToUserList} className="self-start px-4 py-2 bg-gray-200 rounded-md">
+            Back to User List
+          </button>
           {/* Profile & Dependents */}
           <div className="w-full flex flex-col md:flex-row justify-center gap-6">
             {/* Profile Card */}
+            {!dependentDetails && (
             <div
-              className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-5 ${
+              className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-5 h-[350px] overflow-y-auto ${
                 !dependentDetails ? "w-auto md:w-[50%]" : "w-full"
               }`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <img src="https://i.pravatar.cc/100?img=4" alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                  <img src={fullUserDetails.user.profileImage || "https://i.pravatar.cc/100?img=4"} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-800">Sara Malik</h2>
-                    <p className="text-sm text-gray-500">saramalik@gmail.com</p>
+                    <h2 className="text-lg font-semibold text-gray-800">{fullUserDetails.user.full_name || fullUserDetails.user.phone_number}</h2>
+                    <p className="text-sm text-gray-500">{fullUserDetails.user.phone_number || "N/A"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={onEdit}>
                     <img src={ICONS.edituser} alt="Edit" />
                   </button>
-                  <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onDelete(1)}>
+                  <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onDelete(fullUserDetails.user.id)}>
                     <img src={ICONS.delete} alt="Delete" />
                   </button>
                 </div>
@@ -87,15 +135,14 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete}) => {
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm text-gray-700">
                 {[
-                  ["Date of Birth", "25 August 1985"],
-                  ["Gender", "Female"],
-                  ["Country", "Pakistan"],
-                  ["Address", "abc street xyz City"],
-                  ["Phone Number", "+92 300 1234567"],
-                  ["Marital Status", "Married"],
-                  ["Children", "2"],
-                  ["Pregnancy", "Yes"],
-                  ["Trimester", "1"],
+                  ["Date of Birth", fullUserDetails.user.dob ? new Date(fullUserDetails.user.dob).toLocaleDateString() : "N/A"],
+                  ["Gender", fullUserDetails.user.gender || "N/A"],
+                  ["Country", fullUserDetails.user.country || "N/A"],
+                  ["Address", fullUserDetails.user.address || "N/A"],
+                  ["Phone Number", fullUserDetails.user.phone_number || "N/A"],
+                  ["Marital Status", fullUserDetails.user.material_status || "N/A"],
+                  ["Children", fullUserDetails.user.do_you_have_children ? `Yes (${fullUserDetails.user.how_many_children})` : "No"],
+                  ["Pregnancy", fullUserDetails.user.are_you_pregnant ? `Yes (${fullUserDetails.user.pregnancy_detail || 'N/A'})` : "No"],
                 ].map(([label, value], i) => (
                   <div key={i}>
                     <p className="font-semibold text-gray-600">{label}</p>
@@ -104,28 +151,29 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete}) => {
                 ))}
               </div>
             </div>
+            )}
 
             {/* Dependents Card */}
             {!dependentDetails && (
-              <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 w-auto md:w-[50%] p-5">
+              <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 w-auto md:w-[50%] p-5 h-[350px]">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-700">Dependents</h3>
-                  <span className="text-sm text-gray-500">({dependents.length})</span>
+                  <span className="text-sm text-gray-500">({fullUserDetails.dependents?.length || 0})</span>
                 </div>
 
                 <hr className="border-gray-200 mb-3" />
 
                 <div className="flex flex-col gap-3 overflow-y-auto">
-                  {dependents.map((dep, i) => (
+                  {fullUserDetails.dependents?.map((dep, i) => (
                     <div
                       key={i}
                       className="flex items-center gap-2 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition cursor-pointer"
-                      onClick={() => handleDependentDetails(i)}
+                      onClick={() => handleDependentDetails(dep)}
                     >
-                      <img src={dep.img} alt={dep.name} className="w-10 h-10 rounded-full object-cover" />
+                      <img src={dep.img || "https://i.pravatar.cc/100?img=1"} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
                       <div>
-                        <p className="font-medium text-gray-800">{dep.name}</p>
-                        <p className="text-sm text-gray-500">{dep.relation}</p>
+                        <p className="font-medium text-gray-800">{dep.full_name || dep.relation_type}</p>
+                        <p className="text-sm text-gray-500">{dep.relation_type || "N/A"}</p>
                       </div>
                     </div>
                   ))}
@@ -134,29 +182,62 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete}) => {
             )}
           </div>
 
-          {/* Vaccine Tabs Section */}
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 w-full mx-auto">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">Logged Vaccines:</h2>
-
-            {/* Tabs */}
-            <div className="flex flex-wrap gap-2 mb-5">
-              {  tabs?.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-lg font-medium transition ${
-                    activeTab === tab
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+          {/* Dependent Detail View */}
+          {dependentDetails && fullDependentDetails && (
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 w-full mx-auto">
+              <button onClick={handleBackToUserDetails} className="self-start px-4 py-2 bg-gray-200 rounded-md mb-4">
+                Back to User Details
+              </button>
+              <h2 className="text-lg font-semibold text-gray-800 mb-3">Dependent: {fullDependentDetails.dependent.full_name || fullDependentDetails.dependent.relation_type}</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm text-gray-700">
+                {[
+                  ["Relation", fullDependentDetails.dependent.relation_type || "N/A"],
+                  ["Date of Birth", fullDependentDetails.dependent.dob ? new Date(fullDependentDetails.dependent.dob).toLocaleDateString() : "N/A"],
+                  ["Gender", fullDependentDetails.dependent.gender || "N/A"],
+                  ["Phone Number", fullDependentDetails.dependent.phone_number || "N/A"],
+                  ["Country", fullDependentDetails.dependent.country || "N/A"],
+                  ["Address", fullDependentDetails.dependent.address || "N/A"],
+                  ["Marital Status", fullDependentDetails.dependent.material_status || "N/A"],
+                  ["Children", fullDependentDetails.dependent.do_you_have_children ? `Yes (${fullDependentDetails.dependent.how_many_children})` : "No"],
+                  ["Pregnancy", fullDependentDetails.dependent.are_you_pregnant ? `Yes (${fullDependentDetails.dependent.pregnancy_detail || 'N/A'})` : "No"],
+                ].map(([label, value], i) => (
+                  <div key={i}>
+                    <p className="font-semibold text-gray-600">{label}</p>
+                    <p>{value}</p>
+                  </div>
+                ))}
+              </div>
             </div>
+          )}
 
-            <VaccineTableDisplay tab={activeTab} vaccines={vaccines} />
-          </div>
+          {/* Vaccine Section */}
+          {!dependentDetails && fullUserDetails.vaccines && (
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 w-full mx-auto">
+              <h2 className="text-lg font-semibold text-gray-800 mb-3">Logged Vaccines:</h2>
+
+              {/* Tabs */}
+              <div className="flex flex-wrap gap-2 mb-5">
+                {tabs?.map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-2 rounded-lg font-medium transition ${
+                      activeTab === tab
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {activeTab === "Completed" && <VaccineTableDisplay tab="Completed" vaccines={fullUserDetails.vaccines.completed} />}
+              {activeTab === "Upcoming" && <VaccineTableDisplay tab="Upcoming" vaccines={fullUserDetails.vaccines.upcoming} />}
+              {activeTab === "Due Soon" && <VaccineTableDisplay tab="Due Soon" vaccines={fullUserDetails.vaccines.dueSoon} />}
+              {activeTab === "Overdue" && <VaccineTableDisplay tab="Overdue" vaccines={fullUserDetails.vaccines.overdue} />}
+            </div>
+          )}
         </div>
       )}
     </div>

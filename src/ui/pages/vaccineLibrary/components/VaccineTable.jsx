@@ -1,40 +1,50 @@
 import { useState } from "react";
-import { vaccines } from "../../../../ui/constants/data/vaccinejson";
 import Pagination from "../../../components/Pagination";
 import { dashboardlabels } from "../../../constants/pages/Labels";
 import { ICONS } from "../../../constants/assets";
-import Editmodel from "./Editmodel";
-import ConfirmDeleteModal from "../../../../ui/components/ConfirmDeleteDialogBox";
-import VaccineList from "./vaccinelist";
+import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
+import VaccineList from "./VaccineList";
+import { useDeleteVaccineMutation } from "/src/core/services/api/vaccineApi";
 
-export default function VaccineTable() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [items, setItems] = useState(vaccines);
-  const [openEdit, setOpenEdit] = useState(false);
+export default function VaccineTable({
+  vaccines,
+  currentPage,
+  itemsPerPage,
+  refetch,
+  onEdit, // Added onEdit prop
+}) {
   const [openDelete, setOpenDelete] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
+  const [selectedVaccine, setSelectedVaccine] = useState(null);
 
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const [deleteVaccine] = useDeleteVaccineMutation();
 
-  const handleDelete = (id) => {
-    setItems((prev) => {
-      const updated = prev.filter((n) => n.id !== id);
-      if ((currentPage - 1) * itemsPerPage >= updated.length && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
-      return updated;
-    });
+  const handleDelete = async (id) => {
+
+    console.log(id, "id")
+    try {
+      const adminId = localStorage.getItem("adminId");
+      await deleteVaccine({ vaccine_id: id, admin_user_id: adminId }).unwrap();
+      setOpenDelete(false);
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete vaccine:", error);
+    }
   };
+
+  const paginatedVaccines =
+    vaccines?.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    ) || [];
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
       <div className="flex-1 overflow-y-auto">
         <VaccineList
-          items={items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
-          onEdit={() => setOpenEdit(true)}
-          onDelete={(id) => {
-            setDeleteId(id);
+          items={paginatedVaccines}
+          onEdit={onEdit} // Pass onEdit directly
+          onDelete={(vaccine) => {
+            setSelectedVaccine(vaccine);
             setOpenDelete(true);
           }}
         />
@@ -43,20 +53,13 @@ export default function VaccineTable() {
       {/* Delete Modal */}
       <ConfirmDeleteModal
         open={openDelete}
-        title={dashboardlabels.title}
-        description={dashboardlabels.description}
+        title={"Delete Vaccine"}
+        description={"Are you sure you want to delete the vaccine. This action cannot be undone."}
         onClose={() => setOpenDelete(false)}
-        onConfirm={async () => {
-          if (deleteId) {
-            await handleDelete(deleteId);
-            setDeleteId(null);
-          }
-          setOpenDelete(false);
-        }}
+        onConfirm={() => {
+            handleDelete(selectedVaccine.vaccine_id);
+          }}
       />
-
-      {/* Edit Modal */}
-      <Editmodel open={openEdit} onClose={() => setOpenEdit(false)} />
     </div>
   );
 }

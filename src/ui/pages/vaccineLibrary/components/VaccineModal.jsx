@@ -2,14 +2,64 @@ import React, { useEffect, useRef, useState } from "react";
 import { ICONS } from "../../../constants/assets";
 import { vaccineFields } from "./AddFormlabels";
 import { COLORS } from "../../../theme/colors/colors";
+import { useAddVaccineMutation, useUpdateVaccineMutation } from "../../../../core/services/api/vaccineApi";
 
-export default function VaccineForm({ open, onClose }) {
-  const [formData, setFormData] = useState({});
+export default function VaccineModal({ open, onClose, refetch, vaccine }) { // Added vaccine prop
+  const initialFormData = {
+    name: "",
+    type: "",
+    category: "",
+    subCategory: "",
+    minAge: 0,
+    maxAge: 0,
+    totalDoses: 0,
+    frequency: "",
+    whenToGive: "",
+    dose: "",
+    route: "",
+    site: "",
+    notes: ""
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
+
+  useEffect(() => {
+    if (vaccine) {
+      // Map existing vaccine data to formData structure for editing
+      setFormData({
+        name: vaccine.name || "",
+        type: vaccine.type || "",
+        category: vaccine.category || "",
+        subCategory: vaccine.sub_category || "", // Note: backend uses sub_category, frontend uses subCategory
+        minAge: vaccine.age_range?.min_age_months || 0,
+        maxAge: vaccine.age_range?.max_age_months || 0,
+        totalDoses: vaccine.doses?.total_doses || 0,
+        frequency: vaccine.doses?.frequency || "",
+        whenToGive: vaccine.details?.when_to_give || "",
+        dose: vaccine.details?.dose || "",
+        route: vaccine.details?.route || "",
+        site: vaccine.details?.site || "",
+        notes: vaccine.details?.notes || "",
+      });
+    } else {
+      setFormData(initialFormData); // Reset for adding new vaccine
+    }
+  }, [vaccine, open]); // Reset form when modal opens or vaccine prop changes
+
   const closeRef = useRef(null);
   const previouslyFocused = useRef(null);
+  const [addVaccine, { isLoading: isAdding, error: addError }] = useAddVaccineMutation();
+  const [updateVaccine, { isLoading: isUpdating, error: updateError }] = useUpdateVaccineMutation();
 
   const handleChange = (key, value) => {
-    setFormData({ ...formData, [key]: value });
+    setFormData((prevData) => {
+      const fieldDefinition = vaccineFields.find((field) => field.key === key);
+      const processedValue =
+        fieldDefinition && fieldDefinition.type === "number"
+          ? Number(value) || 0 // Convert to number, default to 0 if empty or invalid
+          : value;
+      return { ...prevData, [key]: processedValue };
+    });
   };
 
   useEffect(() => {
@@ -36,16 +86,65 @@ export default function VaccineForm({ open, onClose }) {
 
   if (!open) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.subCategory) {
+      alert("Sub-category is a required field.");
+      return;
+    }
+
+    try {
+      const adminId = localStorage.getItem("adminId");
+      const payload = {
+        admin_user_id: adminId,
+        name: formData.name,
+        type: formData.type,
+        category: formData.category,
+        sub_category: formData.subCategory,
+        min_age_months: formData.minAge,
+        max_age_months: formData.maxAge,
+        total_doses: formData.totalDoses,
+        frequency: formData.frequency,
+        when_to_give: formData.whenToGive,
+        dose: formData.dose,
+        route: formData.route,
+        site: formData.site,
+        notes: formData.notes,
+      };
+
+      if (vaccine) {
+        // Editing existing vaccine
+        await updateVaccine({ vaccine_id: vaccine.vaccine_id, ...payload }).unwrap();
+      } else {
+        // Adding new vaccine
+        await addVaccine(payload).unwrap();
+      }
+
+      onClose();
+      refetch();
+    } catch (err) {
+      console.error("Failed to save vaccine:", err);
+      // Optionally, display a user-friendly error message
+      alert("Failed to save vaccine. Please try again.");
+    }
   };
 
   const renderField = (field) => {
-    if (field.type === "text" || field.type === "number") {
+    if (field.type === "text") {
       return (
         <input
           type={field.type}
           value={formData[field.key] || ""}
+          onChange={(e) => handleChange(field.key, e.target.value)}
+          className="w-full  border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+      );
+    } else if (field.type === "number") {
+      return (
+        <input
+          type={field.type}
+          value={formData[field.key]}
           onChange={(e) => handleChange(field.key, e.target.value)}
           className="w-full  border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
@@ -84,7 +183,7 @@ export default function VaccineForm({ open, onClose }) {
       <div className="max-w-2xl w-full mx-4 bg-white rounded-2xl shadow-lg border-none overflow-y-auto max-h-[80vh]">
         {/* Header */}
         <div className="bg-blue-600 text-white px-6 py-3 rounded-t-2xl flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Add Vaccine</h2>
+          <h2 className="text-lg font-semibold">{vaccine ? "Edit Vaccine" : "Add Vaccine"}</h2>
           <button
             ref={closeRef}
             onClick={onClose}

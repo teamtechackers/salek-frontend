@@ -3,26 +3,33 @@ import { apiSlice } from './apiSlice';
 export const vaccineApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getVaccines: builder.query({
-      query: () => '/vaccines',
+      query: (params) => ({
+        url: '/vaccines',
+        params,
+      }),
     }),
     addVaccine: builder.mutation({
       query: (vaccine) => ({
-        url: '/vaccines',
+        url: '/vaccine-add',
         method: 'POST',
         body: vaccine,
       }),
     }),
     updateVaccine: builder.mutation({
-      query: ({ id, ...vaccine }) => ({
-        url: `/vaccines/${id}`,
+      query: (body) => ({
+        url: '/vaccine-edit',
         method: 'PUT',
-        body: vaccine,
+        body,
       }),
     }),
     deleteVaccine: builder.mutation({
-      query: (id) => ({
-        url: `/vaccines/${id}`,
+      query: ({ vaccine_id, admin_user_id }) => ({
+        url: '/vaccine-delete',
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ vaccine_id, admin_user_id }),
       }),
     }),
   }),

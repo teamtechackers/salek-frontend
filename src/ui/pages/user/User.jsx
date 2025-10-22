@@ -1,25 +1,31 @@
-import { useState } from "react";
+import { useState } from "react"; // Removed useEffect
 import SearchBar from "../../components/Searchbar";
 import DateDropdown from "./components/DateDropdown";
 import PaginationDropdown from "./components/PaginationDropdown";
-import UserList from "./components/UserList";
 import PageContainer from "../../components/PageContainer";
 import TotalSection from "../../components/TotalSection";
 import Pagination from "../../components/Pagination";
 import UserTable from "./components/UserTable";
+import { useGetUsersQuery } from "../../../core/services/api/userApi";
 
 const User = () => {
   const [userDetails, setUserDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
-  const totalItems = UserList.length;
-  const totalPages = Math.ceil(totalItems / pageSize);
 
+  const { data, error, isLoading, refetch } = useGetUsersQuery();
+
+  const users = data?.data?.users || []; // Explicitly access data.users
+  const totalItems = data?.data?.pagination?.total || 0; // Explicitly access data.pagination.total
+  const totalPages = data?.data?.pagination?.pages || 1; // Explicitly access data.pagination.pages
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);
     setCurrentPage(1);
   };
+
+  if (isLoading) return <div>Loading users...</div>;
+  if (error) return <div>Error loading users: {error.message}</div>;
 
   return (
     <PageContainer
@@ -38,26 +44,33 @@ const User = () => {
           )}
         </div>
       }
-      totalSection={<TotalSection label="Total Users" count={100} />}
+      totalSection={<TotalSection label="Total Users" count={totalItems} />}
       tableSection={
              <div className="w-full h-full">
-               <UserTable currentPage={currentPage} itemsPerPage={pageSize}  userDetails={userDetails} setUserDetails={setUserDetails}/>
+               {users.length > 0 ? (
+                 <UserTable
+                   users={users}
+                   currentPage={currentPage}
+                   itemsPerPage={pageSize}
+                   userDetails={userDetails}
+                   setUserDetails={setUserDetails}
+                   refetch={refetch}
+                 />
+               ) : (
+                 <div className="text-center py-8 text-gray-500">No Data Found</div>
+               )}
              </div>
            }
       paginationSection={
         <div className="flex justify-end">
-       
             <Pagination
               currentPage={currentPage}
-              totalPages={Math.ceil(10 / pageSize)}
+              totalPages={totalPages}
               onPageChange={setCurrentPage}
             />
-         
-
         </div>
       }
       userDetails={userDetails}
-
     />
   );
 };
