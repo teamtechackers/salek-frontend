@@ -8,6 +8,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
   const [dependentDetails, setDependentDetails] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedDependentId, setSelectedDependentId] = useState(null);
+  const [currentDependentData, setCurrentDependentData] = useState(null); // New state for clicked dependent's data
 
   const adminId = localStorage.getItem('adminId');
 
@@ -16,12 +17,20 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
     { skip: !selectedUserId || !adminId }
   );
   const fullUserDetails = userDetailsResponse?.data;
+  // console.log("UserList - fullUserDetails:", fullUserDetails); // Removed for cleaner console
 
+  // The dependentDetailsResponse will always be undefined because selectedDependentId is undefined
+  // We keep the hook here in case the backend is updated to provide dependent IDs in the future.
   const { data: dependentDetailsResponse, isLoading: loadingDependentDetails, refetch: refetchDependentDetails } = useGetDependentDetailsQuery(
     { dependent_id: selectedDependentId, user_id: selectedUserId, admin_user_id: adminId },
     { skip: !selectedDependentId || !selectedUserId || !adminId }
   );
   const fullDependentDetails = dependentDetailsResponse?.data;
+  // console.log("UserList - selectedUserId:", selectedUserId); // Removed for cleaner console
+  // console.log("UserList - selectedDependentId:", selectedDependentId); // Removed for cleaner console
+  // console.log("UserList - adminId:", adminId); // Removed for cleaner console
+  // console.log("UserList - dependentDetailsResponse:", dependentDetailsResponse); // Removed for cleaner console
+  // console.log("UserList - fullDependentDetails:", fullDependentDetails); // Removed for cleaner console
 
   useEffect(() => {
     if (selectedUserId) {
@@ -29,6 +38,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
     }
   }, [selectedUserId, refetchUserDetails]);
 
+  // This useEffect will not trigger refetchDependentDetails because selectedDependentId will be null
   useEffect(() => {
     if (selectedDependentId && selectedUserId) {
       refetchDependentDetails();
@@ -40,10 +50,17 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
     setUserDetails(true);
     setDependentDetails(false); // Ensure dependent details view is off
     setSelectedDependentId(null); // Clear selected dependent
+    setCurrentDependentData(null); // Clear current dependent data
   };
 
   const handleDependentDetails = (dependent) => {
-    setSelectedDependentId(dependent.id);
+    // console.log("handleDependentDetails - clicked dependent object:", dependent); // Removed for cleaner console
+    // console.log("handleDependentDetails - dependent.id:", dependent?.id); // Removed for cleaner console
+    // Since 'id' is missing from the dependent object in fullUserDetails.dependents,
+    // we cannot set selectedDependentId for the API call.
+    // We will use the 'dependent' object directly to display its profile details.
+    setSelectedDependentId(null); // Ensure it's null as no ID is available
+    setCurrentDependentData(dependent); // Store the clicked dependent's data
     setDependentDetails(true);
   };
 
@@ -183,23 +200,23 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
           </div>
 
           {/* Dependent Detail View */}
-          {dependentDetails && fullDependentDetails && (
+          {dependentDetails && currentDependentData && (
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 w-full mx-auto">
               <button onClick={handleBackToUserDetails} className="self-start px-4 py-2 bg-gray-200 rounded-md mb-4">
                 Back to User Details
               </button>
-              <h2 className="text-lg font-semibold text-gray-800 mb-3">Dependent: {fullDependentDetails.dependent.full_name || fullDependentDetails.dependent.relation_type}</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-3">Dependent: {currentDependentData.full_name || currentDependentData.relation_type}</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm text-gray-700">
                 {[
-                  ["Relation", fullDependentDetails.dependent.relation_type || "N/A"],
-                  ["Date of Birth", fullDependentDetails.dependent.dob ? new Date(fullDependentDetails.dependent.dob).toLocaleDateString() : "N/A"],
-                  ["Gender", fullDependentDetails.dependent.gender || "N/A"],
-                  ["Phone Number", fullDependentDetails.dependent.phone_number || "N/A"],
-                  ["Country", fullDependentDetails.dependent.country || "N/A"],
-                  ["Address", fullDependentDetails.dependent.address || "N/A"],
-                  ["Marital Status", fullDependentDetails.dependent.material_status || "N/A"],
-                  ["Children", fullDependentDetails.dependent.do_you_have_children ? `Yes (${fullDependentDetails.dependent.how_many_children})` : "No"],
-                  ["Pregnancy", fullDependentDetails.dependent.are_you_pregnant ? `Yes (${fullDependentDetails.dependent.pregnancy_detail || 'N/A'})` : "No"],
+                  ["Relation", currentDependentData.relation_type || "N/A"],
+                  ["Date of Birth", currentDependentData.dob ? new Date(currentDependentData.dob).toLocaleDateString() : "N/A"],
+                  ["Gender", currentDependentData.gender || "N/A"],
+                  ["Phone Number", currentDependentData.phone_number || "N/A"],
+                  ["Country", currentDependentData.country || "N/A"],
+                  ["Address", currentDependentData.address || "N/A"],
+                  ["Marital Status", currentDependentData.material_status || "N/A"],
+                  ["Children", currentDependentData.do_you_have_children ? `Yes (${currentDependentData.how_many_children})` : "No"],
+                  ["Pregnancy", currentDependentData.are_you_pregnant ? `Yes (${currentDependentData.pregnancy_detail || 'N/A'})` : "No"],
                 ].map(([label, value], i) => (
                   <div key={i}>
                     <p className="font-semibold text-gray-600">{label}</p>
@@ -207,10 +224,18 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                   </div>
                 ))}
               </div>
+
+              {/* Display a message about missing vaccine data if fullDependentDetails is not available */}
+              {!fullDependentDetails && (
+                <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md">
+                  <p className="font-semibold">Note:</p>
+                  <p>Dependent-specific vaccine details cannot be fetched because the dependent ID is not provided by the user details API. This section would display vaccine information if the dependent ID were available.</p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Vaccine Section */}
+          {/* Vaccine Section (for user, not dependent) */}
           {!dependentDetails && fullUserDetails.vaccines && (
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 w-full mx-auto">
               <h2 className="text-lg font-semibold text-gray-800 mb-3">Logged Vaccines:</h2>
