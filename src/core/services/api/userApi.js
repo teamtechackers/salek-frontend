@@ -9,7 +9,7 @@ export const userApi = apiSlice.injectEndpoints({
       query: ({ user_id, admin_user_id }) => `/user?admin_user_id=${admin_user_id}&user_id=${user_id}`,
     }),
     getDependentDetails: builder.query({
-      query: ({ dependent_id, user_id, admin_user_id }) => `/dependent?dependent_id=${dependent_id}&user_id=${user_id}&admin_user_id=${admin_user_id}`,
+      query: ({ dependent_id, user_id, admin_user_id }) => `/dependent?admin_user_id=${admin_user_id}&user_id=${user_id}&dependent_id=${dependent_id}`,
     }),
     addUser: builder.mutation({
       query: (user) => ({
