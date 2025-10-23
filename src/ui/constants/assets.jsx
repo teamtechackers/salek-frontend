@@ -1,7 +1,7 @@
-import loginBannerImg from "../../assets/images/logoinbanner.jpg";
-import deleteImg from "../../assets/images/deletedata.png";
-import tickmarkImg from "../../assets/images/tickmark.png";
-import topbarTempUserImg from "../../assets/images/topbarTempUserImage.jpg";
+import loginBannerImg from "../../assets/images/logoinbanner.jpg?url";
+import deleteImg from "../../assets/images/deletedata.png?url";
+import tickmarkImg from "../../assets/images/tickmark.png?url";
+import topbarTempUserImg from "../../assets/images/topbarTempUserImage.jpg?url";
 
 export const IMAGES = {
     loginBanner: loginBannerImg,
@@ -11,24 +11,24 @@ export const IMAGES = {
   }
 
 // Import the most commonly used icons
-import brandLogoIcon from "../../assets/icons/logintitle.svg";
-import dashboardIconWhite from "../../assets/icons/sidebarDashboardIconWhite.svg";
-import dashboardIconBlue from "../../assets/icons/sidebarDashboardIconBlue.svg";
-import userIconWhite from "../../assets/icons/sidebarUserIconWhite.svg";
-import userIconBlue from "../../assets/icons/sidebarUserIconBlue.svg";
-import vaccineIconWhite from "../../assets/icons/sidebarVaccineIconWhite.svg";
-import vaccineIconBlue from "../../assets/icons/sidebarVaccineIconBlue.svg";
-import notificationIconWhite from "../../assets/icons/sidebarNotificationIconWhite.svg";
-import notificationIconBlue from "../../assets/icons/sidebarNotificationIconBlue.svg";
-import topbarSearchIcon from "../../assets/icons/topbarSearchIcon.svg";
-import topbarNotificationIcon from "../../assets/icons/topbarNotificationIcon.svg";
-import crossIcon from "../../assets/icons/cross.svg";
-import cardNotificationIcon from "../../assets/icons/cardNotificationIcon.svg";
-import cardUserIcon from "../../assets/icons/cardUserIcon.svg";
-import cardVaccineIcon from "../../assets/icons/cardVaccineIcon.svg";
-import editIcon from "../../assets/icons/edit.svg";
-import deleteIcon from "../../assets/icons/delete.svg";
-import edituserIcon from "../../assets/icons/edituser.svg";
+import brandLogoIcon from "../../assets/icons/logintitle.svg?url";
+import dashboardIconWhite from "../../assets/icons/sidebarDashboardIconWhite.svg?url";
+import dashboardIconBlue from "../../assets/icons/sidebarDashboardIconBlue.svg?url";
+import userIconWhite from "../../assets/icons/sidebarUserIconWhite.svg?url";
+import userIconBlue from "../../assets/icons/sidebarUserIconBlue.svg?url";
+import vaccineIconWhite from "../../assets/icons/sidebarVaccineIconWhite.svg?url";
+import vaccineIconBlue from "../../assets/icons/sidebarVaccineIconBlue.svg?url";
+import notificationIconWhite from "../../assets/icons/sidebarNotificationIconWhite.svg?url";
+import notificationIconBlue from "../../assets/icons/sidebarNotificationIconBlue.svg?url";
+import topbarSearchIcon from "../../assets/icons/topbarSearchIcon.svg?url";
+import topbarNotificationIcon from "../../assets/icons/topbarNotificationIcon.svg?url";
+import crossIcon from "../../assets/icons/cross.svg?url";
+import cardNotificationIcon from "../../assets/icons/cardNotificationIcon.svg?url";
+import cardUserIcon from "../../assets/icons/cardUserIcon.svg?url";
+import cardVaccineIcon from "../../assets/icons/cardVaccineIcon.svg?url";
+import editIcon from "../../assets/icons/edit.svg?url";
+import deleteIcon from "../../assets/icons/delete.svg?url";
+import edituserIcon from "../../assets/icons/edituser.svg?url";
 
 export const ICONS = {
   brandLogo: brandLogoIcon,
@@ -51,8 +51,8 @@ export const ICONS = {
   edituser: edituserIcon,
 }
 
-import appLogoWhite from "../../assets/icons/appLogoWhite.svg";
-import appLogoBlue from "../../assets/icons/appLogoBlue.svg";
+import appLogoWhite from "../../assets/icons/appLogoWhite.svg?url";
+import appLogoBlue from "../../assets/icons/appLogoBlue.svg?url";
 
 export const LOGOS = {
   appLogoWhite: appLogoWhite,
