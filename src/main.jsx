@@ -9,7 +9,7 @@ import Login from "./ui/pages/login/Login";
 import Dashboard from "./ui/pages/dashboard/Dashboard";
 import User from "./ui/pages/user/User";
 import VaccineLibrary from "./ui/pages/vaccineLibrary/VaccineLibrary";
-import Notifications from "./ui/pages/notifications/Notifications";
+import Notifications from "./ui/pages/Notifications/Notifications"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -24,7 +24,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="user" element={<User />} />
             <Route path="vaccine-library" element={<VaccineLibrary />} />
-            <Route path="notifications" element={<Notifications />} />
+            <Route path="notifications" element={<Notifications/>} />
           </Route>
         </Routes>
       </BrowserRouter>
