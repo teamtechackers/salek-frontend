@@ -1,50 +1,60 @@
-export const IMAGES = {
-    loginBanner: "src/assets/images/logoinbanner.jpg",
-    delete:"src/assets/images/deletedata.png",
-        tickmark:"src/assets/images/tickmark.png",
+import loginBannerImg from "../../assets/images/logoinbanner.jpg";
+import deleteImg from "../../assets/images/deletedata.png";
+import tickmarkImg from "../../assets/images/tickmark.png";
+import topbarTempUserImg from "../../assets/images/topbarTempUserImage.jpg";
 
-    topbarTempUserImage: "src/assets/images/topbarTempUserImage.jpg",
+export const IMAGES = {
+    loginBanner: loginBannerImg,
+    delete: deleteImg,
+    tickmark: tickmarkImg,
+    topbarTempUserImage: topbarTempUserImg,
   }
 
+// Import the most commonly used icons
+import brandLogoIcon from "../../assets/icons/logintitle.svg";
+import dashboardIconWhite from "../../assets/icons/sidebarDashboardIconWhite.svg";
+import dashboardIconBlue from "../../assets/icons/sidebarDashboardIconBlue.svg";
+import userIconWhite from "../../assets/icons/sidebarUserIconWhite.svg";
+import userIconBlue from "../../assets/icons/sidebarUserIconBlue.svg";
+import vaccineIconWhite from "../../assets/icons/sidebarVaccineIconWhite.svg";
+import vaccineIconBlue from "../../assets/icons/sidebarVaccineIconBlue.svg";
+import notificationIconWhite from "../../assets/icons/sidebarNotificationIconWhite.svg";
+import notificationIconBlue from "../../assets/icons/sidebarNotificationIconBlue.svg";
+import topbarSearchIcon from "../../assets/icons/topbarSearchIcon.svg";
+import topbarNotificationIcon from "../../assets/icons/topbarNotificationIcon.svg";
+import crossIcon from "../../assets/icons/cross.svg";
+import cardNotificationIcon from "../../assets/icons/cardNotificationIcon.svg";
+import cardUserIcon from "../../assets/icons/cardUserIcon.svg";
+import cardVaccineIcon from "../../assets/icons/cardVaccineIcon.svg";
+import editIcon from "../../assets/icons/edit.svg";
+import deleteIcon from "../../assets/icons/delete.svg";
+import edituserIcon from "../../assets/icons/edituser.svg";
+
 export const ICONS = {
-  brandLogo: "src/assets/icons/logintitle.svg",
-  appicon: "src/assets/icons/apptitle.svg",
-  dashboad:"src/assets/icons/magedashboardfill .svg",
-  notication:"src/assets/icons/notificationdashboard.svg",
-  user:"src/assets/icons/solar_user-bold.svg",
-  vaccine:"src/assets/icons/dashboardinjection.svg",
-  dashboardIconWhite: "src/assets/icons/sidebarDashboardIconWhite.svg",
-  dashboardIconBlue: "src/assets/icons/sidebarDashboardIconBlue.svg",
-  userIconWhite: "src/assets/icons/sidebarUserIconWhite.svg",
-  userIconBlue: "src/assets/icons/sidebarUserIconBlue.svg",
-  vaccineIconWhite: "src/assets/icons/sidebarVaccineIconWhite.svg",
-  vaccineIconBlue: "src/assets/icons/sidebarVaccineIconBlue.svg",
-  notificationIconWhite: "src/assets/icons/sidebarNotificationIconWhite.svg",
-  notificationIconBlue: "src/assets/icons/sidebarNotificationIconBlue.svg",
-  deletenotification:"src/assets/icons/ddeletenotification.svg",
-  topbarSearchIcon: "/src/assets/icons/topbarSearchIcon.svg",
-  topbarNotificationIcon: "src/assets/icons/topbarNotificationIcon.svg",
-  cross:"src/assets/icons/cross.svg",
-  cardNotificationIcon: "src/assets/icons/cardNotificationIcon.svg",
-  cardUserIcon: "src/assets/icons/cardUserIcon.svg",
-  cardVaccineIcon: "src/assets/icons/cardVaccineIcon.svg",
-  calender:"src/assets/icons/calendar.svg",
-  paginationleftarrow:"src/assets/icons/paginationleftarrow.svg",
-  paginationrightarrow:"src/assets/icons/paginationright.svg",
-  editvacine:"src/assets/icons/editvacinelib.svg",
-  edituser:"src/assets/icons/edituser.svg",
-
-  deletevacine:"src/assets/icons/deletevacine.svg",
-  
-  dropDownArrow:"src/assets/icons/dropdownarrow.svg",
-  edit: "src/assets/icons/edit.svg",
-  delete: "src/assets/icons/delete.svg",
-  status:"src/assets/icons/status.svg",
-  inactiveStatus:"src/assets/icons/inactivation.svg",
-
+  brandLogo: brandLogoIcon,
+  dashboardIconWhite: dashboardIconWhite,
+  dashboardIconBlue: dashboardIconBlue,
+  userIconWhite: userIconWhite,
+  userIconBlue: userIconBlue,
+  vaccineIconWhite: vaccineIconWhite,
+  vaccineIconBlue: vaccineIconBlue,
+  notificationIconWhite: notificationIconWhite,
+  notificationIconBlue: notificationIconBlue,
+  topbarSearchIcon: topbarSearchIcon,
+  topbarNotificationIcon: topbarNotificationIcon,
+  cross: crossIcon,
+  cardNotificationIcon: cardNotificationIcon,
+  cardUserIcon: cardUserIcon,
+  cardVaccineIcon: cardVaccineIcon,
+  edit: editIcon,
+  delete: deleteIcon,
+  edituser: edituserIcon,
 }
 
+import appLogoWhite from "../../assets/icons/appLogoWhite.svg";
+import appLogoBlue from "../../assets/icons/appLogoBlue.svg";
+
 export const LOGOS = {
-  appLogoWhite: "src/assets/icons/appLogoWhite.svg",
-  appLogoBlue: "src/assets/icons/appLogoBlue.svg",
+  appLogoWhite: appLogoWhite,
+  appLogoBlue: appLogoBlue,
 }
