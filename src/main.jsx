@@ -9,7 +9,7 @@ import Login from "./ui/pages/login/Login";
 import Dashboard from "./ui/pages/dashboard/Dashboard";
 import User from "./ui/pages/user/User";
 import VaccineLibrary from "./ui/pages/vaccineLibrary/VaccineLibrary";
-import Notifications from "./ui/pages/Notifications/Notifications"
+import Notifications from "./ui/pages/notifications/Notifications"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
