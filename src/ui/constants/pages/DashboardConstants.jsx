@@ -22,7 +22,7 @@ export const DASHBOARD_CARDS = [
   {
     title: "Notifications",
     value: "123",
-    name: "Notification",
+    name: "Notifications",
     icon: ICONS.cardNotificationIcon,
   },
 ];

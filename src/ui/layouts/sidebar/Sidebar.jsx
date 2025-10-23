@@ -5,7 +5,7 @@ import { LOGOS } from "../../constants/assets";
 
 const Sidebar = () => {
   return (
-    <aside className="w-[15%] min-h-[768px] bg-blue-600 rounded-3xl text-white p-4">
+    <aside className="w-[15%] min-h-[768px] bg-[#245FFF] rounded-3xl text-white p-4">
       {/* Logo */}
       <div className="mb-4 flex justify-center">
         <img src={LOGOS.appLogoWhite} alt="Logo" className="w-32 h-24" />

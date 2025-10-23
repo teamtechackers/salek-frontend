@@ -18,15 +18,15 @@ const UserListItem = ({ item, handleFunction, onEdit, onDelete }) => {
 
   return (
     <div
-      className="flex items-center min-h-[70px] bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 transition cursor-pointer"
+      className="flex items-center min-h-[70px] bg-white border border-blue-300 rounded-2xl shadow-sm hover:bg-gray-50 transition cursor-pointer mt-2"
       onClick={handleFunction}
     >
       <div className="flex justify-center items-center w-[14%]">
         <img src={item.image || "https://i.pravatar.cc/100?img=4"} alt={item.username || "User"} className="w-10 h-10 rounded-full object-cover" />
       </div>
-      <div className="flex justify-center items-center w-[18%] text-gray-700 font-medium">{item.username || "N/A"}</div>
-      <div className="flex justify-center items-center w-[26%] text-gray-500">{item.email !== null ? item.email : item.phoneNo || "N/A"}</div>
-      <div className="flex justify-center items-center w-[14%] text-gray-500">{formatDate(item.DOB)}</div>
+      <div className="flex justify-center items-center w-[18%] text-[#2F3339] font-medium">{item.username || "N/A"}</div>
+      <div className="flex justify-center items-center w-[26%] text-[#2F3339]">{item.email !== null ? item.email : item.phoneNo || "N/A"}</div>
+      <div className="flex justify-center items-center w-[14%] text-[#2F3339]">{formatDate(item.DOB)}</div>
       <div className="flex justify-center items-center w-[14%]">
         <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusColorClass}`}>
           {status}

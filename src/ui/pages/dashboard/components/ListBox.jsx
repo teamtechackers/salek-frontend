@@ -5,7 +5,7 @@ const ListBox = () => {
   const notifications = NotificationsListData;
 
   return (
-    <div className="flex-1 bg-gray-100 rounded-2xl shadow-md p-4 flex flex-col">
+    <div className="flex-1 bg-[#EDF5FF] rounded-2xl shadow-md p-4 flex flex-col">
 
       <h2 className="text-lg font-semibold">Recent Activity Feed</h2>
       <p className="text-sm text-gray-500 mb-4">Latest user actions</p>

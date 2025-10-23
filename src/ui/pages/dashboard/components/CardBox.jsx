@@ -18,9 +18,9 @@ const CardBox = ({ totals }) => { // Accept totals prop
   };
 
   return (
-    <div className="flex-1 max-h-[45%] bg-gray-100 rounded-2xl shadow-md p-4 flex flex-col">
+    <div className="flex-1 max-h-[48%] bg-[#EDF5FF] rounded-2xl shadow-md p-4 flex flex-col">
         <h2 className="text-lg font-semibold mb-2">Dashboard</h2>
-        <h3 className="text-md font-medium mb-4">
+        <h3 className="text-md  mb-4">
         From reminders to records, everything you need at a glance.
         </h3>
 
@@ -32,6 +32,7 @@ const CardBox = ({ totals }) => { // Accept totals prop
             value={getCardValue(card.title)} // Use dynamic value from API
             name={card.name}
             icon={card.icon}
+            x
             />
         ))}
         </div>

@@ -53,7 +53,7 @@ const VaccineLibrary = () => {
             <div className="w-1/2 flex items-center justify-end gap-3">
               <CategoryDropdown onCategoryChange={setCategory} />
               <button
-                className="bg-blue-500 rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition"
+                className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition"
                 onClick={() => {
                   setSelectedVaccine(null); // Clear selected vaccine for "Add New"
                   setOpenModal(true);

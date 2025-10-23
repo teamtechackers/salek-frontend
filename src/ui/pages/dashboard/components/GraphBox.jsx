@@ -3,7 +3,7 @@ import { GraphData } from "../../../constants/data/dashboardData";
 
 const GraphBox = () => {
   return (
-    <div className="flex-1 max-h-[55%] bg-gray-100 rounded-2xl shadow-md p-4 flex flex-col">
+    <div className="flex-1 max-h-[50%] bg-[#EDF5FF] rounded-2xl shadow-md p-4 flex flex-col">
       <div className="flex justify-between items-center mb-3">
         <div>
           <h2 className="text-sm font-bold">User Trend</h2>
@@ -28,7 +28,7 @@ const GraphBox = () => {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={230}>
         <BarChart data={GraphData} className="p-3 rounded-xl bg-white">
           <CartesianGrid vertical={false} horizontal={false} />
           <XAxis dataKey="month" axisLine={false} tickLine={false} />

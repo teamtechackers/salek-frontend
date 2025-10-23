@@ -88,7 +88,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
       {/* User List View */}
       {!userDetails && (
         <>
-          <div className="flex h-[50px] bg-blue-500 text-white font-semibold rounded-lg">
+          <div className="flex h-[50px] bg-[#245FFF] text-white font-semibold rounded-lg">
             <div className="flex items-center justify-center w-[14%]">Photo</div>
             <div className="flex items-center justify-center w-[18%]">User</div>
             <div className="flex items-center justify-center w-[26%]">Login</div>
