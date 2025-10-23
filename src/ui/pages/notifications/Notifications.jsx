@@ -1,44 +1,62 @@
-import NotificationsList from "./components/Notificationlist"
+import React, { useState } from "react";
 import SearchBar from "../../components/Searchbar";
-import { ICONS } from "../../constants/assets"
-import { useState } from "react"
-import { STYLES } from "../../theme/typography/styles"
-import { dashboardlabels } from "../../constants/pages/Labels"
+import DateDropdown from "../user/components/DateDropdown";
+import PaginationDropdown from "../user/components/PaginationDropdown";
+import PageContainer from "../../components/PageContainer";
+import TotalSection from "../../components/TotalSection";
+import Pagination from "../../components/Pagination";
+import NotificationsList from "./components/Notificationlist";
 
-export default function Notification() {
-  const [query, setQuery] = useState("")
+const Notification = () => {
+  // pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   return (
-    <div className=" w-full p-6 top-[145px] left-[355px] gap-[19px] ">
-      <div className="mb-6 flex items-center justify-between gap-3">
-
-        <div className="relative flex-1 max-w-md mb-4">
-          <SearchBar
+   <>
+    <PageContainer
+      topSection={
+        <div className="flex w-full">
+          <>
+            <div className="w-1/2 flex items-center justify-start">
+              <SearchBar />
+            </div>
+            <div className="w-1/2 flex items-center justify-end">
+              <DateDropdown />
+            </div>
+          </>
+        </div>
+      }
+      totalSection={<TotalSection label="Total Notifications" count={totalItems} />}
+      tableSection={
+        <div className="w-full h-full">
+          <NotificationsList
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onTotalItemsChange={(n) => {
+              setTotalItems(n);
+              const pages = Math.max(1, Math.ceil(n / itemsPerPage));
+              if (currentPage > pages) setCurrentPage(pages);
+            }}
+            onPageChange={(p) => setCurrentPage(p)}
           />
         </div>
+      }
+      paginationSection={
 
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-lg border bg-card px-4 py-2 text-sm text-foreground hover:bg-muted"
-          aria-haspopup="dialog"
-          aria-label={dashboardlabels.selectDate}
-        >
-          <img src={ICONS.calender} alt="calendar-icon" className="h-4 w-4" />
-          <span>{dashboardlabels.dateValue}</span>
-          <img src={ICONS.dropDownArrow} alt="dropdown-icon" className="h-3 w-3" />
-        </button>
-      </div>
+           <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+      }
+    />
+    
+      </>
+  );
+};
 
-      <div className="mb-4 flex items-baseline justify-between">
-        <h2 style={STYLES.dashboard_title}>
-          {dashboardlabels.notificationsTitle}
-        </h2>
-        <span className="text-sm text-muted-foreground">
-          {dashboardlabels.notificationsCount}
-        </span>
-      </div>
-
-      <NotificationsList />
-    </div>
-  )
-}
+export default Notification;

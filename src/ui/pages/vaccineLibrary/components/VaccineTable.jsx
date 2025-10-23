@@ -1,0 +1,65 @@
+import { useState } from "react";
+import Pagination from "../../../components/Pagination";
+import { dashboardlabels } from "../../../constants/pages/Labels";
+import { ICONS } from "../../../constants/assets";
+import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
+import VaccineList from "./VaccineList";
+import { useDeleteVaccineMutation } from "/src/core/services/api/vaccineApi";
+
+export default function VaccineTable({
+  vaccines,
+  currentPage,
+  itemsPerPage,
+  refetch,
+  onEdit, // Added onEdit prop
+}) {
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedVaccine, setSelectedVaccine] = useState(null);
+
+  const [deleteVaccine] = useDeleteVaccineMutation();
+
+  const handleDelete = async (id) => {
+
+    console.log(id, "id")
+    try {
+      const adminId = localStorage.getItem("adminId");
+      await deleteVaccine({ vaccine_id: id, admin_user_id: adminId }).unwrap();
+      setOpenDelete(false);
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete vaccine:", error);
+    }
+  };
+
+  const paginatedVaccines =
+    vaccines?.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    ) || [];
+
+  return (
+    <div className="w-full h-full flex flex-col justify-between">
+      <div className="flex-1 overflow-y-auto">
+        <VaccineList
+          items={paginatedVaccines}
+          onEdit={onEdit} // Pass onEdit directly
+          onDelete={(vaccine) => {
+            setSelectedVaccine(vaccine);
+            setOpenDelete(true);
+          }}
+        />
+      </div>
+
+      {/* Delete Modal */}
+      <ConfirmDeleteModal
+        open={openDelete}
+        title={"Delete Vaccine"}
+        description={"Are you sure you want to delete the vaccine. This action cannot be undone."}
+        onClose={() => setOpenDelete(false)}
+        onConfirm={() => {
+            handleDelete(selectedVaccine.vaccine_id);
+          }}
+      />
+    </div>
+  );
+}

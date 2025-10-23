@@ -3,7 +3,7 @@ import { DASHBOARD_CARDS } from "../../../constants/pages/DashboardConstants";
 
 const CardBox = () => {
   return (
-    <div className="flex-1 max-h-[45%]  bg-gray-100 rounded-2xl shadow-md p-4 flex flex-col">
+    <div className="flex-1 max-h-[45%] bg-gray-100 rounded-2xl shadow-md p-4 flex flex-col">
         <h2 className="text-lg font-semibold mb-2">Dashboard</h2>
         <h3 className="text-md font-medium mb-4">
         From reminders to records, everything you need at a glance.
