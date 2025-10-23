@@ -31,17 +31,11 @@ export default function VaccineTable({
     }
   };
 
-  const paginatedVaccines =
-    vaccines?.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    ) || [];
-
   return (
     <div className="w-full h-full flex flex-col justify-between">
       <div className="flex-1 overflow-y-auto">
         <VaccineList
-          items={paginatedVaccines}
+          items={vaccines}
           onEdit={onEdit} // Pass onEdit directly
           onDelete={(vaccine) => {
             setSelectedVaccine(vaccine);
