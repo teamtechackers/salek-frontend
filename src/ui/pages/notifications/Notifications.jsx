@@ -5,7 +5,7 @@ import PaginationDropdown from "../user/components/PaginationDropdown";
 import PageContainer from "../../components/PageContainer";
 import TotalSection from "../../components/TotalSection";
 import Pagination from "../../components/Pagination";
-import NotificationsList from "./components/Notificationlist";
+import NotificationsList from "./components/NotificationList";
 
 const Notification = () => {
   // pagination state
