@@ -118,7 +118,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
       {/* User Detail View */}
       {userDetails && fullUserDetails && (
         <div className="flex flex-col gap-6 mt-4">
-          <button onClick={handleBackToUserList} className="self-start px-4 py-2 bg-gray-200 rounded-md">
+          <button onClick={handleBackToUserList} className="self-start px-4 py-2 bg-[#EDF5FF] rounded-md cursor-pointer">
             Back to User List
           </button>
           {/* Profile & Dependents */}
@@ -126,8 +126,8 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
             {/* Profile Card */}
             {!dependentDetails && (
             <div
-              className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-5 h-[350px] overflow-y-auto ${
-                !dependentDetails ? "w-auto md:w-[50%]" : "w-full"
+              className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-5 h-[275px] overflow-y-auto ${
+                !dependentDetails ? "w-auto md:w-[75%]" : "w-full"
               }`}
             >
               <div className="flex items-center justify-between mb-4">
@@ -172,7 +172,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
 
             {/* Dependents Card */}
             {!dependentDetails && (
-              <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 w-auto md:w-[50%] p-5 h-[350px]">
+              <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 w-auto md:w-[50%] p-5 h-[275px]">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-700">Dependents</h3>
                   <span className="text-sm text-gray-500">({fullUserDetails.dependents?.length || 0})</span>
@@ -202,7 +202,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
           {/* Dependent Detail View */}
           {dependentDetails && currentDependentData && (
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 w-full mx-auto">
-              <button onClick={handleBackToUserDetails} className="self-start px-4 py-2 bg-gray-200 rounded-md mb-4">
+              <button onClick={handleBackToUserDetails} className="self-start px-4 py-2 bg-[#EDF5FF] rounded-md mb-4 cursor-pointer">
                 Back to User Details
               </button>
               <h2 className="text-lg font-semibold text-gray-800 mb-3">Dependent: {currentDependentData.full_name || currentDependentData.relation_type}</h2>
