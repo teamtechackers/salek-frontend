@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import NotificationItem from "./NotificationItme";
+import NotificationItem from "./NotificationItem";
 import { data as initialData } from "../../../constants/data/notificationJson";
 import Pagination from "../../../components/Pagination"; // if you need in-list pagination (optional)
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
