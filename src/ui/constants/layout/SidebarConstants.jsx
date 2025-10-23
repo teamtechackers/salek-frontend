@@ -1,10 +1,10 @@
 import { ICONS } from "../assets";
 
 export const ROUTES = {
-  DASHBOARD: "/dashboard",
-  USER: "/user",
-  VACCINE_LIBRARY: "/vaccine-library",
-  NOTIFICATIONS: "/notifications",
+  DASHBOARD: "/app/dashboard",
+  USER: "/app/user",
+  VACCINE_LIBRARY: "/app/vaccine-library",
+  NOTIFICATIONS: "/app/notifications",
 };
 
 export const NAMES = {

@@ -17,10 +17,11 @@ createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <Routes>
           {/* Public route */}
+          <Route path="/login" element={<Login />} />
           <Route path="/" element={<Login />} />
 
           {/* Protected layout routes */}
-          <Route path="/" element={<Layout />}>
+          <Route path="/app" element={<Layout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="user" element={<User />} />
             <Route path="vaccine-library" element={<VaccineLibrary />} />
