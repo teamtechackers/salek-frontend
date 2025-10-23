@@ -7,7 +7,7 @@ import TotalSection from "../../components/TotalSection";
 import Pagination from "../../components/Pagination";
 import NotificationsList from "./components/NotificationList";
 
-const Notification = () => {
+const Notifications = () => {
   // pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -59,4 +59,4 @@ const Notification = () => {
   );
 };
 
-export default Notification;
+export default Notifications;
