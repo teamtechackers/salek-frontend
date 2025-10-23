@@ -15,7 +15,7 @@ useEffect(()=>{
 
   return (
     <div className="flex items-center min-h-[70px] bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 transition ">
-      <div className="flex justify-center items-center w-[18%]">{item.name || "N/A"}</div>
+      <div className="flex justify-start items-center w-[18%] ml-6">{item.name || "N/A"}</div>
       <div className="flex justify-center items-center w-[14%] text-gray-700 font-medium">{item.category || "N/A"}</div>
       <div className="flex justify-center items-center w-[26%] text-gray-500">{ageRange}</div>
       <div className="flex justify-center items-center w-[14%] text-gray-500">{item.type || "N/A"}</div>
