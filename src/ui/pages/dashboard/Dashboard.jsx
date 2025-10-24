@@ -16,12 +16,13 @@ const Dashboard = () => {
   if (error) return <div>Error loading dashboard: {error.message}</div>;
 
   const totals = data?.data?.totals || {};
+  const graphData = data?.data?.graph || [];
 
   return (
     <div className="flex-1 p-4 flex gap-4 h-full ">
       <div className="flex-2 flex flex-col h-full gap-4">
         <CardBox totals={totals} />
-        <GraphBox />
+        <GraphBox graphData={graphData} />
       </div>
         <ListBox />
     </div>
