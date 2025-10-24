@@ -61,7 +61,7 @@ export default function LoginPage() {
 
           {/* Form */}
           <div className="space-y-6">
-            <h2 style={STYLES.page_title}>{login_labels.TITLE}</h2>
+            <h2 className="block mb-2 text-[34px] text-[#2F3339] font-[500] mb-4">{login_labels.TITLE}</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email field (reusable) */}
@@ -73,6 +73,7 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+
               />
 
               {/* Password field (reusable) */}

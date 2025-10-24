@@ -2,13 +2,14 @@ import { useState } from "react";
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
 import UserList from "./UserList";
 import EditUserModal from "./EditUserModal";
-import ConfirmationModal from "../../../components/ConfirmationModal";
 import { useDeleteUserMutation } from "/src/core/services/api/userApi";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 
 export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch }) {
   const [openDelete, setOpenDelete] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null); // State to hold the user being edited
   const [deleteId, setDeleteId] = useState(null);
 
   const [deleteUser] = useDeleteUserMutation();
@@ -29,15 +30,14 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
     }
   };
 
-  console.log("Users in UserTable:", users);
-  console.log("currentPage in UserTable:", currentPage);
-  console.log("itemsPerPage in UserTable:", itemsPerPage);
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setOpenEdit(true);
+  };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedUsers = users?.slice(startIndex, endIndex) || [];
-
-  console.log("Paginated Users (after slice) in UserTable:", paginatedUsers);
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
@@ -45,7 +45,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
       <div className="flex-1 overflow-y-auto">
         <UserList
           items={paginatedUsers}
-          onEdit={() => setOpenEdit(true)}
+          onEdit={handleEdit} // Pass handleEdit function
           onDelete={(id) => {
             setDeleteId(id);
             setOpenDelete(true);
@@ -65,7 +65,15 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
       />
 
       {/* Edit Modal */}
-      <EditUserModal open={openEdit} onClose={() => setOpenEdit(false)} />
+      <EditUserModal
+        open={openEdit}
+        onClose={() => {
+          setOpenEdit(false);
+          setSelectedUser(null); // Clear selected user on close
+        }}
+        userId={selectedUser?.id} // Pass the selected user's ID
+        refetch={refetch} // Pass refetch to update user list
+      />
 
       {/* Success Modal */}
       <ConfirmationModal

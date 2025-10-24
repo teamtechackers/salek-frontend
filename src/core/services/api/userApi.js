@@ -19,10 +19,10 @@ export const userApi = apiSlice.injectEndpoints({
       }),
     }),
     updateUser: builder.mutation({
-      query: ({ id, ...user }) => ({
-        url: `/users/${id}`,
+      query: (userData) => ({
+        url: '/user-edit',
         method: 'PUT',
-        body: user,
+        body: userData,
       }),
     }),
     deleteUser: builder.mutation({

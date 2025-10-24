@@ -5,7 +5,7 @@ export const TEXTS = {
     EMAIL: "Email Address",
     PASSWORD: "Password",
     TERMS: "I accept all",
-    CONDITIONS: "terms and conditioon",
+    CONDITIONS: "terms and condition",
     BUTTON_LOGIN: "Login",
   };
   

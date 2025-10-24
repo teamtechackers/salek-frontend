@@ -4,7 +4,7 @@ import { vaccineFields } from "./AddFormlabels";
 import { COLORS } from "../../../theme/colors/colors";
 import { useAddVaccineMutation, useUpdateVaccineMutation } from "../../../../core/services/api/vaccineApi";
 
-export default function VaccineModal({ open, onClose, refetch, vaccine }) { // Added vaccine prop
+export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   const initialFormData = {
     name: "",
     type: "",
@@ -25,26 +25,33 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) { // A
 
   useEffect(() => {
     if (vaccine) {
-      // Map existing vaccine data to formData structure for editing
+      const getOptionValue = (fieldKey, value) => {
+        const field = vaccineFields.find(f => f.key === fieldKey);
+        if (field && field.options && field.options.includes(value)) {
+          return value;
+        }
+        return ""; // Default to empty string if value is not in options
+      };
+
       setFormData({
         name: vaccine.name || "",
-        type: vaccine.type || "",
-        category: vaccine.category || "",
-        subCategory: vaccine.sub_category || "", // Note: backend uses sub_category, frontend uses subCategory
+        type: getOptionValue("type", vaccine.type),
+        category: getOptionValue("category", vaccine.category),
+        subCategory: getOptionValue("subCategory", vaccine.sub_category),
         minAge: vaccine.age_range?.min_age_months || 0,
         maxAge: vaccine.age_range?.max_age_months || 0,
         totalDoses: vaccine.doses?.total_doses || 0,
         frequency: vaccine.doses?.frequency || "",
         whenToGive: vaccine.details?.when_to_give || "",
         dose: vaccine.details?.dose || "",
-        route: vaccine.details?.route || "",
-        site: vaccine.details?.site || "",
+        route: getOptionValue("route", vaccine.details?.route),
+        site: getOptionValue("site", vaccine.details?.site),
         notes: vaccine.details?.notes || "",
       });
     } else {
-      setFormData(initialFormData); // Reset for adding new vaccine
+      setFormData(initialFormData);
     }
-  }, [vaccine, open]); // Reset form when modal opens or vaccine prop changes
+  }, [vaccine, open]);
 
   const closeRef = useRef(null);
   const previouslyFocused = useRef(null);

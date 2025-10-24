@@ -6,7 +6,7 @@ export const STYLES = {
   // Page title "Log In Account"
   page_title: {
     color: COLORS.black,
-    ...FONTS.inter_500_38_38,
+    ...FONTS.inter_600_38_38,
   },
 
   dashboard_title: {

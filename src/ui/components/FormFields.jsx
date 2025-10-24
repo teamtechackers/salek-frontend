@@ -12,7 +12,7 @@ export default function FormField({
   return (
     <div>
       {/* Label */}
-      <label htmlFor={id} style={STYLES.field_label}>
+      <label htmlFor={id} className="block mb-2 text-[20px] text-[#2F3339] font-[600]">
         {label}
       </label>
 
