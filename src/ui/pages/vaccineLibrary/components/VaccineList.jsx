@@ -1,6 +1,6 @@
 import VaccineListItem from "./VaccineListItem";
 
-export default function VaccineList({ items, onEdit, onDelete }) {
+export default function VaccineList({ items, onEdit, onDelete, onRowClick }) {
   return (
     <div className="w-full flex flex-col">
       {/* Header */}
@@ -22,6 +22,7 @@ export default function VaccineList({ items, onEdit, onDelete }) {
               item={item}
               onEdit={onEdit}
               onDelete={onDelete}
+              onRowClick={onRowClick} // Pass onRowClick to VaccineListItem
             />
           ))
         ) : (

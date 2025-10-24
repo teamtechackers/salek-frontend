@@ -4,6 +4,7 @@ import { dashboardlabels } from "../../../constants/pages/Labels";
 import { ICONS } from "../../../constants/assets";
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
 import VaccineList from "./VaccineList";
+import RowModal from "./RowModal.jsx"; // Import RowModal
 import { useDeleteVaccineMutation } from "/src/core/services/api/vaccineApi";
 
 export default function VaccineTable({
@@ -15,11 +16,12 @@ export default function VaccineTable({
 }) {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedVaccine, setSelectedVaccine] = useState(null);
+  const [openRowModal, setOpenRowModal] = useState(false); // State for RowModal
+  const [rowModalData, setRowModalData] = useState(null); // State for RowModal data
 
   const [deleteVaccine] = useDeleteVaccineMutation();
 
   const handleDelete = async (id) => {
-
     console.log(id, "id")
     try {
       const adminId = localStorage.getItem("adminId");
@@ -29,6 +31,11 @@ export default function VaccineTable({
     } catch (error) {
       console.error("Failed to delete vaccine:", error);
     }
+  };
+
+  const handleRowClick = (vaccine) => {
+    setRowModalData(vaccine);
+    setOpenRowModal(true);
   };
 
   return (
@@ -41,6 +48,7 @@ export default function VaccineTable({
             setSelectedVaccine(vaccine);
             setOpenDelete(true);
           }}
+          onRowClick={handleRowClick} // Pass new onRowClick handler
         />
       </div>
 
@@ -53,6 +61,16 @@ export default function VaccineTable({
         onConfirm={() => {
             handleDelete(selectedVaccine.vaccine_id);
           }}
+      />
+
+      {/* Row Details Modal */}
+      <RowModal
+        open={openRowModal}
+        onClose={() => {
+          setOpenRowModal(false);
+          setRowModalData(null);
+        }}
+        data={rowModalData}
       />
     </div>
   );
