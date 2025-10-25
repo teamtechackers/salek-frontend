@@ -12,7 +12,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
 
   const adminId = localStorage.getItem('adminId');
 
-  const { data: userDetailsResponse, isLoading: loadingUserDetails, refetch: refetchUserDetails } = useGetUserDetailsQuery(
+  const { data: userDetailsResponse, isLoading: loadingUserDetails, refetch: refetchUserDetailsQuery } = useGetUserDetailsQuery(
     { user_id: selectedUserId, admin_user_id: adminId },
     { skip: !selectedUserId || !adminId }
   );
@@ -34,9 +34,24 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
 
   useEffect(() => {
     if (selectedUserId) {
-      refetchUserDetails();
+      refetchUserDetailsQuery();
     }
-  }, [selectedUserId, refetchUserDetails]);
+  }, [selectedUserId, refetchUserDetailsQuery]);
+
+  // Add a global refresh function that can be called from anywhere
+  useEffect(() => {
+    // Expose a global refresh function
+    window.refreshUserDetails = () => {
+      if (refetchUserDetailsQuery) {
+        console.log("UserList - Global refresh called");
+        refetchUserDetailsQuery();
+      }
+    };
+    
+    return () => {
+      delete window.refreshUserDetails;
+    };
+  }, [refetchUserDetailsQuery]);
 
   // This useEffect will not trigger refetchDependentDetails because selectedDependentId will be null
   useEffect(() => {
@@ -139,7 +154,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={onEdit}>
+                  <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onEdit(fullUserDetails.user, null)}>
                     <img src={ICONS.edituser} alt="Edit" />
                   </button>
                   <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onDelete(fullUserDetails.user.id)}>
