@@ -44,6 +44,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
       {/* Table */}
       <div className="flex-1 overflow-y-auto">
         <UserList
+          key={JSON.stringify(users?.map(u => ({ id: u.id, username: u.username, updated_at: u.updated_at })) || [])} // Force re-render when user data changes
           items={paginatedUsers}
           onEdit={handleEdit} // Pass handleEdit function
           onDelete={(id) => {
