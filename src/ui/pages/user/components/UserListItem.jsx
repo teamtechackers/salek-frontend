@@ -37,7 +37,7 @@ const UserListItem = ({ item, handleFunction, onEdit, onDelete }) => {
           className="p-2 rounded-md hover:bg-blue-100"
           onClick={(e) => {
             e.stopPropagation();
-            onEdit(item);
+            onEdit(item, null);
           }}
         >
           <img src={ICONS.edit} alt="Edit" />

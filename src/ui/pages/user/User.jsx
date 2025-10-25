@@ -14,6 +14,14 @@ const User = () => {
   const [pageSize, setPageSize] = useState(8);
 
   const { data, error, isLoading, refetch } = useGetUsersQuery();
+  
+  // State to hold the refetch function for user details
+  const [userDetailsRefetch, setUserDetailsRefetch] = useState(null);
+  
+  // Callback to receive refetch function from UserTable
+  const handleRefetchUserDetails = (refetchFn) => {
+    setUserDetailsRefetch(() => refetchFn);
+  };
 
   const users = data?.data?.users || []; // Explicitly access data.users
   const totalItems = data?.data?.pagination?.total || 0; // Explicitly access data.pagination.total
@@ -59,6 +67,8 @@ const User = () => {
                    userDetails={userDetails}
                    setUserDetails={setUserDetails}
                    refetch={refetch}
+                   refetchUserDetails={userDetailsRefetch}
+                   onRefetchUserDetails={handleRefetchUserDetails}
                  />
                ) : (
                  <div className="text-center py-8 text-gray-500">No Data Found</div>

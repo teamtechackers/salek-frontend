@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useUpdateUserMutation, useGetUserDetailsQuery } from "../../../../core/services/api/userApi";
 
-const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user' to 'userId'
+const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onRefreshTrigger, viewOnly = false }) => { // Changed 'user' to 'userId'
+  console.log("EditUserModal - refetchUserDetails:", refetchUserDetails);
   const initialFormData = {
     name: "",
     gender: "",
@@ -25,7 +26,9 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
   const user = userDetailsResponse?.data?.user; // Get the actual user object from the response
 
   useEffect(() => {
+    console.log("EditUserModal - useEffect triggered with user:", user);
     if (user) {
+      console.log("EditUserModal - Setting form data for user:", user);
       setFormData({
         name: user.full_name || user.username || "", // Use full_name from fetched details
         gender: user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : user.gender === 'male' ? 'Male' : user.gender === 'female' ? 'Female' : user.gender || "",
@@ -38,6 +41,7 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
         trimester: user.are_you_pregnant && user.pregnancy_detail ? String(user.pregnancy_detail).match(/\d+/)?.[0] || "" : "", // Extract number for trimester
       });
     } else {
+      console.log("EditUserModal - No user data, setting initial form data");
       setFormData(initialFormData);
     }
   }, [user, open]); // Depend on 'user' (fetched data) and 'open'
@@ -104,13 +108,19 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
       console.log("Gender value type:", typeof genderValue);
       const result = await updateUser(payload).unwrap();
       console.log("Update successful:", result);
+      
+      // Close modal and let RTK Query handle the cache invalidation
+      console.log("Update successful, closing modal...");
+      
+      // Refresh detail page data if global refresh function is available
+      if (window.refreshUserDetails) {
+        console.log("Refreshing detail page data...");
+        setTimeout(() => {
+          window.refreshUserDetails();
+        }, 100);
+      }
+      
       onClose();
-      // Force refetch after successful update
-      setTimeout(() => {
-        console.log("About to call refetch...");
-        refetch();
-        console.log("Manual refetch called");
-      }, 100);
     } catch (err) {
       console.error("Failed to update user:", err);
       alert("Failed to update user. Please try again.");
@@ -140,7 +150,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+              readOnly={viewOnly}
+              className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             />
           </div>
 
@@ -151,7 +162,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+              disabled={viewOnly}
+              className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             >
               <option value="">Select Gender</option>
               <option value="Female">Female</option>
@@ -167,7 +179,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                disabled={viewOnly}
+                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               >
                 <option value="">Select Country</option>
                 <option value="India">India</option>
@@ -183,7 +196,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  className="flex-1 outline-none bg-transparent"
+                  readOnly={viewOnly}
+                  className={`flex-1 outline-none bg-transparent ${viewOnly ? 'cursor-not-allowed' : ''}`}
                 />
                 <span className="text-gray-500 cursor-pointer">✏️</span>
               </div>
@@ -198,7 +212,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+              readOnly={viewOnly}
+              className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             />
           </div>
 
@@ -210,7 +225,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
                 name="maritalStatus"
                 value={formData.maritalStatus}
                 onChange={handleChange}
-                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                disabled={viewOnly}
+                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               >
                 <option value="">Select Status</option>
                 <option value="Married">Married</option>
@@ -226,7 +242,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
                   name="children"
                   value={formData.children}
                   onChange={handleChange}
-                  className="flex-1 outline-none bg-transparent"
+                  readOnly={viewOnly}
+                  className={`flex-1 outline-none bg-transparent ${viewOnly ? 'cursor-not-allowed' : ''}`}
                 />
                 <span className="text-gray-500 cursor-pointer">✏️</span>
               </div>
@@ -241,7 +258,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
                 name="pregnancy"
                 value={formData.pregnancy}
                 onChange={handleChange}
-                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                disabled={viewOnly}
+                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               >
                 <option value="">Select</option>
                 <option value="Yes">Yes</option>
@@ -255,7 +273,8 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
                 name="trimester"
                 value={formData.trimester}
                 onChange={handleChange}
-                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                disabled={viewOnly}
+                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               >
                 <option value="">Select Trimester</option>
                 <option value="1">1</option>
@@ -266,19 +285,21 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
           </div>
 
           <div className="flex justify-between pt-4 gap-3">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
-            >
-              {isLoading ? "Saving..." : "Save Changes"}
-            </button>
+            {!viewOnly && (
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+              >
+                {isLoading ? "Saving..." : "Save Changes"}
+              </button>
+            )}
             <button
               type="button"
               onClick={onClose}
-              className="w-1/2 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition"
+              className={`${viewOnly ? "w-full" : "w-1/2"} bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition`}
             >
-              Cancel
+              {viewOnly ? "Close" : "Cancel"}
             </button>
           </div>
         </form>
