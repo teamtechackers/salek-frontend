@@ -4,7 +4,6 @@ import { useUpdateUserMutation, useGetUserDetailsQuery } from "../../../../core/
 const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user' to 'userId'
   const initialFormData = {
     name: "",
-    dob: "",
     gender: "",
     country: "",
     address: "",
@@ -29,11 +28,10 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
     if (user) {
       setFormData({
         name: user.full_name || user.username || "", // Use full_name from fetched details
-        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : "", // Use dob from fetched details
-        gender: user.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : "",
+        gender: user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : user.gender === 'male' ? 'Male' : user.gender === 'female' ? 'Female' : user.gender || "",
         country: user.country || "",
         address: user.address || "",
-        phoneNumber: user.phone_number || "",
+        phoneNumber: user.phone_number || user.contact_no || "",
         maritalStatus: user.material_status ? user.material_status.charAt(0).toUpperCase() + user.material_status.slice(1) : "",
         children: user.do_you_have_children ? String(user.how_many_children) : "",
         pregnancy: user.are_you_pregnant ? "Yes" : "No",
@@ -81,23 +79,38 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
     e.preventDefault();
     try {
       const adminId = localStorage.getItem("adminId");
+      const genderValue = formData.gender === 'Male' ? 'male' : formData.gender === 'Female' ? 'female' : formData.gender;
+      console.log("Form gender:", formData.gender);
+      console.log("Converted gender:", genderValue);
+      
       const payload = {
         admin_user_id: adminId,
         user_id: userId, // Use userId from props
-        name: formData.name,
-        dob: formData.dob,
-        gender: formData.gender,
-        country: formData.country,
-        address: formData.address,
-        phone_number: formData.phoneNumber,
-        marital_status: formData.maritalStatus,
-        children: Number(formData.children),
-        pregnancy: formData.pregnancy,
-        trimester: Number(formData.trimester),
+        full_name: formData.name || null, // Convert empty string to null
+        phone_number: formData.phoneNumber || null, // Convert empty string to null
+        gender: genderValue || null, // Convert empty string to null
+        country: formData.country || null, // Convert empty string to null
+        address: formData.address || null, // Convert empty string to null
+        material_status: formData.maritalStatus || null, // Convert empty string to null
+        do_you_have_children: formData.children > 0 ? 1 : 0, // Changed format
+        how_many_children: Number(formData.children) || 0, // Convert to number or 0
+        are_you_pregnant: formData.pregnancy === 'Yes' ? 1 : 0, // Changed format
+        pregnancy_detail: formData.pregnancy === 'Yes' ? (formData.trimester || null) : null,
       };
-      await updateUser(payload).unwrap();
+      console.log("Sending payload:", payload);
+      console.log("Admin ID:", adminId);
+      console.log("User ID:", userId);
+      console.log("Gender value length:", genderValue ? genderValue.length : 0);
+      console.log("Gender value type:", typeof genderValue);
+      const result = await updateUser(payload).unwrap();
+      console.log("Update successful:", result);
       onClose();
-      refetch(); // Refetch user list after successful update
+      // Force refetch after successful update
+      setTimeout(() => {
+        console.log("About to call refetch...");
+        refetch();
+        console.log("Manual refetch called");
+      }, 100);
     } catch (err) {
       console.error("Failed to update user:", err);
       alert("Failed to update user. Please try again.");
@@ -131,35 +144,19 @@ const EditUserModal = ({ open, onClose, userId, refetch }) => { // Changed 'user
             />
           </div>
 
-          {/* DOB & Gender */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Date of Birth</label>
-              <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-                <input
-                  type="text"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  className="flex-1 outline-none bg-transparent"
-                />
-                <span className="text-gray-500 cursor-pointer">📅</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Gender</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-              >
-                <option value="">Select Gender</option>
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-              </select>
-            </div>
+          {/* Gender */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Gender</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+            >
+              <option value="">Select Gender</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
           </div>
 
           {/* Country & Address */}

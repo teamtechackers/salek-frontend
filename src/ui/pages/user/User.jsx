@@ -19,6 +19,10 @@ const User = () => {
   const totalItems = data?.data?.pagination?.total || 0; // Explicitly access data.pagination.total
   const totalPages = data?.data?.pagination?.pages || 1; // Explicitly access data.pagination.pages
 
+  // Debug logging
+  console.log("User component - data:", data);
+  console.log("User component - users:", users);
+
   const handlePageSizeChange = (value) => {
     setPageSize(value);
     setCurrentPage(1);
