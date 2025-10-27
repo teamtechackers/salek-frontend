@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import login_labels from "../../constants/pages/loginConstants"
@@ -9,6 +7,7 @@ import FormField from "../../components/FormFields" // ✅ Import the reusable f
 import { LAYOUT } from "../../constants/layout/LayoutsContants"
 import { IMAGES, ICONS } from "../../constants/assets"
 import { useLoginMutation } from "../../../core/services/api/userApi" // Import the login mutation
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("") // Changed from email to username
@@ -111,7 +110,13 @@ export default function LoginPage() {
                 style={STYLES.button_text}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed py-3 px-4 rounded-lg transition-colors"
               >
-                {isLoading ? "Logging in..." : login_labels.FORM.BUTTON}
+                {isLoading ? (
+                  <div className="flex justify-center items-center">
+                    <CircularProgress size={24} color="inherit" />
+                  </div>
+                ) : (
+                  login_labels.FORM.BUTTON
+                )}
               </button>
               {error && (
                 <p className="text-red-500 text-center mt-2">

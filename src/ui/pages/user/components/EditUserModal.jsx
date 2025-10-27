@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useUpdateUserMutation, useGetUserDetailsQuery } from "../../../../core/services/api/userApi";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onRefreshTrigger, viewOnly = false }) => { // Changed 'user' to 'userId'
   console.log("EditUserModal - refetchUserDetails:", refetchUserDetails);
@@ -140,169 +141,189 @@ const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onR
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-5 max-h-[80vh] overflow-y-auto space-y-4">
-          {/* Name */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              readOnly={viewOnly}
-              className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-            />
-          </div>
+        <hr className="border-gray-200 mb-4" />
 
-          {/* Gender */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Gender</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              disabled={viewOnly}
-              className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-            >
-              <option value="">Select Gender</option>
-              <option value="Female">Female</option>
-              <option value="Male">Male</option>
-            </select>
+        {loadingUserDetails ? (
+          <div className="flex justify-center items-center h-40">
+            <CircularProgress />
           </div>
-
-          {/* Country & Address */}
-          <div className="grid grid-cols-2 gap-3">
+        ) : error ? (
+          <p className="text-red-500">Error loading user details: {error.message}</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-5 max-h-[80vh] overflow-y-auto space-y-4">
+            {/* Name */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Country</label>
-              <select
-                name="country"
-                value={formData.country}
+              <label className="text-sm font-medium text-gray-700">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                disabled={viewOnly}
-                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-              >
-                <option value="">Select Country</option>
-                <option value="India">India</option>
-                <option value="Pakistan">Pakistan</option>
-              </select>
+                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+              />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Address</label>
-              <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
+            {/* DOB & Gender */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Date of Birth</label>
+                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+                  <input
+                    type="text"
+                    name="dob"
+                    value={formData.dob}
+                    onChange={handleChange}
+                    className="flex-1 outline-none bg-transparent"
+                  />
+                  <span className="text-gray-500 cursor-pointer">📅</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Gender</label>
+                <select
+                  name="gender"
+                  value={formData.gender}
                   onChange={handleChange}
-                  readOnly={viewOnly}
-                  className={`flex-1 outline-none bg-transparent ${viewOnly ? 'cursor-not-allowed' : ''}`}
-                />
-                <span className="text-gray-500 cursor-pointer">✏️</span>
+                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                </select>
               </div>
             </div>
-          </div>
 
-          {/* Phone Number */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Phone Number</label>
-            <input
-              type="text"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              readOnly={viewOnly}
-              className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-            />
-          </div>
-
-          {/* Marital & Children */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Marital Status</label>
-              <select
-                name="maritalStatus"
-                value={formData.maritalStatus}
-                onChange={handleChange}
-                disabled={viewOnly}
-                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-              >
-                <option value="">Select Status</option>
-                <option value="Married">Married</option>
-                <option value="Single">Single</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Children</label>
-              <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-                <input
-                  type="number"
-                  name="children"
-                  value={formData.children}
+            {/* Country & Address */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Country</label>
+                <select
+                  name="country"
+                  value={formData.country}
                   onChange={handleChange}
-                  readOnly={viewOnly}
-                  className={`flex-1 outline-none bg-transparent ${viewOnly ? 'cursor-not-allowed' : ''}`}
-                />
-                <span className="text-gray-500 cursor-pointer">✏️</span>
+                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Country</option>
+                  <option value="India">India</option>
+                  <option value="Pakistan">Pakistan</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Address</label>
+                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className="flex-1 outline-none bg-transparent"
+                  />
+                  <span className="text-gray-500 cursor-pointer">✏️</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Pregnancy & Trimester */}
-          <div className="grid grid-cols-2 gap-3">
+            {/* Phone Number */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Pregnancy</label>
-              <select
-                name="pregnancy"
-                value={formData.pregnancy}
+              <label className="text-sm font-medium text-gray-700">Phone Number</label>
+              <input
+                type="text"
+                name="phoneNumber"
+                value={formData.phoneNumber}
                 onChange={handleChange}
-                disabled={viewOnly}
-                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
+                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+              />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Trimester</label>
-              <select
-                name="trimester"
-                value={formData.trimester}
-                onChange={handleChange}
-                disabled={viewOnly}
-                className={`border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 ${viewOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-              >
-                <option value="">Select Trimester</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-              </select>
-            </div>
-          </div>
+            {/* Marital & Children */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Marital Status</label>
+                <select
+                  name="maritalStatus"
+                  value={formData.maritalStatus}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Status</option>
+                  <option value="Married">Married</option>
+                  <option value="Single">Single</option>
+                </select>
+              </div>
 
-          <div className="flex justify-between pt-4 gap-3">
-            {!viewOnly && (
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Children</label>
+                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+                  <input
+                    type="number"
+                    name="children"
+                    value={formData.children}
+                    onChange={handleChange}
+                    className="flex-1 outline-none bg-transparent"
+                  />
+                  <span className="text-gray-500 cursor-pointer">✏️</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Pregnancy & Trimester */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Pregnancy</label>
+                <select
+                  name="pregnancy"
+                  value={formData.pregnancy}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                >
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Trimester</label>
+                <select
+                  name="trimester"
+                  value={formData.trimester}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Trimester</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-between pt-4 gap-3">
               <button
                 type="submit"
                 disabled={isLoading}
                 className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
               >
-                {isLoading ? "Saving..." : "Save Changes"}
+                {isLoading ? (
+                  <div className="flex justify-center items-center">
+                    <CircularProgress size={24} color="inherit" />
+                  </div>
+                ) : (
+                  "Save Changes"
+                )}
               </button>
-            )}
-            <button
-              type="button"
-              onClick={onClose}
-              className={`${viewOnly ? "w-full" : "w-1/2"} bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition`}
-            >
-              {viewOnly ? "Close" : "Cancel"}
-            </button>
-          </div>
-        </form>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-1/2 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

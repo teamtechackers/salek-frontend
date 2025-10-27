@@ -1,9 +1,11 @@
 import React from "react";
 import { ICONS } from "../../../constants/assets";
 
-const VaccineTableDisplay = ({ tab, vaccines }) => {
-  const displayVaccines = vaccines || []; // 'vaccines' prop is already the array for the specific tab
+const VaccineTableDisplay = ({ tab, vaccines, onRowClick }) => {
+  const displayVaccines = vaccines || [];
   const title = `${tab} Vaccines`;
+
+  const isClickable = tab !== "Completed";
 
   return (
     <>
@@ -23,7 +25,11 @@ const VaccineTableDisplay = ({ tab, vaccines }) => {
           <tbody>
             {displayVaccines.length > 0 ? (
               displayVaccines.map((v, i) => (
-                <tr key={i} className="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition">
+                <tr
+                  key={i}
+                  className={`border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition ${isClickable ? "cursor-pointer" : ""}`}
+                  onClick={isClickable && onRowClick ? () => onRowClick(v) : undefined}
+                >
                   <td className="py-3 px-3 font-medium text-gray-800">{v.vaccine_name}</td>
                   <td className="py-3 px-3 text-gray-600">{v.dose_number}</td>
                   <td className="py-3 px-3 text-gray-600">{new Date(v.scheduled_date).toLocaleDateString()}</td>

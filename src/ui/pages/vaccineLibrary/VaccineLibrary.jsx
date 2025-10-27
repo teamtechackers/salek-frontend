@@ -7,6 +7,7 @@ import TotalSection from "../../components/TotalSection";
 import Pagination from "../../components/Pagination";
 import VaccineModal from "./components/VaccineModal";
 import { useGetVaccinesQuery } from "../../../core/services/api/vaccineApi";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const VaccineLibrary = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,7 +37,11 @@ const VaccineLibrary = () => {
   const totalItems = data?.data?.pagination?.total || 0;
   const totalPages = data?.data?.pagination?.pages || 1;
 
-  if (isLoading) return <div>Loading vaccines...</div>;
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-full">
+      <CircularProgress />
+    </div>
+  );
   if (error) return <div>Error loading vaccines: {error.message}</div>;
 
   return (

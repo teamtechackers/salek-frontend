@@ -7,6 +7,7 @@ import TotalSection from "../../components/TotalSection";
 import Pagination from "../../components/Pagination";
 import UserTable from "./components/UserTable";
 import { useGetUsersQuery } from "../../../core/services/api/userApi";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const User = () => {
   const [userDetails, setUserDetails] = useState(false);
@@ -36,7 +37,11 @@ const User = () => {
     setCurrentPage(1);
   };
 
-  if (isLoading) return <div>Loading users...</div>;
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-full">
+      <CircularProgress />
+    </div>
+  );
   if (error) return <div>Error loading users: {error.message}</div>;
 
   return (

@@ -2,13 +2,27 @@ import { useState, useEffect } from "react";
 import { ICONS } from "../../../constants/assets";
 import VaccineTableDisplay from "./VaccineTable";
 import UserListItem from "./UserListItem";
+import ReminderModal from "./ReminderModal"; // Import the new modal
 import { useGetUserDetailsQuery, useGetDependentDetailsQuery } from "/src/core/services/api/userApi";
+import { useGetNotificationsQuery } from "../../../../core/services/api/notificationApi";
+import { useGetRemindersByUserIdQuery } from "../../../../core/services/api/vaccineApi";
+import NotificationsTab from "./NotificationsTab"; // Import the new NotificationsTab component
+import RemindersTab from "./RemindersTab"; // Import the new RemindersTab component
+import CircularProgress from "@mui/material/CircularProgress";
 
 const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
   const [dependentDetails, setDependentDetails] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedDependentId, setSelectedDependentId] = useState(null);
-  const [currentDependentData, setCurrentDependentData] = useState(null); // New state for clicked dependent's data
+  const [currentDependentData, setCurrentDependentData] = useState(null);
+
+  // State for Main Tabs
+  const [activeMainTab, setActiveMainTab] = useState("Logged Vaccines");
+
+  // State for Reminder Modal
+  const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
+  const [selectedVaccineForReminder, setSelectedVaccineForReminder] = useState(null);
+  const [selectedVaccineNameForReminder, setSelectedVaccineNameForReminder] = useState("");
 
   const adminId = localStorage.getItem('adminId');
 
@@ -17,41 +31,19 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
     { skip: !selectedUserId || !adminId }
   );
   const fullUserDetails = userDetailsResponse?.data;
-  // console.log("UserList - fullUserDetails:", fullUserDetails); // Removed for cleaner console
 
-  // The dependentDetailsResponse will always be undefined because selectedDependentId is undefined
-  // We keep the hook here in case the backend is updated to provide dependent IDs in the future.
   const { data: dependentDetailsResponse, isLoading: loadingDependentDetails, refetch: refetchDependentDetails } = useGetDependentDetailsQuery(
     { dependent_id: selectedDependentId, user_id: selectedUserId, admin_user_id: adminId },
     { skip: !selectedDependentId || !selectedUserId || !adminId }
   );
   const fullDependentDetails = dependentDetailsResponse?.data;
-  // console.log("UserList - selectedUserId:", selectedUserId); // Removed for cleaner console
-  // console.log("UserList - selectedDependentId:", selectedDependentId); // Removed for cleaner console
-  // console.log("UserList - adminId:", adminId); // Removed for cleaner console
-  // console.log("UserList - dependentDetailsResponse:", dependentDetailsResponse); // Removed for cleaner console
-  // console.log("UserList - fullDependentDetails:", fullDependentDetails); // Removed for cleaner console
+
 
   useEffect(() => {
     if (selectedUserId) {
       refetchUserDetailsQuery();
     }
   }, [selectedUserId, refetchUserDetailsQuery]);
-
-  // Add a global refresh function that can be called from anywhere
-  useEffect(() => {
-    // Expose a global refresh function
-    window.refreshUserDetails = () => {
-      if (refetchUserDetailsQuery) {
-        console.log("UserList - Global refresh called");
-        refetchUserDetailsQuery();
-      }
-    };
-    
-    return () => {
-      delete window.refreshUserDetails;
-    };
-  }, [refetchUserDetailsQuery]);
 
   // This useEffect will not trigger refetchDependentDetails because selectedDependentId will be null
   useEffect(() => {
@@ -62,20 +54,15 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
 
   const handleUserDetails = (user) => {
     setSelectedUserId(user.id);
-    setUserDetails(true);
-    setDependentDetails(false); // Ensure dependent details view is off
-    setSelectedDependentId(null); // Clear selected dependent
-    setCurrentDependentData(null); // Clear current dependent data
+    setUserDetails(user); // Pass the user object
+    setDependentDetails(false);
+    setSelectedDependentId(null);
+    setCurrentDependentData(null);
   };
 
   const handleDependentDetails = (dependent) => {
-    // console.log("handleDependentDetails - clicked dependent object:", dependent); // Removed for cleaner console
-    // console.log("handleDependentDetails - dependent.id:", dependent?.id); // Removed for cleaner console
-    // Since 'id' is missing from the dependent object in fullUserDetails.dependents,
-    // we cannot set selectedDependentId for the API call.
-    // We will use the 'dependent' object directly to display its profile details.
-    setSelectedDependentId(null); // Ensure it's null as no ID is available
-    setCurrentDependentData(dependent); // Store the clicked dependent's data
+    setSelectedDependentId(null);
+    setCurrentDependentData(dependent);
     setDependentDetails(true);
   };
 
@@ -84,6 +71,10 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
     setSelectedUserId(null);
     setDependentDetails(false);
     setSelectedDependentId(null);
+    setIsReminderModalOpen(false); // Close modal on back
+    setSelectedVaccineForReminder(null); // Clear selected vaccine
+    setSelectedVaccineNameForReminder("");
+    setActiveMainTab("Logged Vaccines"); // Reset to default tab
   };
 
   const [activeTab, setActiveTab] = useState("Completed");
@@ -92,10 +83,34 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
   const handleBackToUserDetails = () => {
     setDependentDetails(false);
     setSelectedDependentId(null);
+    setIsReminderModalOpen(false); // Close modal on back
+    setSelectedVaccineForReminder(null); // Clear selected vaccine
+    setSelectedVaccineNameForReminder("");
+    setActiveMainTab("Logged Vaccines"); // Reset to default tab
   };
 
+  const handleVaccineRowClick = (vaccine) => {
+    console.log("handleVaccineRowClick - vaccine:", vaccine);
+    setSelectedVaccineForReminder(vaccine);
+    setSelectedVaccineNameForReminder(vaccine.vaccine_name);
+    setIsReminderModalOpen(true);
+  };
+
+  const handleCloseReminderModal = () => {
+    setIsReminderModalOpen(false);
+    setSelectedVaccineForReminder(null);
+    setSelectedVaccineNameForReminder("");
+  };
+
+  // Debugging: Log values before useGetRemindersQuery is evaluated
+
+
   if (loadingUserDetails || loadingDependentDetails) {
-    return <div className="text-center py-8 text-gray-500">Loading details...</div>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (
@@ -154,7 +169,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onEdit(fullUserDetails.user, null)}>
+                  <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onEdit(fullUserDetails.user, refetchUserDetailsQuery)}>
                     <img src={ICONS.edituser} alt="Edit" />
                   </button>
                   <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onDelete(fullUserDetails.user.id)}>
@@ -250,21 +265,18 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
             </div>
           )}
 
-          {/* Vaccine Section (for user, not dependent) */}
-          {!dependentDetails && fullUserDetails.vaccines && (
+          {/* Main Tabs Section */}
+          {!dependentDetails && (
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 w-full mx-auto">
-              <h2 className="text-lg font-semibold text-gray-800 mb-3">Logged Vaccines:</h2>
-
-              {/* Tabs */}
-              <div className="flex flex-wrap gap-2 mb-5">
-                {tabs?.map((tab) => (
+              <div className="flex border-b border-gray-200 mb-4">
+                {["Logged Vaccines", "Notifications", "Reminders"].map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-lg font-medium transition ${
-                      activeTab === tab
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                    onClick={() => setActiveMainTab(tab)}
+                    className={`px-4 py-2 -mb-px border-b-2 text-sm font-medium ${
+                      activeMainTab === tab
+                        ? "border-blue-600 text-blue-600"
+                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                     }`}
                   >
                     {tab}
@@ -272,13 +284,58 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                 ))}
               </div>
 
-              {activeTab === "Completed" && <VaccineTableDisplay tab="Completed" vaccines={fullUserDetails.vaccines.completed} />}
-              {activeTab === "Upcoming" && <VaccineTableDisplay tab="Upcoming" vaccines={fullUserDetails.vaccines.upcoming} />}
-              {activeTab === "Due Soon" && <VaccineTableDisplay tab="Due Soon" vaccines={fullUserDetails.vaccines.dueSoon} />}
-              {activeTab === "Overdue" && <VaccineTableDisplay tab="Overdue" vaccines={fullUserDetails.vaccines.overdue} />}
+              {activeMainTab === "Logged Vaccines" && fullUserDetails.vaccines && (
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-3">Logged Vaccines:</h2>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {tabs?.map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`px-4 py-2 rounded-lg font-medium transition ${
+                          activeTab === tab
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+                  {activeTab === "Completed" && <VaccineTableDisplay tab="Completed" vaccines={fullUserDetails.vaccines.completed} onRowClick={handleVaccineRowClick} />}
+                  {activeTab === "Upcoming" && <VaccineTableDisplay tab="Upcoming" vaccines={fullUserDetails.vaccines.upcoming} onRowClick={handleVaccineRowClick} />}
+                  {activeTab === "Due Soon" && <VaccineTableDisplay tab="Due Soon" vaccines={fullUserDetails.vaccines.dueSoon} onRowClick={handleVaccineRowClick} />}
+                  {activeTab === "Overdue" && <VaccineTableDisplay tab="Overdue" vaccines={fullUserDetails.vaccines.overdue} onRowClick={handleVaccineRowClick} />}
+                </div>
+              )}
+
+              {activeMainTab === "Notifications" && (
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-3">Notifications:</h2>
+                  {/* Fetch and display notifications */}
+                  <NotificationsTab userId={selectedUserId} />
+                </div>
+              )}
+
+              {activeMainTab === "Reminders" && (
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-3">All Reminders:</h2>
+                  {/* Fetch and display all reminders for the user */}
+                  <RemindersTab userId={selectedUserId} />
+                </div>
+              )}
             </div>
           )}
         </div>
+      )}
+      {isReminderModalOpen && (
+        <ReminderModal
+          open={isReminderModalOpen}
+          onClose={handleCloseReminderModal}
+          userId={selectedUserId}
+          userVaccineId={selectedVaccineForReminder?.user_vaccine_id}
+          vaccineName={selectedVaccineNameForReminder}
+        />
       )}
     </div>
   );

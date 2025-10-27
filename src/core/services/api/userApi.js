@@ -3,24 +3,17 @@ import { apiSlice } from './apiSlice';
 export const userApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: () => '/users',
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.data.users.map(({ id }) => ({ type: 'User', id })),
-              { type: 'User', id: 'LIST' },
-            ]
-          : [{ type: 'User', id: 'LIST' }],
+      query: () => '/admin/users',
     }),
     getUserDetails: builder.query({
-      query: ({ user_id, admin_user_id }) => `/user?admin_user_id=${admin_user_id}&user_id=${user_id}`,
+      query: ({ user_id, admin_user_id }) => `/admin/user?admin_user_id=${admin_user_id}&user_id=${user_id}`,
     }),
     getDependentDetails: builder.query({
-      query: ({ dependent_id, user_id, admin_user_id }) => `/dependent?admin_user_id=${admin_user_id}&user_id=${user_id}&dependent_id=${dependent_id}`,
+      query: ({ dependent_id, user_id, admin_user_id }) => `/admin/dependent?admin_user_id=${admin_user_id}&user_id=${user_id}&dependent_id=${dependent_id}`,
     }),
     addUser: builder.mutation({
       query: (user) => ({
-        url: '/users',
+        url: '/admin/users',
         method: 'POST',
         body: user,
       }),
@@ -28,7 +21,7 @@ export const userApi = apiSlice.injectEndpoints({
     }),
     updateUser: builder.mutation({
       query: (userData) => ({
-        url: '/user-edit',
+        url: '/admin/user-edit',
         method: 'PUT',
         body: userData,
       }),
@@ -39,7 +32,7 @@ export const userApi = apiSlice.injectEndpoints({
     }),
     deleteUser: builder.mutation({
       query: (body) => ({
-        url: '/user-delete',
+        url: '/admin/user-delete',
         method: 'DELETE',
         body,
       }),
@@ -47,7 +40,7 @@ export const userApi = apiSlice.injectEndpoints({
     }),
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/login',
+        url: '/admin/login',
         method: 'POST',
         body: credentials,
       }),

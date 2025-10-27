@@ -77,7 +77,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
           setIsViewOnly(false); // Reset view-only mode
         }}
         userId={selectedUser?.id} // Pass the selected user's ID
-        refetch={refetch} // Pass refetch to update user list
+        refetch={isViewOnly ? refetchUserDetails : refetch} // Pass appropriate refetch function
         viewOnly={isViewOnly} // Pass view-only mode
       />
 
