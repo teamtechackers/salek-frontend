@@ -108,7 +108,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={!acceptTerms || isLoading} // Disable button when loading or terms not accepted
                 style={STYLES.button_text}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed py-3 px-4 rounded-lg transition-colors"
+                className="w-full bg-[#245FFF] hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed py-3 px-4 rounded-lg transition-colors"
               >
                 {isLoading ? (
                   <div className="flex justify-center items-center">

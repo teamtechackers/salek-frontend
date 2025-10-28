@@ -13,29 +13,30 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick }) => {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-blue-600 text-white text-md">
-              <th className="text-left py-2 px-3 rounded-l-lg">Vaccine Name</th>
-              <th className="text-left py-2 px-3">Dose</th>
-              <th className="text-left py-2 px-3">Scheduled Date</th>
-              <th className="text-left py-2 px-3">Status</th>
-              <th className="text-left py-2 px-3">Days Remaining</th>
-              <th className="text-left py-2 px-3 rounded-r-lg">Actions</th>
+            <tr className="flex h-[50px] bg-[#245FFF] text-white font-semibold w-full">
+              <th className="flex items-center justify-center rounded-l-lg w-[25%]">Vaccine Name</th>
+              <th className="flex items-center justify-center w-[10%]">Dose</th>
+              <th className="flex items-center justify-center w-[15%]">Scheduled Date</th>
+              <th className="flex items-center justify-center w-[10%]">Status</th>
+              <th className="flex items-center justify-center w-[25%]">Days Remaining</th>
+              <th className="flex items-center justify-center w-[10%] rounded-r-lg">Actions</th>
             </tr>
+            
           </thead>
           <tbody>
             {displayVaccines.length > 0 ? (
               displayVaccines.map((v, i) => (
                 <tr
                   key={i}
-                  className={`border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition ${isClickable ? "cursor-pointer" : ""}`}
+                  className={`flex h-[50px] text-black font-semibold w-full transition ${isClickable ? "cursor-pointer" : ""}`}
                   onClick={isClickable && onRowClick ? () => onRowClick(v) : undefined}
                 >
-                  <td className="py-3 px-3 font-medium text-gray-800">{v.vaccine_name}</td>
-                  <td className="py-3 px-3 text-gray-600">{v.dose_number}</td>
-                  <td className="py-3 px-3 text-gray-600">{new Date(v.scheduled_date).toLocaleDateString()}</td>
-                  <td className="py-3 px-3 text-gray-600">{v.status}</td>
-                  <td className="py-3 px-3 text-gray-600">{v.days_remaining}</td>
-                  <td className="py-3 px-3">
+                  <td className="flex items-center justify-center rounded-l-lg w-[25%]">{v.vaccine_name}</td>
+                  <td className="flex items-center justify-center w-[10%]">{v.dose_number}</td>
+                  <td className="flex items-center justify-center w-[15%]">{new Date(v.scheduled_date).toLocaleDateString()}</td>
+                  <td className="flex items-center justify-center w-[10%]">{v.status}</td>
+                  <td className="flex items-center justify-center w-[25%]">{v.days_remaining}</td>
+                  <td className="flex items-center justify-center w-[10%] rounded-r-lg">
                     <button className="text-blue-600 hover:text-blue-800 text-lg">
                       <img src={ICONS.delete} alt="Delete" />
                     </button>
