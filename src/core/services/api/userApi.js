@@ -38,6 +38,15 @@ export const userApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['User'],
     }),
+    deleteDependent: builder.mutation({
+      query: ({ admin_user_id, user_id, dependent_id }) => ({
+        url: `/admin/dependent-delete?admin_user_id=${admin_user_id}&user_id=${user_id}&dependent_id=${dependent_id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { user_id }) => [
+        { type: 'User', id: user_id }, // Invalidate user details to refresh dependent list
+      ],
+    }),
     login: builder.mutation({
       query: (credentials) => ({
         url: '/admin/login',
@@ -55,5 +64,6 @@ export const {
   useAddUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useDeleteDependentMutation,
   useLoginMutation,
 } = userApi;

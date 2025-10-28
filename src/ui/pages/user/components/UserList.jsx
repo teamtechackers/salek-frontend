@@ -3,7 +3,9 @@ import { ICONS } from "../../../constants/assets";
 import VaccineTableDisplay from "./VaccineTable";
 import UserListItem from "./UserListItem";
 import ReminderModal from "./ReminderModal"; // Import the new modal
-import { useGetUserDetailsQuery, useGetDependentDetailsQuery } from "/src/core/services/api/userApi";
+import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox"; // Import ConfirmDeleteModal
+import ConfirmationModal from "../../../components/ConfirmationModal"; // Import ConfirmationModal
+import { useGetUserDetailsQuery, useGetDependentDetailsQuery, useDeleteDependentMutation } from "/src/core/services/api/userApi";
 import { useGetNotificationsQuery } from "../../../../core/services/api/notificationApi";
 import { useGetRemindersByUserIdQuery } from "../../../../core/services/api/vaccineApi";
 import NotificationsTab from "./NotificationsTab"; // Import the new NotificationsTab component
@@ -24,7 +26,14 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
   const [selectedVaccineForReminder, setSelectedVaccineForReminder] = useState(null);
   const [selectedVaccineNameForReminder, setSelectedVaccineNameForReminder] = useState("");
 
+  // State for Dependent Deletion
+  const [openDeleteDependent, setOpenDeleteDependent] = useState(false);
+  const [dependentToDelete, setDependentToDelete] = useState(null);
+  const [openDependentDeleteConfirm, setOpenDependentDeleteConfirm] = useState(false);
+
   const adminId = localStorage.getItem('adminId');
+
+  const [deleteDependent] = useDeleteDependentMutation();
 
   const { data: userDetailsResponse, isLoading: loadingUserDetails, refetch: refetchUserDetailsQuery } = useGetUserDetailsQuery(
     { user_id: selectedUserId, admin_user_id: adminId },
@@ -74,7 +83,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
   };
 
   const handleDependentDetails = (dependent) => {
-    setSelectedDependentId(dependent.dependent_id); // Set the dependent's ID
+    setSelectedDependentId(dependent.dependent_id); // Reverted to original: Set the dependent's ID
     setCurrentDependentData(dependent);
     setDependentDetails(true);
   };
@@ -115,8 +124,27 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
     setSelectedVaccineNameForReminder("");
   };
 
-  // Debugging: Log values before useGetRemindersQuery is evaluated
+  const handleDeleteDependent = (dependentId) => {
+    setDependentToDelete({ user_id: selectedUserId, dependent_id: dependentId });
+    setOpenDeleteDependent(true);
+  };
 
+  const confirmDeleteDependent = async () => {
+    try {
+      await deleteDependent({
+        admin_user_id: adminId,
+        user_id: dependentToDelete.user_id,
+        dependent_id: dependentToDelete.dependent_id,
+      }).unwrap();
+      setOpenDeleteDependent(false);
+      setOpenDependentDeleteConfirm(true);
+      refetchUserDetailsQuery(); // Refresh user details to update dependent list
+      setDependentDetails(false); // Go back to user details view
+      setSelectedDependentId(null); // Clear selected dependent
+    } catch (error) {
+      console.error('Failed to delete dependent:', error);
+    }
+  };
 
   if (loadingUserDetails || loadingDependentDetails) {
     return (
@@ -161,7 +189,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
       {/* User Detail View */}
       {userDetails && (
         <div className="flex flex-col gap-6 mt-4">
-          {!dependentDetails && ( 
+          {!dependentDetails && (
           <button onClick={handleBackToUserList} className="self-start px-4 py-2 bg-[#EDF5FF] rounded-md cursor-pointer">
             Back to User List
           </button>
@@ -199,9 +227,9 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                     ["Gender", fullUserDetails.user.gender || "N/A"],
                     ["Country", fullUserDetails.user.country || "N/A"],
                     ["Address", fullUserDetails.user.address || "N/A"],
-                   
+
                      ["Phone Number", fullUserDetails.user.phone_number || "N/A"],
-                       
+
                      ["Marital Status", fullUserDetails.user.material_status || "N/A"],
                     ["Children", fullUserDetails.user.do_you_have_children ? `Yes (${fullUserDetails.user.how_many_children})` : "No"],
                     ["Pregnancy", fullUserDetails.user.are_you_pregnant ? `Yes (${fullUserDetails.user.pregnancy_detail || 'N/A'})` : "No"],
@@ -263,7 +291,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                     <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onEdit(fullDependentDetails.dependent, refetchDependentDetails)}>
                       <img src={ICONS.edituser} alt="Edit" />
                     </button>
-                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onDelete(fullDependentDetails.dependent.id)}>
+                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => handleDeleteDependent(fullDependentDetails.dependent.id)}>
                       <img src={ICONS.delete} alt="Delete" />
                     </button>
                   </div>
@@ -317,7 +345,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                    <h2 className="text-lg font-semibold text-black mb-3">Logged Vaccines:</h2>
                 <h2 className="text-lg font-medium text-black mb-3">{20}</h2>
                   </div>
-               
+
                 <div className="flex flex-wrap gap-2 mb-5">
                   {tabs?.map((tab) => (
                     <button
@@ -367,6 +395,24 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
           vaccineName={selectedVaccineNameForReminder}
         />
       )}
+
+      {/* Dependent Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        open={openDeleteDependent}
+        title="Delete Dependent"
+        description="Are you sure you want to delete this dependent? This action cannot be undone."
+        onClose={() => setOpenDeleteDependent(false)}
+        onConfirm={confirmDeleteDependent}
+      />
+
+      {/* Dependent Delete Success Modal */}
+      <ConfirmationModal
+        open={openDependentDeleteConfirm}
+        onClose={() => setOpenDependentDeleteConfirm(false)}
+        title="Dependent Deleted"
+        description="The dependent has been successfully deleted."
+        onConfirm={() => setOpenDependentDeleteConfirm(false)}
+      />
     </div>
   );
 };
