@@ -362,7 +362,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
         <ReminderModal
           open={isReminderModalOpen}
           onClose={handleCloseReminderModal}
-          userId={selectedUserId}
+          userId={dependentDetails ? selectedDependentId : selectedUserId}
           userVaccineId={selectedVaccineForReminder?.user_vaccine_id}
           vaccineName={selectedVaccineNameForReminder}
         />

@@ -1,4 +1,4 @@
-import { useState } from "react"; // Removed useEffect
+import React, { useState, useEffect } from "react";
 import SearchBar from "../../components/Searchbar";
 import DateDropdown from "./components/DateDropdown";
 import PaginationDropdown from "./components/PaginationDropdown";
@@ -13,6 +13,8 @@ const User = () => {
   const [userDetails, setUserDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
+  const [search, setSearch] = useState("");
+  const [searchType, setSearchType] = useState("username"); // Default search type for users
 
   const { data, error, isLoading, refetch } = useGetUsersQuery();
   
@@ -24,18 +26,52 @@ const User = () => {
     setUserDetailsRefetch(() => refetchFn);
   };
 
-  const users = data?.data?.users || []; // Explicitly access data.users
-  const totalItems = data?.data?.pagination?.total || 0; // Explicitly access data.pagination.total
-  const totalPages = data?.data?.pagination?.pages || 1; // Explicitly access data.pagination.pages
+  const allUsers = data?.data?.users || [];
 
-  // Debug logging
-  console.log("User component - data:", data);
-  console.log("User component - users:", users);
+  // Client-side filtering logic
+  const filteredUsers = allUsers.filter((user) => {
+    if (!search) return true; // If no search term, show all users
+
+    const searchTermLower = search.toLowerCase();
+    let matchesSearch = false;
+
+    switch (searchType) {
+      case "username":
+        matchesSearch = user.username?.toLowerCase().includes(searchTermLower);
+        break;
+      case "phoneNo":
+        matchesSearch = user.phoneNo?.toLowerCase().includes(searchTermLower);
+        break;
+      case "email":
+        matchesSearch = user.email?.toLowerCase().includes(searchTermLower);
+        break;
+      default:
+        matchesSearch = false;
+    }
+    return matchesSearch;
+  });
+
+  // Client-side pagination
+  const totalItems = filteredUsers.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset page when filters change
+  }, [search, searchType, pageSize]);
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);
     setCurrentPage(1);
   };
+
+  const searchOptions = [
+    { value: "username", label: "Username" },
+    { value: "phoneNo", label: "Phone Number" },
+    { value: "email", label: "Email" },
+  ];
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -50,8 +86,19 @@ const User = () => {
         <div className="flex w-full">
           {!userDetails && (
             <>
-              <div className="w-1/2 flex items-center justify-start">
-                <SearchBar />
+              <div className="w-1/2 flex items-center justify-start gap-3">
+                <select
+                  className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"
+                  value={searchType}
+                  onChange={(e) => setSearchType(e.target.value)}
+                >
+                  {searchOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <SearchBar value={search} onChange={setSearch} onSearch={refetch} />
               </div>
               <div className="w-1/2 flex items-center justify-end">
                 <DateDropdown />
@@ -64,9 +111,9 @@ const User = () => {
       totalSection={<TotalSection label="Total Users" count={totalItems} />}
       tableSection={
              <div className="w-full h-full">
-               {users.length > 0 ? (
+               {paginatedUsers.length > 0 ? (
                  <UserTable
-                   users={users}
+                   users={paginatedUsers}
                    currentPage={currentPage}
                    itemsPerPage={pageSize}
                    userDetails={userDetails}
