@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SearchBar from "../../components/Searchbar";
-import DateDropdown from "./components/DateDropdown";
+// import DateDropdown from "./components/DateDropdown"; // Removed DateDropdown
 import PaginationDropdown from "./components/PaginationDropdown";
 import PageContainer from "../../components/PageContainer";
 import TotalSection from "../../components/TotalSection";
@@ -15,6 +15,7 @@ const User = () => {
   const [pageSize, setPageSize] = useState(8);
   const [search, setSearch] = useState("");
   const [searchType, setSearchType] = useState("username"); // Default search type for users
+  const [selectedDate, setSelectedDate] = useState(""); // Single state for selected date
 
   const { data, error, isLoading, refetch } = useGetUsersQuery();
   
@@ -30,25 +31,37 @@ const User = () => {
 
   // Client-side filtering logic
   const filteredUsers = allUsers.filter((user) => {
-    if (!search) return true; // If no search term, show all users
-
-    const searchTermLower = search.toLowerCase();
-    let matchesSearch = false;
-
-    switch (searchType) {
-      case "username":
-        matchesSearch = user.username?.toLowerCase().includes(searchTermLower);
-        break;
-      case "phoneNo":
-        matchesSearch = user.phoneNo?.toLowerCase().includes(searchTermLower);
-        break;
-      case "email":
-        matchesSearch = user.email?.toLowerCase().includes(searchTermLower);
-        break;
-      default:
-        matchesSearch = false;
+    // Search filtering
+    let matchesSearch = true;
+    if (search) {
+      const searchTermLower = search.toLowerCase();
+      switch (searchType) {
+        case "username":
+          matchesSearch = user.username?.toLowerCase().includes(searchTermLower);
+          break;
+        case "phoneNo":
+          matchesSearch = user.phoneNo?.toLowerCase().includes(searchTermLower);
+          break;
+        case "email":
+          matchesSearch = user.email?.toLowerCase().includes(searchTermLower);
+          break;
+        default:
+          matchesSearch = false;
+      }
     }
-    return matchesSearch;
+
+    // Date of Birth filtering
+    let matchesDOB = true;
+    if (selectedDate && user.DOB) {
+      const userDOB = new Date(user.DOB);
+      const filterDate = new Date(selectedDate);
+      // Compare only year, month, and day
+      matchesDOB = userDOB.getFullYear() === filterDate.getFullYear() &&
+                   userDOB.getMonth() === filterDate.getMonth() &&
+                   userDOB.getDate() === filterDate.getDate();
+    }
+
+    return matchesSearch && matchesDOB;
   });
 
   // Client-side pagination
@@ -60,7 +73,7 @@ const User = () => {
 
   useEffect(() => {
     setCurrentPage(1); // Reset page when filters change
-  }, [search, searchType, pageSize]);
+  }, [search, searchType, pageSize, selectedDate]); // Added selectedDate to dependencies
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);
@@ -100,9 +113,14 @@ const User = () => {
                 </select>
                 <SearchBar value={search} onChange={setSearch} onSearch={refetch} />
               </div>
-              <div className="w-1/2 flex items-center justify-end">
-                <DateDropdown />
-                <PaginationDropdown onChange={handlePageSizeChange} />
+              <div className="w-1/2 flex items-center justify-end gap-3">
+                <input
+                  type="date"
+                  className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  placeholder="Select Date of Birth"
+                />
               </div>
             </>
           )}
