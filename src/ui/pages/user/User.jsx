@@ -15,7 +15,7 @@ const User = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [search, setSearch] = useState("");
-  const [searchType, setSearchType] = useState("username"); // Default search type for users
+  // const [searchType, setSearchType] = useState("username"); // Default search type for users - REMOVED
   const [selectedDate, setSelectedDate] = useState(""); // Single state for selected date
   const [openEditModal, setOpenEditModal] = useState(false); // State for proper edit modal
   const [selectedUserForEdit, setSelectedUserForEdit] = useState(null); // State to hold user/dependent for proper edit
@@ -63,14 +63,17 @@ const User = () => {
   const allUsers = data?.data?.users || [];
 
   // Client-side filtering for selectedDate
-  // Client-side filtering for search and searchType
+  // Client-side filtering for search across multiple fields
   const filteredUsersBySearch = allUsers.filter((user) => {
     if (!search) return true; // If no search term, return all users
 
     const searchValue = search.toLowerCase();
-    const userValue = String(user[searchType]).toLowerCase(); // Get user property based on searchType
-
-    return userValue.includes(searchValue);
+    // Search across username, phoneNo, and email
+    return (
+      String(user.username).toLowerCase().includes(searchValue) ||
+      String(user.phoneNo).toLowerCase().includes(searchValue) ||
+      String(user.email).toLowerCase().includes(searchValue)
+    );
   });
 
   // Client-side filtering for selectedDate
@@ -100,11 +103,11 @@ const User = () => {
     setCurrentPage(1);
   };
 
-  const searchOptions = [
-    { value: "username", label: "Username" },
-    { value: "phoneNo", label: "Phone Number" },
-    { value: "email", label: "Email" },
-  ];
+  // const searchOptions = [ // REMOVED
+  //   { value: "username", label: "Username" },
+  //   { value: "phoneNo", label: "Phone Number" },
+  //   { value: "email", label: "Email" },
+  // ];
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -126,17 +129,7 @@ const User = () => {
                 </div>
                
                 <div className="w-1/2 flex items-center justify-end gap-3">
-                 <select
-                    className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"
-                    value={searchType}
-                    onChange={(e) => setSearchType(e.target.value)}
-                  >
-                    {searchOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                  {/* Search type dropdown removed as per request */}
                   <input
                     type="date"
                     className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"

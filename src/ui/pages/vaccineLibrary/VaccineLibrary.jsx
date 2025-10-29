@@ -16,7 +16,7 @@ const VaccineLibrary = () => {
   const [selectedVaccine, setSelectedVaccine] = useState(null); // To pass to VaccineModal for editing
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
-  const [searchType, setSearchType] = useState("name"); // Default search type
+  // const [searchType, setSearchType] = useState("name"); // Default search type - REMOVED
 
   const adminId = localStorage.getItem("adminId");
 
@@ -24,24 +24,33 @@ const VaccineLibrary = () => {
     admin_user_id: adminId,
     page: currentPage - 1, // API expects 0-indexed page
     limit: pageSize,
-    search,
-    searchType,
-    category,
+    // Pass search and category to the API for initial filtering
+    search: search, // Keep search for API if backend supports it
+    category: category,
   });
 
-  const vaccinesData = data?.data?.vaccines || [];
-  const totalItems = data?.data?.pagination?.total || 0;
+  const allVaccines = data?.data?.vaccines || [];
+
+  // Client-side filtering for search across multiple fields
+  const filteredVaccinesBySearch = allVaccines.filter((vaccine) => {
+    if (!search) return true; // If no search term, return all vaccines
+
+    const searchValue = search.toLowerCase();
+    // Search across name, site, and type
+    return (
+      String(vaccine.name).toLowerCase().includes(searchValue) ||
+      String(vaccine.site).toLowerCase().includes(searchValue) ||
+      String(vaccine.type).toLowerCase().includes(searchValue)
+    );
+  });
+
+  const vaccinesData = filteredVaccinesBySearch; // Use client-side filtered data
+  const totalItems = data?.data?.pagination?.total || 0; // Total from API, not filtered count
   const totalPages = data?.data?.pagination?.pages || 1;
 
   useEffect(() => {
     setCurrentPage(1); // Reset page when filters change
-  }, [search, category, searchType, pageSize]);
-
-  const searchOptions = [
-    { value: "name", label: "Vaccine Name" },
-    { value: "site", label: "Site" },
-    { value: "type", label: "Type" },
-  ];
+  }, [search, category, pageSize]);
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -63,7 +72,7 @@ const VaccineLibrary = () => {
 
             {/* Right - Category + Add Button */}
             <div className="w-1/2 flex items-center justify-end gap-3">
-              {/* Search type dropdown removed from UI, but state remains */}
+              {/* Search type dropdown removed as per request */}
               <CategoryDropdown selectedCategory={category} onCategoryChange={setCategory} />
               <button
                 className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition"
