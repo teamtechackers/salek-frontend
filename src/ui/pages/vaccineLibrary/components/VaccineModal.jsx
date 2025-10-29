@@ -3,6 +3,7 @@ import { ICONS } from "../../../constants/assets";
 import { vaccineFields } from "./AddFormlabels";
 import { COLORS } from "../../../theme/colors/colors";
 import { useAddVaccineMutation, useUpdateVaccineMutation } from "../../../../core/services/api/vaccineApi";
+import CircularProgress from "@mui/material/CircularProgress"; // Import CircularProgress
 
 export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   const initialFormData = {
@@ -129,13 +130,17 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
       }
 
       onClose();
-      refetch();
+      if (refetch && typeof refetch === 'function') { // Check if refetch is a function
+        refetch(); // Ensure refetch is called if provided
+      }
     } catch (err) {
       console.error("Failed to save vaccine:", err);
       // Optionally, display a user-friendly error message
       alert("Failed to save vaccine. Please try again.");
     }
   };
+
+  const isLoading = isAdding || isUpdating; // Combine loading states for buttons
 
   const renderField = (field) => {
     if (field.type === "text") {
@@ -258,9 +263,16 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
           <div className="flex justify-end gap-4 mt-4">
             <button
               type="submit"
-              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+              disabled={isLoading} // Disable button while loading
+              className={`bg-green-600 text-white px-6 py-2 rounded-lg ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-700'}`}
             >
-              Save Changes
+              {isLoading ? (
+                <div className="flex justify-center items-center">
+                  <CircularProgress size={24} color="inherit" />
+                </div>
+              ) : (
+                "Save Changes"
+              )}
             </button>
             <button
               type="button"

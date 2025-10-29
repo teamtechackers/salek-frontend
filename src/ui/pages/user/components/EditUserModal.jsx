@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useUpdateUserMutation, useGetUserDetailsQuery } from "../../../../core/services/api/userApi";
+import { useUpdateUserMutation, useUpdateDependentMutation } from "../../../../core/services/api/userApi"; // Import both mutations
 import CircularProgress from "@mui/material/CircularProgress";
 
-const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onRefreshTrigger, viewOnly = false }) => { // Changed 'user' to 'userId'
+const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetchUserDetails, refetchDependentDetails, onSuccessfulEditAndClose }) => {
+  console.log("EditUserModal - user:", user);
+  console.log("EditUserModal - isDependent:", isDependent);
+  console.log("EditUserModal - parentUserId:", parentUserId);
   console.log("EditUserModal - refetchUserDetails:", refetchUserDetails);
+  console.log("EditUserModal - refetchDependentDetails:", refetchDependentDetails);
+
   const initialFormData = {
     name: "",
+    dob: "", // Added DOB field
     gender: "",
     country: "",
     address: "",
@@ -14,24 +20,21 @@ const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onR
     children: "",
     pregnancy: "",
     trimester: "",
+    relation: "", // Added for dependents
   };
 
   const [formData, setFormData] = useState(initialFormData);
-  const [updateUser, { isLoading, error }] = useUpdateUserMutation();
+  const [updateUser, { isLoading: isUpdatingUser, error: userUpdateError }] = useUpdateUserMutation();
+  const [updateDependent, { isLoading: isUpdatingDependent, error: dependentUpdateError }] = useUpdateDependentMutation();
 
   const adminId = localStorage.getItem('adminId');
-  const { data: userDetailsResponse, isLoading: loadingUserDetails } = useGetUserDetailsQuery(
-    { user_id: userId, admin_user_id: adminId },
-    { skip: !userId || !adminId || !open } 
-  );
-  const user = userDetailsResponse?.data?.user; // Get the actual user object from the response
 
   useEffect(() => {
-    console.log("EditUserModal - useEffect triggered with user:", user);
-    if (user) {
-      console.log("EditUserModal - Setting form data for user:", user);
+    if (user && open) {
+      console.log("EditUserModal - Setting form data for user/dependent:", user);
       setFormData({
-        name: user.full_name || user.username || "", // Use full_name from fetched details
+        name: user.full_name || user.username || user.relation_type || "", // Use full_name or relation_type for dependents
+        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : "", // Format DOB for input type="date"
         gender: user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : user.gender === 'male' ? 'Male' : user.gender === 'female' ? 'Female' : user.gender || "",
         country: user.country || "",
         address: user.address || "",
@@ -39,13 +42,17 @@ const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onR
         maritalStatus: user.material_status ? user.material_status.charAt(0).toUpperCase() + user.material_status.slice(1) : "",
         children: user.do_you_have_children ? String(user.how_many_children) : "",
         pregnancy: user.are_you_pregnant ? "Yes" : "No",
-        trimester: user.are_you_pregnant && user.pregnancy_detail ? String(user.pregnancy_detail).match(/\d+/)?.[0] || "" : "", // Extract number for trimester
+        trimester: user.are_you_pregnant && user.pregnancy_detail ? String(user.pregnancy_detail).match(/\d+/)?.[0] || "" : "",
+        relation: user.relation_type || "", // For dependents
       });
     } else {
-      console.log("EditUserModal - No user data, setting initial form data");
+      console.log("EditUserModal - No user/dependent data or modal closed, setting initial form data");
       setFormData(initialFormData);
     }
-  }, [user, open]); // Depend on 'user' (fetched data) and 'open'
+  }, [user, open]); // Depend on 'user' (passed data) and 'open'
+
+  const isLoading = isUpdatingUser || isUpdatingDependent;
+  const error = userUpdateError || dependentUpdateError;
 
   const confirmRef = useRef(null);
   const previouslyFocused = useRef(null);
@@ -87,44 +94,57 @@ const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onR
       const genderValue = formData.gender === 'Male' ? 'male' : formData.gender === 'Female' ? 'female' : formData.gender;
       console.log("Form gender:", formData.gender);
       console.log("Converted gender:", genderValue);
-      
-      const payload = {
-        admin_user_id: adminId,
-        user_id: userId, // Use userId from props
-        full_name: formData.name || null, // Convert empty string to null
-        phone_number: formData.phoneNumber || null, // Convert empty string to null
-        gender: genderValue || null, // Convert empty string to null
-        country: formData.country || null, // Convert empty string to null
-        address: formData.address || null, // Convert empty string to null
-        material_status: formData.maritalStatus || null, // Convert empty string to null
-        do_you_have_children: formData.children > 0 ? 1 : 0, // Changed format
-        how_many_children: Number(formData.children) || 0, // Convert to number or 0
-        are_you_pregnant: formData.pregnancy === 'Yes' ? 1 : 0, // Changed format
+
+      let basePayload = {
+        full_name: formData.name || null,
+        dob: formData.dob || null,
+        phone_number: formData.phoneNumber || null,
+        gender: genderValue || null,
+        country: formData.country || null,
+        address: formData.address || null,
+        material_status: formData.maritalStatus || null,
+        do_you_have_children: formData.children > 0 ? 1 : 0,
+        how_many_children: Number(formData.children) || 0,
+        are_you_pregnant: formData.pregnancy === 'Yes' ? 1 : 0,
         pregnancy_detail: formData.pregnancy === 'Yes' ? (formData.trimester || null) : null,
       };
-      console.log("Sending payload:", payload);
-      console.log("Admin ID:", adminId);
-      console.log("User ID:", userId);
-      console.log("Gender value length:", genderValue ? genderValue.length : 0);
-      console.log("Gender value type:", typeof genderValue);
-      const result = await updateUser(payload).unwrap();
-      console.log("Update successful:", result);
-      
-      // Close modal and let RTK Query handle the cache invalidation
-      console.log("Update successful, closing modal...");
-      
-      // Refresh detail page data if global refresh function is available
-      if (window.refreshUserDetails) {
-        console.log("Refreshing detail page data...");
-        setTimeout(() => {
-          window.refreshUserDetails();
-        }, 100);
+
+      let result;
+      if (isDependent) {
+        const dependentUpdatePayload = {
+          admin_user_id: adminId,
+          user_id: parentUserId, // Use parentUserId from props
+          dependent_id: user.id, // Dependent's ID
+          ...basePayload,
+          relation_type: formData.relation || null, // For dependents
+        };
+        console.log("Sending dependent update payload:", dependentUpdatePayload);
+        result = await updateDependent(dependentUpdatePayload).unwrap();
+        if (refetchDependentDetails) {
+          refetchDependentDetails();
+        }
+      } else {
+        const userUpdatePayload = {
+          admin_user_id: adminId,
+          user_id: user.id, // User's ID
+          ...basePayload,
+        };
+        console.log("Sending user update payload:", userUpdatePayload);
+        result = await updateUser(userUpdatePayload).unwrap();
+        if (refetchUserDetails) {
+          refetchUserDetails();
+        }
       }
-      
-      onClose();
+
+      console.log("Update successful:", result);
+      if (onSuccessfulEditAndClose) {
+        onSuccessfulEditAndClose(); // Call the new callback to close modal, navigate to main table, and refetch
+      } else {
+        onClose(); // Fallback to just closing the modal
+      }
     } catch (err) {
-      console.error("Failed to update user:", err);
-      alert("Failed to update user. Please try again.");
+      console.error("Failed to update:", err);
+      alert(`Failed to update ${isDependent ? 'dependent' : 'user'}. Please try again.`);
     }
   };
 
@@ -132,7 +152,7 @@ const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onR
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-blue-600 text-white px-5 py-3 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Edit User</h2>
+          <h2 className="text-lg font-semibold">{isDependent ? "Edit Dependent" : "Edit User"}</h2>
           <button
             onClick={onClose}
             className="text-white hover:bg-blue-700 rounded-full w-7 h-7 flex items-center justify-center"
@@ -143,12 +163,8 @@ const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onR
 
         <hr className="border-gray-200 mb-4" />
 
-        {loadingUserDetails ? (
-          <div className="flex justify-center items-center h-40">
-            <CircularProgress />
-          </div>
-        ) : error ? (
-          <p className="text-red-500">Error loading user details: {error.message}</p>
+        {error ? (
+          <p className="text-red-500 p-5">Error: {error.message}</p>
         ) : (
           <form onSubmit={handleSubmit} className="p-5 max-h-[80vh] overflow-y-auto space-y-4">
             {/* Name */}
@@ -163,20 +179,31 @@ const EditUserModal = ({ open, onClose, userId, refetch, refetchUserDetails, onR
               />
             </div>
 
+            {/* Relation (for dependents) */}
+            {isDependent && (
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Relation</label>
+                <input
+                  type="text"
+                  name="relation"
+                  value={formData.relation}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                />
+              </div>
+            )}
+
             {/* DOB & Gender */}
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">Date of Birth</label>
-                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-                  <input
-                    type="text"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    className="flex-1 outline-none bg-transparent"
-                  />
-                  <span className="text-gray-500 cursor-pointer">📅</span>
-                </div>
+                <input
+                  type="date"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                />
               </div>
 
               <div className="flex flex-col gap-1">

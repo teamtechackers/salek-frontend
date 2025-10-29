@@ -3,10 +3,14 @@ import { apiSlice } from './apiSlice';
 export const vaccineApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getVaccines: builder.query({
-      query: (params) => ({
-        url: '/admin/vaccines',
-        params,
-      }),
+      query: ({ page = 0, limit = 8 } = {}) => {
+        const adminId = localStorage.getItem('adminId');
+        let url = `/admin/vaccines?page=${page}&limit=${limit}`;
+        if (adminId) {
+          url += `&admin_user_id=${adminId}`;
+        }
+        return url;
+      },
     }),
     addVaccine: builder.mutation({
       query: (vaccine) => ({

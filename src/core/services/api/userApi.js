@@ -3,7 +3,10 @@ import { apiSlice } from './apiSlice';
 export const userApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: () => '/admin/users',
+      query: ({ page = 0, limit = 8 } = {}) => {
+        let url = `/admin/users?page=${page}&limit=${limit}`;
+        return url;
+      },
     }),
     getUserDetails: builder.query({
       query: ({ user_id, admin_user_id }) => `/admin/user?admin_user_id=${admin_user_id}&user_id=${user_id}`,
@@ -47,6 +50,16 @@ export const userApi = apiSlice.injectEndpoints({
         { type: 'User', id: user_id }, // Invalidate user details to refresh dependent list
       ],
     }),
+    updateDependent: builder.mutation({
+      query: ({ admin_user_id, user_id, dependent_id, ...dependentData }) => ({
+        url: `/admin/dependent-edit?admin_user_id=${admin_user_id}&user_id=${user_id}&dependent_id=${dependent_id}`,
+        method: 'PUT',
+        body: dependentData, // Send only the rest of the data in the body
+      }),
+      invalidatesTags: (result, error, { user_id }) => [
+        { type: 'User', id: user_id }, // Invalidate user details to refresh dependent list
+      ],
+    }),
     login: builder.mutation({
       query: (credentials) => ({
         url: '/admin/login',
@@ -65,5 +78,6 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useDeleteDependentMutation,
+  useUpdateDependentMutation,
   useLoginMutation,
 } = userApi;

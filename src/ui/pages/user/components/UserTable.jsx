@@ -1,19 +1,34 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react"; // Corrected import
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
 import UserList from "./UserList";
-import EditUserModal from "./EditUserModal";
-import { useDeleteUserMutation } from "/src/core/services/api/userApi";
+import EditUserShortModal from "./EditUserShortModal";
+import { useUpdateUserMutation, useDeleteUserMutation } from "../../../../core/services/api/userApi";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 
-export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails }) {
+export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onOpenFullEdit }) {
+  console.log("UserTable.jsx - onOpenFullEdit received:", onOpenFullEdit);
   const [openDelete, setOpenDelete] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [openEditShort, setOpenEditShort] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null); // State to hold the user being edited
   const [deleteId, setDeleteId] = useState(null);
   const [isViewOnly, setIsViewOnly] = useState(false); // State to track if modal is in view-only mode
 
+  useEffect(() => {
+    if (openEditShort && selectedUser) {
+      // Find the updated user in the 'users' prop based on the ID
+      const updatedUserInList = users.find(user => user.id === selectedUser.id);
+      // Always update selectedUser if a matching user is found in the updated 'users' list
+      // This ensures the modal always gets the latest data, even if object reference didn't change
+      if (updatedUserInList) {
+        setSelectedUser(updatedUserInList);
+      }
+    }
+  }, [users, openEditShort, selectedUser]); // Keep selectedUser in dependency array to re-run if selectedUser itself changes
+
   const [deleteUser] = useDeleteUserMutation();
+  const [updateUser] = useUpdateUserMutation();
 
   const handleDelete = async () => {
     try {
@@ -31,31 +46,41 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
     }
   };
 
-  const handleEdit = (user, refetchFn) => {
+  const handleEdit = (user) => {
     console.log("UserTable - handleEdit called with user:", user);
     setSelectedUser(user);
-    // If refetchFn is passed, it means it's coming from detail view (view-only mode)
-    setIsViewOnly(!!refetchFn);
-    setOpenEdit(true);
+    setOpenEditShort(true);
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedUsers = users?.slice(startIndex, endIndex) || [];
+  const handleSaveShortEdit = async (updatedUser) => {
+    try {
+      const adminId = localStorage.getItem('adminId');
+      if (!adminId) {
+        console.error('Admin ID not found in localStorage');
+        return;
+      }
+      await updateUser({ user_id: updatedUser.user_id, ...updatedUser, admin_user_id: adminId }).unwrap();
+      setOpenEditShort(false);
+      refetch();
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    }
+  };
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
       {/* Table */}
       <div className="flex-1 overflow-y-auto">
         <UserList
-          items={paginatedUsers}
-          onEdit={handleEdit} // Pass handleEdit function
+          items={users}
+          onEdit={handleEdit} // Pass handleEdit function for short modal
           onDelete={(id) => {
             setDeleteId(id);
             setOpenDelete(true);
           }}
           userDetails={userDetails}
           setUserDetails={setUserDetails}
+          onOpenFullEdit={onOpenFullEdit} // Pass onOpenFullEdit for proper modal
         />
       </div>
 
@@ -68,17 +93,16 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
         onConfirm={handleDelete}
       />
 
-      {/* Edit Modal */}
-      <EditUserModal
-        open={openEdit}
+      {/* Edit Short Modal */}
+      <EditUserShortModal
+        key={selectedUser ? selectedUser.id : 'new-user'} // Add key prop to force re-mount
+        open={openEditShort}
         onClose={() => {
-          setOpenEdit(false);
+          setOpenEditShort(false);
           setSelectedUser(null); // Clear selected user on close
-          setIsViewOnly(false); // Reset view-only mode
         }}
-        userId={selectedUser?.id} // Pass the selected user's ID
-        refetch={isViewOnly ? refetchUserDetails : refetch} // Pass appropriate refetch function
-        viewOnly={isViewOnly} // Pass view-only mode
+        user={selectedUser || {}}
+        onSave={handleSaveShortEdit}
       />
 
       {/* Success Modal */}
