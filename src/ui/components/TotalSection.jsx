@@ -6,7 +6,7 @@ const TotalSection = ({ label, count }) => {
             <h2 className='text-lg font-semibold text-black'>
               {label}
             </h2>
-            <span className='text-sm text-black'>{count}</span>
+            <span className='text-[20px] font-semibold text-black'>{count}</span>
           </div>
   );
 };

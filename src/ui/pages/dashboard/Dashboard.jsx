@@ -3,6 +3,7 @@ import ListBox from "./components/ListBox";
 import CardBox from "./components/CardBox";
 import GraphBox from "./components/GraphBox";
 import { useGetDashboardQuery } from "../../../core/services/api/dashboardApi";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Dashboard = () => {
   const adminId = localStorage.getItem("adminId");
@@ -12,7 +13,11 @@ const Dashboard = () => {
     refetch();
   }, []);
 
-  if (isLoading) return <div>Loading dashboard...</div>;
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-full">
+      <CircularProgress />
+    </div>
+  );
   if (error) return <div>Error loading dashboard: {error.message}</div>;
 
   const totals = data?.data?.totals || {};

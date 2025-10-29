@@ -5,7 +5,7 @@ export default function VaccineList({ items, onEdit, onDelete, onRowClick }) {
     <div className="w-full flex flex-col">
       {/* Header */}
       <div className="flex h-[50px] bg-[#245FFF] text-white font-semibold rounded-lg">
-        <div className="flex items-center justify-center w-[18%]">Vaccine</div>
+        <div className="flex items-center justify-start w-[18%] ml-6">Vaccine</div>
         <div className="flex items-center justify-center w-[14%]">Category</div>
         <div className="flex items-center justify-center w-[26%]">Age</div>
         <div className="flex items-center justify-center w-[14%]">Type</div>
