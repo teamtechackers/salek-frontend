@@ -176,7 +176,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 value={formData.name}
                 onChange={handleChange}
                 className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-              />
+             required
+             />
             </div>
 
             {/* Relation (for dependents) */}
@@ -189,6 +190,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.relation}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                required
                 />
               </div>
             )}
@@ -203,7 +205,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.dob}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                />
+              required
+              />
               </div>
 
               <div className="flex flex-col gap-1">
@@ -213,7 +216,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.gender}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                >
+              required
+              >
                   <option value="">Select Gender</option>
                   <option value="Female">Female</option>
                   <option value="Male">Male</option>
@@ -230,7 +234,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.country}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                >
+               required
+               >
                   <option value="">Select Country</option>
                   <option value="India">India</option>
                   <option value="Pakistan">Pakistan</option>
@@ -246,7 +251,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                     value={formData.address}
                     onChange={handleChange}
                     className="flex-1 outline-none bg-transparent"
-                  />
+                 required
+                 />
                   <span className="text-gray-500 cursor-pointer">✏️</span>
                 </div>
               </div>
@@ -261,7 +267,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-              />
+            required
+            />
             </div>
 
             {/* Marital & Children */}
@@ -273,7 +280,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.maritalStatus}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                >
+               required
+               >
                   <option value="">Select Status</option>
                   <option value="Married">Married</option>
                   <option value="Single">Single</option>
@@ -289,7 +297,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                     value={formData.children}
                     onChange={handleChange}
                     className="flex-1 outline-none bg-transparent"
-                  />
+                 />
                   <span className="text-gray-500 cursor-pointer">✏️</span>
                 </div>
               </div>
@@ -304,7 +312,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.pregnancy}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                >
+               >
                   <option value="">Select</option>
                   <option value="Yes">Yes</option>
                   <option value="No">No</option>
@@ -318,7 +326,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.trimester}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                >
+               >
                   <option value="">Select Trimester</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -344,7 +352,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
               <button
                 type="button"
                 onClick={onClose}
-                className="w-1/2 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition"
+                className="w-1/2 bg-[#444951] text-white py-2 rounded-lg hover:bg-gray-400 transition"
               >
                 Cancel
               </button>

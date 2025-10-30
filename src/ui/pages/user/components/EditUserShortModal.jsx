@@ -111,7 +111,7 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
 
             <button
               onClick={onClose}
-              className="flex-1 rounded-full bg-slate-700 px-4 py-3 text-sm font-semibold text-white shadow"
+              className="flex-1 rounded-full bg-[#444951] px-4 py-3 text-sm font-semibold text-white shadow"
             >
               Cancel
             </button>

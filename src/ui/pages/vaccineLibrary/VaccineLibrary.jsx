@@ -44,7 +44,13 @@ const VaccineLibrary = () => {
     );
   });
 
-  const vaccinesData = filteredVaccinesBySearch; // Use client-side filtered data
+  // Client-side filtering for category
+  const filteredVaccinesByCategory = filteredVaccinesBySearch.filter((vaccine) => {
+    if (!category || category === "") return true; // If no category selected, return all vaccines
+    return String(vaccine.category).toLowerCase() === String(category).toLowerCase();
+  });
+
+  const vaccinesData = filteredVaccinesByCategory; // Use client-side filtered data
   const totalItems = data?.data?.pagination?.total || 0; // Total from API, not filtered count
   const totalPages = data?.data?.pagination?.pages || 1;
 

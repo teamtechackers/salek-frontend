@@ -28,8 +28,7 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick }) => {
               displayVaccines.map((v, i) => (
                 <tr
                   key={i}
-                  className={`flex h-[50px] text-black font-semibold w-full transition ${isClickable ? "cursor-pointer" : ""}`}
-                  onClick={isClickable && onRowClick ? () => onRowClick(v) : undefined}
+                  className={`flex h-[50px] text-black font-semibold w-full transition`}
                 >
                   <td className="flex items-center justify-center rounded-l-lg w-[25%]">{v.vaccine_name}</td>
                   <td className="flex items-center justify-center w-[10%]">{v.dose_number}</td>
@@ -37,6 +36,13 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick }) => {
                   <td className="flex items-center justify-center w-[10%]">{v.status}</td>
                   <td className="flex items-center justify-center w-[25%]">{v.days_remaining}</td>
                   <td className="flex items-center justify-center w-[10%] rounded-r-lg">
+               {isClickable && (
+ <button className="text-blue-600 hover:text-blue-800 text-lg mr-4 cursor-pointer">
+                      <img src={ICONS.reminder} alt="Reminder"                   onClick={isClickable && onRowClick ? () => onRowClick(v) : undefined}
+ />
+                    </button>
+               )}
+                  
                     <button className="text-blue-600 hover:text-blue-800 text-lg">
                       <img src={ICONS.delete} alt="Delete" />
                     </button>

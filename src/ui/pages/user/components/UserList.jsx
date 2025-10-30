@@ -155,6 +155,16 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
     );
   }
 
+  const loggedVaccinesCount = (fullUserDetails?.vaccines?.completed?.length || 0) +
+                              (fullUserDetails?.vaccines?.upcoming?.length || 0) +
+                              (fullUserDetails?.vaccines?.dueSoon?.length || 0) +
+                              (fullUserDetails?.vaccines?.overdue?.length || 0);
+
+  const loggedVaccinesCountDependent = (fullDependentDetails?.vaccines?.completed?.length || 0) +
+                                       (fullDependentDetails?.vaccines?.upcoming?.length || 0) +
+                                       (fullDependentDetails?.vaccines?.dueSoon?.length || 0) +
+                                       (fullDependentDetails?.vaccines?.overdue?.length || 0);
+
   return (
     <div className="w-full h-full">
       {/* User List View */}
@@ -350,7 +360,9 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
               <div>
                 <div className="flex justify-between items-center ">
                    <h2 className="text-lg font-semibold text-black mb-3">Logged Vaccines:</h2>
-                <h2 className="text-lg font-medium text-black mb-3">{20}</h2>
+                <h2 className="text-lg font-medium text-black mb-3">
+                  {dependentDetails ? loggedVaccinesCountDependent : loggedVaccinesCount}
+                </h2>
                   </div>
 
                 <div className="flex flex-wrap gap-2 mb-5">

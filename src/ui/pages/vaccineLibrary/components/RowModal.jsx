@@ -54,10 +54,10 @@ export default function RowModal({ open, onClose, data }) {
               <div className="font-medium text-gray-800 text-right">{formatMonths(data.age_range?.max_age_months)}</div>
 
               <div className="text-gray-500">Total Doses:</div>
-              <div className="font-medium text-gray-800 text-right">{data.details?.total_doses ?? "N/A"}</div>
+              <div className="font-medium text-gray-800 text-right">{data.doses?.total_doses ?? "N/A"}</div>
 
               <div className="text-gray-500">Frequency:</div>
-              <div className="font-medium text-gray-800 text-right">{data.details?.frequency || "N/A"}</div>
+              <div className="font-medium text-gray-800 text-right">{data.doses?.frequency || "N/A"}</div>
 
               <div className="text-gray-500">When to Give:</div>
               <div className="font-medium text-gray-800 text-right">{data.details?.when_to_give || "N/A"}</div>
