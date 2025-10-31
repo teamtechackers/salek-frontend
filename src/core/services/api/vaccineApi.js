@@ -3,10 +3,14 @@ import { apiSlice } from './apiSlice';
 export const vaccineApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getVaccines: builder.query({
-      query: (params) => ({
-        url: '/admin/vaccines',
-        params,
-      }),
+      query: ({ page = 0, limit = 8 } = {}) => {
+        const adminId = localStorage.getItem('adminId');
+        let url = `/admin/vaccines?page=${page}&limit=${limit}`;
+        if (adminId) {
+          url += `&admin_user_id=${adminId}`;
+        }
+        return url;
+      },
     }),
     addVaccine: builder.mutation({
       query: (vaccine) => ({
@@ -38,6 +42,26 @@ export const vaccineApi = apiSlice.injectEndpoints({
     getRemindersByUserId: builder.query({
       query: (userId) => `/vaccines/get-reminders-by-user/${userId}`,
     }),
+    deleteDependentUserVaccine: builder.mutation({
+      query: ({ admin_user_id, user_vaccine_id }) => ({
+        url: '/admin/dependent-user-vaccine-delete',
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ admin_user_id, user_vaccine_id }),
+      }),
+    }),
+    deleteUserVaccine: builder.mutation({
+      query: ({ admin_user_id, user_vaccine_id }) => ({
+        url: '/admin/user-vaccine-delete',
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ admin_user_id, user_vaccine_id }),
+      }),
+    }),
   }),
 });
 
@@ -48,4 +72,6 @@ export const {
   useDeleteVaccineMutation,
   useGetRemindersQuery,
   useGetRemindersByUserIdQuery,
+  useDeleteDependentUserVaccineMutation,
+  useDeleteUserVaccineMutation,
 } = vaccineApi;

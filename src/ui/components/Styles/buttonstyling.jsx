@@ -10,7 +10,7 @@ import { COLORS } from "../../theme/colors/colors";
 export const BUTTON_COLORS = {
   delete: "bg-red-500 hover:bg-red-600",
   edit: "bg-green-500 hover:bg-green-600",
-  cancel: "bg-gray-400 hover:bg-gray-500"
+  cancel: "bg-[#444951]"
 };
 
 export const STYLES = {

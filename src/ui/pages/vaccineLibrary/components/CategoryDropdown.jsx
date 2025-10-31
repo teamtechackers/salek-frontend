@@ -11,21 +11,19 @@ export default function CategoryDropdown({ selectedCategory, onCategoryChange })
   ];
 
   return (
-    <div className="p-4">
       <select
-        className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"
+      className="rounded-lg py-2 px-2 bg-white shadow-sm border border-gray-100"
         value={selectedCategory}
         onChange={(e) => onCategoryChange(e.target.value)}
       >
         <option value="">Select a category</option>
         {categories.map((category, index) => (
-          <option key={index} value={category.toLowerCase()}>
+          <option key={index} value={category}>
             {category}
           </option>
         ))}
       </select>
 
      
-    </div>
   );
 }

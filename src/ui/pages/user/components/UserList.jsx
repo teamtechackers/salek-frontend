@@ -12,7 +12,8 @@ import NotificationsTab from "./NotificationsTab"; // Import the new Notificatio
 import RemindersTab from "./RemindersTab"; // Import the new RemindersTab component
 import CircularProgress from "@mui/material/CircularProgress";
 
-const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
+const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpenFullEdit }) => {
+  console.log("UserList.jsx - onOpenFullEdit received:", onOpenFullEdit);
   const [dependentDetails, setDependentDetails] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedDependentId, setSelectedDependentId] = useState(null);
@@ -154,6 +155,16 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
     );
   }
 
+  const loggedVaccinesCount = (fullUserDetails?.vaccines?.completed?.length || 0) +
+                              (fullUserDetails?.vaccines?.upcoming?.length || 0) +
+                              (fullUserDetails?.vaccines?.dueSoon?.length || 0) +
+                              (fullUserDetails?.vaccines?.overdue?.length || 0);
+
+  const loggedVaccinesCountDependent = (fullDependentDetails?.vaccines?.completed?.length || 0) +
+                                       (fullDependentDetails?.vaccines?.upcoming?.length || 0) +
+                                       (fullDependentDetails?.vaccines?.dueSoon?.length || 0) +
+                                       (fullDependentDetails?.vaccines?.overdue?.length || 0);
+
   return (
     <div className="w-full h-full">
       {/* User List View */}
@@ -210,7 +221,10 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onEdit(fullUserDetails.user, refetchUserDetailsQuery)}>
+                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => {
+                      console.log("UserList.jsx - Edit User button clicked. Calling onOpenFullEdit with:", fullUserDetails.user);
+                      onOpenFullEdit(fullUserDetails.user, false, selectedUserId); // Pass selectedUserId for user edit
+                    }}>
                       <img src={ICONS.edituser} alt="Edit" />
                     </button>
                     <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onDelete(fullUserDetails.user.id)}>
@@ -272,7 +286,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
 
           {/* Dependent Detail View */}
           {dependentDetails && fullDependentDetails && ( // Use fullDependentDetails here
-            <div className="flex flex-col gap-6 mt-4">
+            <div className="flex flex-col gap-6 ">
               <button onClick={handleBackToUserDetails} className="self-start px-4 py-2 bg-[#EDF5FF] rounded-md cursor-pointer">
                 Back to User Details
               </button>
@@ -288,7 +302,10 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onEdit(fullDependentDetails.dependent, refetchDependentDetails)}>
+                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => {
+                      console.log("UserList.jsx - Edit Dependent button clicked. Calling onOpenFullEdit with:", fullDependentDetails.dependent);
+                      onOpenFullEdit(fullDependentDetails.dependent, true, selectedUserId); // Pass selectedUserId for dependent edit
+                    }}>
                       <img src={ICONS.edituser} alt="Edit" />
                     </button>
                     <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => handleDeleteDependent(fullDependentDetails.dependent.id)}>
@@ -343,7 +360,9 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
               <div>
                 <div className="flex justify-between items-center ">
                    <h2 className="text-lg font-semibold text-black mb-3">Logged Vaccines:</h2>
-                <h2 className="text-lg font-medium text-black mb-3">{20}</h2>
+                <h2 className="text-lg font-medium text-black mb-3">
+                  {dependentDetails ? loggedVaccinesCountDependent : loggedVaccinesCount}
+                </h2>
                   </div>
 
                 <div className="flex flex-wrap gap-2 mb-5">
@@ -361,10 +380,10 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete }) => {
                     </button>
                   ))}
                 </div>
-                {activeTab === "Completed" && <VaccineTableDisplay tab="Completed" vaccines={dependentDetails ? fullDependentDetails.vaccines.completed : fullUserDetails.vaccines.completed} onRowClick={handleVaccineRowClick} />}
-                {activeTab === "Upcoming" && <VaccineTableDisplay tab="Upcoming" vaccines={dependentDetails ? fullDependentDetails.vaccines.upcoming : fullUserDetails.vaccines.upcoming} onRowClick={handleVaccineRowClick} />}
-                {activeTab === "Due Soon" && <VaccineTableDisplay tab="Due Soon" vaccines={dependentDetails ? fullDependentDetails.vaccines.dueSoon : fullUserDetails.vaccines.dueSoon} onRowClick={handleVaccineRowClick} />}
-                {activeTab === "Overdue" && <VaccineTableDisplay tab="Overdue" vaccines={dependentDetails ? fullDependentDetails.vaccines.overdue : fullUserDetails.vaccines.overdue} onRowClick={handleVaccineRowClick} />}
+                {activeTab === "Completed" && <VaccineTableDisplay tab="Completed" vaccines={dependentDetails ? fullDependentDetails.vaccines.completed : fullUserDetails.vaccines.completed} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
+                {activeTab === "Upcoming" && <VaccineTableDisplay tab="Upcoming" vaccines={dependentDetails ? fullDependentDetails.vaccines.upcoming : fullUserDetails.vaccines.upcoming} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
+                {activeTab === "Due Soon" && <VaccineTableDisplay tab="Due Soon" vaccines={dependentDetails ? fullDependentDetails.vaccines.dueSoon : fullUserDetails.vaccines.dueSoon} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
+                {activeTab === "Overdue" && <VaccineTableDisplay tab="Overdue" vaccines={dependentDetails ? fullDependentDetails.vaccines.overdue : fullUserDetails.vaccines.overdue} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
               </div>
             )}
 

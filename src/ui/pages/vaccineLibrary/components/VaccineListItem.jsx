@@ -15,7 +15,7 @@ useEffect(()=>{
 
   return (
     <div
-      className="flex items-center min-h-[70px] bg-white border border-blue-300 rounded-2xl shadow-sm hover:bg-blue-100 transition mt-2 cursor-pointer"
+      className="flex items-center min-h-[60px] bg-white border border-blue-300 rounded-2xl shadow-sm hover:bg-blue-100 transition mt-2 cursor-pointer"
       onClick={() => onRowClick(item)} 
     >
       <div className="flex justify-start items-center w-[18%] ml-6">{item.name || "N/A"}</div>

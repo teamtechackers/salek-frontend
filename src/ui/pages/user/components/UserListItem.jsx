@@ -18,7 +18,7 @@ const UserListItem = ({ item, handleFunction, onEdit, onDelete }) => {
 
   return (
     <div
-      className="flex items-center min-h-[70px] bg-white border border-blue-300 rounded-2xl shadow-sm hover:bg-blue-100 transition cursor-pointer mt-2"
+      className="flex items-center min-h-[60px] bg-white border border-blue-300 rounded-2xl shadow-sm hover:bg-blue-100 transition cursor-pointer mt-2"
       onClick={handleFunction}
     >
       <div className="flex justify-center items-center w-[14%]">

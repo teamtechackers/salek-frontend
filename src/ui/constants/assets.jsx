@@ -10,7 +10,6 @@ export const IMAGES = {
     topbarTempUserImage: topbarTempUserImg,
   }
 
-// Import the most commonly used icons
 import brandLogoIcon from "../../assets/icons/logintitle.svg?url";
 import dashboardIconWhite from "../../assets/icons/sidebarDashboardIconWhite.svg?url";
 import dashboardIconBlue from "../../assets/icons/sidebarDashboardIconBlue.svg?url";
@@ -29,6 +28,8 @@ import cardVaccineIcon from "../../assets/icons/cardVaccineIcon.svg?url";
 import editIcon from "../../assets/icons/edit.svg?url";
 import deleteIcon from "../../assets/icons/delete.svg?url";
 import edituserIcon from "../../assets/icons/edituser.svg?url";
+import remindericon from "../../assets/icons/reminder.png?url";
+
 
 export const ICONS = {
   brandLogo: brandLogoIcon,
@@ -49,6 +50,7 @@ export const ICONS = {
   edit: editIcon,
   delete: deleteIcon,
   edituser: edituserIcon,
+  reminder: remindericon,
 }
 
 import appLogoWhite from "../../assets/icons/appLogoWhite.svg?url";
