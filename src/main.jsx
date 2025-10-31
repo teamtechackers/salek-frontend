@@ -11,6 +11,8 @@ import User from "./ui/pages/user/User";
 import VaccineLibrary from "./ui/pages/vaccineLibrary/VaccineLibrary";
 import Notifications from "./ui/pages/notifications/Notifications";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme();
 
@@ -32,6 +34,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="notifications" element={<Notifications />} />
             </Route>
           </Routes>
+          <ToastContainer />
         </ThemeProvider>
       </BrowserRouter>
     </Provider>

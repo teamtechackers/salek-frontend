@@ -1,11 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import { ICONS } from "../../../constants/assets";
+import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
+import {
+  useDeleteDependentUserVaccineMutation,
+  useDeleteUserVaccineMutation,
+} from "../../../../core/services/api/vaccineApi";
+import { toast } from "react-toastify"; // Assuming toast for notifications
 
-const VaccineTableDisplay = ({ tab, vaccines, onRowClick }) => {
+const VaccineTableDisplay = ({ tab, vaccines, onRowClick, userId, isDependent, refetchUserVaccines, refetchDependentVaccines }) => {
   const displayVaccines = vaccines || [];
   const title = `${tab} Vaccines`;
 
   const isClickable = tab !== "Completed";
+
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedVaccineToDelete, setSelectedVaccineToDelete] = useState(null);
+
+  const [deleteDependentUserVaccine] = useDeleteDependentUserVaccineMutation();
+  const [deleteUserVaccine] = useDeleteUserVaccineMutation();
+
+  const adminId = localStorage.getItem('adminId');
+
+  const handleDeleteClick = (vaccine) => {
+    setSelectedVaccineToDelete(vaccine);
+    setOpenDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedVaccineToDelete || !adminId) {
+      toast.error("Missing information for deletion.");
+      return;
+    }
+
+    try {
+      const payload = {
+        admin_user_id: adminId,
+        user_vaccine_id: selectedVaccineToDelete.user_vaccine_id,
+      };
+
+      if (isDependent) {
+        await deleteDependentUserVaccine(payload).unwrap();
+        toast.success("Dependent vaccine deleted successfully!");
+        if (refetchDependentVaccines) refetchDependentVaccines();
+      } else {
+        await deleteUserVaccine(payload).unwrap();
+        toast.success("User vaccine deleted successfully!");
+        if (refetchUserVaccines) refetchUserVaccines();
+      }
+      setOpenDeleteModal(false);
+      setSelectedVaccineToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete vaccine:", error);
+      toast.error("Failed to delete vaccine.");
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedVaccineToDelete(null);
+  };
 
   return (
     <>
@@ -36,14 +89,15 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick }) => {
                   <td className="flex items-center justify-center w-[10%]">{v.status}</td>
                   <td className="flex items-center justify-center w-[25%]">{v.days_remaining}</td>
                   <td className="flex items-center justify-center w-[10%] rounded-r-lg">
-               {isClickable && (
- <button className="text-blue-600 hover:text-blue-800 text-lg mr-4 cursor-pointer">
-                      <img src={ICONS.reminder} alt="Reminder"                   onClick={isClickable && onRowClick ? () => onRowClick(v) : undefined}
- />
-                    </button>
-               )}
-                  
-                    <button className="text-blue-600 hover:text-blue-800 text-lg">
+                    {isClickable && (
+                      <button className="text-blue-600 hover:text-blue-800 text-lg mr-4 cursor-pointer">
+                        <img src={ICONS.reminder} alt="Reminder" onClick={isClickable && onRowClick ? () => onRowClick(v) : undefined} />
+                      </button>
+                    )}
+                    <button
+                      className="text-blue-600 hover:text-blue-800 text-lg"
+                      onClick={() => handleDeleteClick(v)}
+                    >
                       <img src={ICONS.delete} alt="Delete" />
                     </button>
                   </td>
@@ -57,8 +111,16 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick }) => {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDeleteModal
+        open={openDeleteModal}
+        title="Confirm Vaccine Deletion"
+        description="Are you sure you want to delete this vaccine? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onClose={handleCloseDeleteModal}
+      />
     </>
   );
 };
 
-export default VaccineTableDisplay
+export default VaccineTableDisplay;

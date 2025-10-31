@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 export default function EditUserShortModal({ open, onClose, user = {}, onSave }) {
   const [form, setForm] = useState({
     user_id: user.id || null,
-    name: user.username || "",
+    full_name: user.username || "",
     login: user.phoneNo || "",
     dob: user.DOB ? new Date(user.DOB).toISOString().split('T')[0] : "",
   });
@@ -12,7 +12,7 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
     if (user) {
       setForm({
         user_id: user.id || null,
-        name: user.username || "",
+        full_name: user.username || "",
         login: user.phoneNo || "",
         dob: user.DOB ? new Date(user.DOB).toISOString().split('T')[0] : "",
       });
@@ -56,15 +56,15 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
             </div>
           </div>
 
-          <p className="mt-3 text-center text-sm font-medium">{form.name}</p>
+          <p className="mt-3 text-center text-sm font-medium">{form.full_name}</p>
 
           {/* Form */}
           <div className="mt-5 space-y-4">
             <div>
               <label className="mb-2 block text-xs font-medium text-gray-600">User</label>
               <input
-                value={form.name}
-                onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                value={form.full_name}
+                onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
             </div>

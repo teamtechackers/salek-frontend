@@ -380,10 +380,10 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
                     </button>
                   ))}
                 </div>
-                {activeTab === "Completed" && <VaccineTableDisplay tab="Completed" vaccines={dependentDetails ? fullDependentDetails.vaccines.completed : fullUserDetails.vaccines.completed} onRowClick={handleVaccineRowClick} />}
-                {activeTab === "Upcoming" && <VaccineTableDisplay tab="Upcoming" vaccines={dependentDetails ? fullDependentDetails.vaccines.upcoming : fullUserDetails.vaccines.upcoming} onRowClick={handleVaccineRowClick} />}
-                {activeTab === "Due Soon" && <VaccineTableDisplay tab="Due Soon" vaccines={dependentDetails ? fullDependentDetails.vaccines.dueSoon : fullUserDetails.vaccines.dueSoon} onRowClick={handleVaccineRowClick} />}
-                {activeTab === "Overdue" && <VaccineTableDisplay tab="Overdue" vaccines={dependentDetails ? fullDependentDetails.vaccines.overdue : fullUserDetails.vaccines.overdue} onRowClick={handleVaccineRowClick} />}
+                {activeTab === "Completed" && <VaccineTableDisplay tab="Completed" vaccines={dependentDetails ? fullDependentDetails.vaccines.completed : fullUserDetails.vaccines.completed} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
+                {activeTab === "Upcoming" && <VaccineTableDisplay tab="Upcoming" vaccines={dependentDetails ? fullDependentDetails.vaccines.upcoming : fullUserDetails.vaccines.upcoming} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
+                {activeTab === "Due Soon" && <VaccineTableDisplay tab="Due Soon" vaccines={dependentDetails ? fullDependentDetails.vaccines.dueSoon : fullUserDetails.vaccines.dueSoon} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
+                {activeTab === "Overdue" && <VaccineTableDisplay tab="Overdue" vaccines={dependentDetails ? fullDependentDetails.vaccines.overdue : fullUserDetails.vaccines.overdue} onRowClick={handleVaccineRowClick} userId={selectedUserId} isDependent={dependentDetails} refetchUserVaccines={refetchUserDetailsQuery} refetchDependentVaccines={refetchDependentDetails} />}
               </div>
             )}
 

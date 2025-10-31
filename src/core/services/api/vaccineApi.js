@@ -42,6 +42,26 @@ export const vaccineApi = apiSlice.injectEndpoints({
     getRemindersByUserId: builder.query({
       query: (userId) => `/vaccines/get-reminders-by-user/${userId}`,
     }),
+    deleteDependentUserVaccine: builder.mutation({
+      query: ({ admin_user_id, user_vaccine_id }) => ({
+        url: '/admin/dependent-user-vaccine-delete',
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ admin_user_id, user_vaccine_id }),
+      }),
+    }),
+    deleteUserVaccine: builder.mutation({
+      query: ({ admin_user_id, user_vaccine_id }) => ({
+        url: '/admin/user-vaccine-delete',
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ admin_user_id, user_vaccine_id }),
+      }),
+    }),
   }),
 });
 
@@ -52,4 +72,6 @@ export const {
   useDeleteVaccineMutation,
   useGetRemindersQuery,
   useGetRemindersByUserIdQuery,
+  useDeleteDependentUserVaccineMutation,
+  useDeleteUserVaccineMutation,
 } = vaccineApi;
