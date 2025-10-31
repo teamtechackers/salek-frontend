@@ -28,7 +28,7 @@ import cardVaccineIcon from "../../assets/icons/cardVaccineIcon.svg?url";
 import editIcon from "../../assets/icons/edit.svg?url";
 import deleteIcon from "../../assets/icons/delete.svg?url";
 import edituserIcon from "../../assets/icons/edituser.svg?url";
-import remindericon from "../../assets/icons/reminder.png?url";
+import remindericon from "../../assets/icons/reminder.svg?url";
 
 
 export const ICONS = {

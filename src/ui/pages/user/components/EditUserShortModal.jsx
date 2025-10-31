@@ -61,7 +61,7 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
           {/* Form */}
           <div className="mt-5 space-y-4">
             <div>
-              <label className="mb-2 block text-xs font-medium text-gray-600">User</label>
+              <label className="mb-2 block text-xs font-medium text-gray-600">Name</label>
               <input
                 value={form.full_name}
                 onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))}
@@ -70,23 +70,25 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-medium text-gray-600">Log In</label>
+              <label className="mb-2 block text-xs font-medium text-gray-600">Phone Number/Email</label>
               <input
                 value={form.login}
                 onChange={(e) => setForm((p) => ({ ...p, login: e.target.value }))}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-              />
+            disabled
+            />
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-medium text-gray-600">DOB</label>
+              <label className="mb-2 block text-xs font-medium text-gray-600">Date of Birth</label>
               <div className="relative">
                 <input
                   type="date"
                   value={form.dob}
                   onChange={(e) => setForm((p) => ({ ...p, dob: e.target.value }))}
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 pr-10 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                />
+               disabled
+               />
 
                 <div className="absolute inset-y-0 right-3 grid place-items-center">
                   <svg className="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -104,7 +106,7 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
               onClick={() => {
                 onSave?.(form);
               }}
-              className="flex-1 rounded-full bg-green-500 px-4 py-3 text-sm font-semibold text-white shadow"
+              className="flex-1 rounded-full bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow"
             >
               Save Changes
             </button>
