@@ -205,7 +205,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.dob}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-              required
+              disabled
               />
               </div>
 
@@ -267,7 +267,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                required={!isDependent}           
+                required={!isDependent} 
+                disabled={!isDependent}          
                  />
             </div>
 

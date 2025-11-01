@@ -95,7 +95,7 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick, userId, isDependent, r
                       </button>
                     )}
                     <button
-                      className="text-blue-600 hover:text-blue-800 text-lg"
+                      className="text-blue-600 hover:text-blue-800 text-lg cursor-pointer"
                       onClick={() => handleDeleteClick(v)}
                     >
                       <img src={ICONS.delete} alt="Delete" />
