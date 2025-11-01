@@ -66,7 +66,8 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
                 value={form.full_name}
                 onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-              />
+             required
+             />
             </div>
 
             <div>

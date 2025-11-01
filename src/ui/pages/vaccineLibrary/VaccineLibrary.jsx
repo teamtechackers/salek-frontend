@@ -56,7 +56,7 @@ const VaccineLibrary = () => {
 
   useEffect(() => {
     setCurrentPage(1); // Reset page when filters change
-  }, [search, category, pageSize]);
+  }, [category, pageSize]);
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
