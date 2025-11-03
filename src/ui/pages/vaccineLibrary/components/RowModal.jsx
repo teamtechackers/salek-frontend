@@ -18,7 +18,7 @@ export default function RowModal({ open, onClose, data }) {
           <button
             onClick={onClose}
             aria-label="close"
-            className="absolute right-4 top-4 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md text-blue-600"
+            className="absolute right-4 top-4 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md text-blue-600 p-1"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 8.586L15.293 3.293a1 1 0 111.414 1.414L11.414 10l5.293 5.293a1 1 0 01-1.414 1.414L10 11.414l-5.293 5.293a1 1 0 01-1.414-1.414L8.586 10 3.293 4.707A1 1 0 014.707 3.293L10 8.586z" clipRule="evenodd" />

@@ -10,6 +10,7 @@ import UserTable from "./components/UserTable";
 import { useGetUsersQuery } from "../../../core/services/api/userApi";
 import CircularProgress from "@mui/material/CircularProgress";
 import EditUserModal from "./components/EditUserModal"; // Import the proper edit modal
+import TextField from "@mui/material/TextField";
 
 const User = () => {
   const navigate = useNavigate(); // Add navigate hook
@@ -155,12 +156,19 @@ const User = () => {
                
                 <div className="w-1/2 flex items-center justify-end gap-3">
                   {/* Search type dropdown removed as per request */}
-                  <input
+                  <TextField
                     type="date"
-                    className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"
+                    variant="outlined"
+                    size="small"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    placeholder="Select Date of Birth"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '10px',
+                        backgroundColor: 'white',
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                      },
+                    }}
                   />
                 </div>
               </div>

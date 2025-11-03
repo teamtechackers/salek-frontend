@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Select, MenuItem, FormControl } from "@mui/material";
 
 const GraphBox = ({ graphData }) => {
   const processedGraphData = graphData.map(item => ({
@@ -19,11 +20,29 @@ const GraphBox = ({ graphData }) => {
           </p>
         </div>
 
-        <select className="bg-white rounded-md text-sm p-2">
-          <option>Month</option>
-          <option>Week</option>
-          <option>Year</option>
-        </select>
+        <FormControl size="small">
+          <Select
+            defaultValue="Month"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '10px !important',
+                backgroundColor: 'white',
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderRadius: '10px !important',
+              },
+              '& .MuiSelect-select': {
+                padding: '8px 12px',
+                fontSize: '0.875rem',
+              },
+            }}
+            displayEmpty
+          >
+            <MenuItem value="Month">Month</MenuItem>
+            <MenuItem value="Week">Week</MenuItem>
+            <MenuItem value="Year">Year</MenuItem>
+          </Select>
+        </FormControl>
       </div>
 
       <div className="flex justify-end gap-4 mb-2 pr-2">

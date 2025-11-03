@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Select, MenuItem, FormControl } from "@mui/material";
 
 export default function PaginationDropdown({ onChange }) {
   const [pageSize, setPageSize] = useState("All");
@@ -13,17 +14,30 @@ export default function PaginationDropdown({ onChange }) {
 
   return (
     <div>
-      <select
-        className="rounded-lg py-2 p-3 bg-white shadow-sm border border-gray-100"
-        value={pageSize}
-        onChange={handleChange}
-      >
-        {options.map((opt, index) => (
-          <option key={index} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
+      <FormControl size="small" fullWidth>
+        <Select
+          value={pageSize}
+          onChange={handleChange}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px !important',
+              backgroundColor: 'white',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+              borderColor: 'rgba(0, 0, 0, 0.1)',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '10px !important',
+              borderColor: 'rgba(0, 0, 0, 0.1) !important',
+            },
+          }}
+        >
+          {options.map((opt, index) => (
+            <MenuItem key={index} value={opt}>
+              {opt}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </div>
   );
 }

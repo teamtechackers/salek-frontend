@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Select, MenuItem, FormControl } from "@mui/material";
 
 export default function CategoryDropdown({ selectedCategory, onCategoryChange }) {
   const categories = [
@@ -11,19 +12,34 @@ export default function CategoryDropdown({ selectedCategory, onCategoryChange })
   ];
 
   return (
-      <select
-      className="rounded-lg py-2 px-2 bg-white shadow-sm border border-gray-100"
+    <FormControl size="small" sx={{ width: '175px' }}> {/* Set fixed width */}
+      <Select
         value={selectedCategory}
         onChange={(e) => onCategoryChange(e.target.value)}
+        displayEmpty
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '10px !important',
+            backgroundColor: 'white',
+            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+            borderColor: 'rgba(0, 0, 0, 0.1)',
+            width: '120px !important', // Fixed width
+          },
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderRadius: '10px !important',
+            borderColor: 'rgba(0, 0, 0, 0.1) !important',
+          },
+        }}
       >
-        <option value="">Select a category</option>
+        <MenuItem value="">
+          <em>Select a category</em>
+        </MenuItem>
         {categories.map((category, index) => (
-          <option key={index} value={category}>
+          <MenuItem key={index} value={category}>
             {category}
-          </option>
+          </MenuItem>
         ))}
-      </select>
-
-     
+      </Select>
+    </FormControl>
   );
 }
