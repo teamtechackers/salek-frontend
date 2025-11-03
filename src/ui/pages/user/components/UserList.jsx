@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; // Add useLocation hook
 import { ICONS } from "../../../constants/assets";
 import VaccineTableDisplay from "./VaccineTable";
 import UserListItem from "./UserListItem";
@@ -14,6 +15,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpenFullEdit }) => {
   console.log("UserList.jsx - onOpenFullEdit received:", onOpenFullEdit);
+  const location = useLocation(); // Add location hook
   const [dependentDetails, setDependentDetails] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedDependentId, setSelectedDependentId] = useState(null);
@@ -60,6 +62,20 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
   console.log("UserList - loadingDependentDetails:", loadingDependentDetails);
   console.log("UserList - fullDependentDetails:", fullDependentDetails);
 
+  // Effect to handle route-based refresh
+  useEffect(() => {
+    // Check if there's a refresh flag in location state
+    if (location.state && location.state.refresh) {
+      if (selectedUserId) {
+        refetchUserDetailsQuery();
+      }
+      if (selectedDependentId && selectedUserId) {
+        refetchDependentDetails();
+      }
+      // Clear the refresh flag by replacing state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location, selectedUserId, selectedDependentId, refetchUserDetailsQuery, refetchDependentDetails]);
 
   useEffect(() => {
     if (selectedUserId) {
@@ -74,6 +90,20 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
       refetchDependentDetails();
     }
   }, [selectedDependentId, selectedUserId, refetchDependentDetails]);
+
+  // Expose refetch functions to parent component through a callback
+  useEffect(() => {
+    // This is a simple way to expose refetch functions to parent
+    // In a real app, you might want to use a more sophisticated approach
+    window.userListRefetchUserDetails = refetchUserDetailsQuery;
+    window.userListRefetchDependentDetails = refetchDependentDetails;
+    
+    // Cleanup on unmount
+    return () => {
+      delete window.userListRefetchUserDetails;
+      delete window.userListRefetchDependentDetails;
+    };
+  }, [refetchUserDetailsQuery, refetchDependentDetails]);
 
   const handleUserDetails = (user) => {
     setSelectedUserId(user.id);

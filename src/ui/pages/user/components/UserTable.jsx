@@ -4,8 +4,9 @@ import UserList from "./UserList";
 import EditUserShortModal from "./EditUserShortModal";
 import { useUpdateUserMutation, useDeleteUserMutation } from "../../../../core/services/api/userApi";
 import ConfirmationModal from "../../../components/ConfirmationModal";
+import CircularProgress from "@mui/material/CircularProgress";
 
-export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onOpenFullEdit }) {
+export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onRefetchUserDetails, onOpenFullEdit }) {
   console.log("UserTable.jsx - onOpenFullEdit received:", onOpenFullEdit);
   const [openDelete, setOpenDelete] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -14,6 +15,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
   const [selectedUser, setSelectedUser] = useState(null); // State to hold the user being edited
   const [deleteId, setDeleteId] = useState(null);
   const [isViewOnly, setIsViewOnly] = useState(false); // State to track if modal is in view-only mode
+  const [isSaving, setIsSaving] = useState(false); // State for saving indicator
 
   useEffect(() => {
     if (openEditShort && selectedUser) {
@@ -53,17 +55,40 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
   };
 
   const handleSaveShortEdit = async (updatedUser) => {
+    setIsSaving(true); // Set saving state
     try {
       const adminId = localStorage.getItem('adminId');
       if (!adminId) {
         console.error('Admin ID not found in localStorage');
+        setIsSaving(false);
         return;
       }
       await updateUser({ user_id: updatedUser.user_id, ...updatedUser, admin_user_id: adminId }).unwrap();
-      setOpenEditShort(false);
-      refetch();
+      
+      // Call refetch to update the UI
+      // Only call refetch functions if they exist to avoid the error
+      setTimeout(() => {
+        try {
+          if (window.userListRefetchUserDetails) {
+            window.userListRefetchUserDetails();
+          }
+        } catch (e) {
+          console.warn("Could not refetch user details:", e);
+        }
+        
+        try {
+          refetch();
+        } catch (e) {
+          console.warn("Could not refetch main list:", e);
+        }
+        
+        // Close modal only after data is updated
+        setOpenEditShort(false);
+        setIsSaving(false); // Reset saving state
+      }, 150); // Slightly longer delay to ensure data is updated
     } catch (error) {
       console.error('Failed to update user:', error);
+      setIsSaving(false); // Reset saving state on error
     }
   };
 
@@ -103,6 +128,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
         }}
         user={selectedUser || {}}
         onSave={handleSaveShortEdit}
+        isSaving={isSaving} // Pass saving state
       />
 
       {/* Success Modal */}

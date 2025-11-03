@@ -26,6 +26,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
   const [formData, setFormData] = useState(initialFormData);
   const [updateUser, { isLoading: isUpdatingUser, error: userUpdateError }] = useUpdateUserMutation();
   const [updateDependent, { isLoading: isUpdatingDependent, error: dependentUpdateError }] = useUpdateDependentMutation();
+  const [isProcessing, setIsProcessing] = useState(false); // State for processing indicator
 
   const adminId = localStorage.getItem('adminId');
 
@@ -51,7 +52,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
     }
   }, [user, open]); // Depend on 'user' (passed data) and 'open'
 
-  const isLoading = isUpdatingUser || isUpdatingDependent;
+  const isLoading = isUpdatingUser || isUpdatingDependent || isProcessing;
   const error = userUpdateError || dependentUpdateError;
 
   const confirmRef = useRef(null);
@@ -89,6 +90,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsProcessing(true); // Set processing state
     try {
       const adminId = localStorage.getItem("adminId");
       const genderValue = formData.gender === 'Male' ? 'male' : formData.gender === 'Female' ? 'female' : formData.gender;
@@ -120,9 +122,35 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
         };
         console.log("Sending dependent update payload:", dependentUpdatePayload);
         result = await updateDependent(dependentUpdatePayload).unwrap();
-        if (refetchDependentDetails) {
-          refetchDependentDetails();
-        }
+        // For dependents, we need to refetch both the dependent details and the user details
+        // Use the exposed refetch functions with error handling
+        setTimeout(() => {
+          try {
+            if (window.userListRefetchDependentDetails) {
+              window.userListRefetchDependentDetails();
+            }
+          } catch (e) {
+            console.warn("Could not refetch dependent details:", e);
+          }
+          
+          try {
+            if (window.userListRefetchUserDetails) {
+              window.userListRefetchUserDetails();
+            }
+          } catch (e) {
+            console.warn("Could not refetch user details:", e);
+          }
+          
+          // Only close modal after data is updated
+          setIsProcessing(false); // Reset processing state
+          
+          // Call the success callback or close the modal
+          if (onSuccessfulEditAndClose) {
+            onSuccessfulEditAndClose(); // Call the callback to close modal and handle any additional logic
+          } else {
+            onClose(); // Fallback to just closing the modal
+          }
+        }, 150); // Slightly longer delay to ensure data is updated
       } else {
         const userUpdatePayload = {
           admin_user_id: adminId,
@@ -131,19 +159,32 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
         };
         console.log("Sending user update payload:", userUpdatePayload);
         result = await updateUser(userUpdatePayload).unwrap();
-        if (refetchUserDetails) {
-          refetchUserDetails();
-        }
+        // Use the exposed refetch function with error handling
+        setTimeout(() => {
+          try {
+            if (window.userListRefetchUserDetails) {
+              window.userListRefetchUserDetails();
+            }
+          } catch (e) {
+            console.warn("Could not refetch user details:", e);
+          }
+          
+          // Only close modal after data is updated
+          setIsProcessing(false); // Reset processing state
+          
+          // Call the success callback or close the modal
+          if (onSuccessfulEditAndClose) {
+            onSuccessfulEditAndClose(); // Call the callback to close modal and handle any additional logic
+          } else {
+            onClose(); // Fallback to just closing the modal
+          }
+        }, 150); // Slightly longer delay to ensure data is updated
       }
 
       console.log("Update successful:", result);
-      if (onSuccessfulEditAndClose) {
-        onSuccessfulEditAndClose(); // Call the new callback to close modal, navigate to main table, and refetch
-      } else {
-        onClose(); // Fallback to just closing the modal
-      }
     } catch (err) {
       console.error("Failed to update:", err);
+      setIsProcessing(false); // Reset processing state on error
       alert(`Failed to update ${isDependent ? 'dependent' : 'user'}. Please try again.`);
     }
   };
@@ -156,6 +197,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
           <button
             onClick={onClose}
             className="text-white hover:bg-blue-700 rounded-full w-7 h-7 flex items-center justify-center"
+            disabled={isLoading}
           >
             ✕
           </button>
@@ -177,6 +219,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 onChange={handleChange}
                 className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
              required
+             disabled={isLoading}
              />
             </div>
 
@@ -191,6 +234,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
                 required
+                disabled={isLoading}
                 />
               </div>
             )}
@@ -217,6 +261,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
               required
+              disabled={isLoading}
               >
                   <option value="">Select Gender</option>
                   <option value="Female">Female</option>
@@ -235,6 +280,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
                required
+               disabled={isLoading}
                >
                   <option value="">Select Country</option>
                   <option value="India">India</option>
@@ -252,6 +298,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                     onChange={handleChange}
                     className="flex-1 outline-none bg-transparent"
                  required
+                 disabled={isLoading}
                  />
                   <span className="text-gray-500 cursor-pointer">✏️</span>
                 </div>
@@ -268,7 +315,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 onChange={handleChange}
                 className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
                 required={!isDependent} 
-                disabled={!isDependent}          
+                disabled={!isDependent || isLoading}          
                  />
             </div>
 
@@ -282,6 +329,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
                required
+               disabled={isLoading}
                >
                   <option value="">Select Status</option>
                   <option value="Married">Married</option>
@@ -298,6 +346,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                     value={formData.children}
                     onChange={handleChange}
                     className="flex-1 outline-none bg-transparent"
+                    disabled={isLoading}
                  />
                   <span className="text-gray-500 cursor-pointer">✏️</span>
                 </div>
@@ -313,6 +362,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.pregnancy}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                  disabled={isLoading}
                >
                   <option value="">Select</option>
                   <option value="Yes">Yes</option>
@@ -327,6 +377,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                   value={formData.trimester}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                  disabled={isLoading}
                >
                   <option value="">Select Trimester</option>
                   <option value="1">1</option>
@@ -340,11 +391,12 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center"
               >
                 {isLoading ? (
-                  <div className="flex justify-center items-center">
-                    <CircularProgress size={24} color="inherit" />
+                  <div className="flex items-center">
+                    <CircularProgress size={20} color="inherit" className="mr-2" />
+                    <span>Saving...</span>
                   </div>
                 ) : (
                   "Save Changes"
@@ -353,7 +405,8 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
               <button
                 type="button"
                 onClick={onClose}
-                className="w-1/2 bg-[#444951] text-white py-2 rounded-lg hover:bg-gray-400 transition"
+                disabled={isLoading}
+                className="w-1/2 bg-[#444951] text-white py-2 rounded-lg hover:bg-gray-400 transition disabled:opacity-50"
               >
                 Cancel
               </button>

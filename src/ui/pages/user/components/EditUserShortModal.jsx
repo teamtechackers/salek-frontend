@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
-export default function EditUserShortModal({ open, onClose, user = {}, onSave }) {
+export default function EditUserShortModal({ open, onClose, user = {}, onSave, isSaving }) {
   const [form, setForm] = useState({
     user_id: user.id || null,
     full_name: user.username || "",
@@ -34,6 +35,7 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
               onClick={onClose}
               className="h-8 w-8 rounded-full bg-white/20 grid place-items-center"
               aria-label="close"
+              disabled={isSaving}
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -67,6 +69,7 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
                 onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
              required
+             disabled={isSaving}
              />
             </div>
 
@@ -107,14 +110,23 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave })
               onClick={() => {
                 onSave?.(form);
               }}
-              className="flex-1 rounded-full bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow"
+              className="flex-1 rounded-full bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow flex items-center justify-center"
+              disabled={isSaving}
             >
-              Save Changes
+              {isSaving ? (
+                <div className="flex items-center">
+                  <CircularProgress size={20} color="inherit" className="mr-2" />
+                  <span>Saving...</span>
+                </div>
+              ) : (
+                "Save Changes"
+              )}
             </button>
 
             <button
               onClick={onClose}
               className="flex-1 rounded-full bg-[#444951] px-4 py-3 text-sm font-semibold text-white shadow"
+              disabled={isSaving}
             >
               Cancel
             </button>

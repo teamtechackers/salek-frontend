@@ -168,7 +168,7 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
         <select
           value={formData[field.key] || ""}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border border-gray-700 rounded-md mr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 custom-select-arrow"
          required
        >
           <option value="">Select</option>
