@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Select, MenuItem, FormControl } from "@mui/material";
 
 export default function DateDropdown() {
   const [selectedDate, setSelectedDate] = useState("");
@@ -18,21 +19,37 @@ export default function DateDropdown() {
 
   return (
     <div className="p-4">
-      <select
-        className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-      >
-        <option value="">Select a date</option>
-        {dates.map((date, index) => {
-          const formatted = formatDate(date);
-          return (
-            <option key={index} value={formatted}>
-              {formatted}
-            </option>
-          );
-        })}
-      </select>
+      <FormControl size="small" fullWidth>
+        <Select
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          displayEmpty
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px !important',
+              backgroundColor: 'white',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+              borderColor: 'rgba(0, 0, 0, 0.1)',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '10px !important',
+              borderColor: 'rgba(0, 0, 0, 0.1) !important',
+            },
+          }}
+        >
+          <MenuItem value="">
+            <em>Select a date</em>
+          </MenuItem>
+          {dates.map((date, index) => {
+            const formatted = formatDate(date);
+            return (
+              <MenuItem key={index} value={formatted}>
+                {formatted}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
     </div>
   );
 }

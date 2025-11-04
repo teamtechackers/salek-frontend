@@ -56,7 +56,7 @@ const VaccineLibrary = () => {
 
   useEffect(() => {
     setCurrentPage(1); // Reset page when filters change
-  }, [search, category, pageSize]);
+  }, [category, pageSize]);
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -68,7 +68,7 @@ const VaccineLibrary = () => {
   return (
     <>
       <PageContainer
-        topSection={
+          topSection={
           <div className="flex w-full items-center justify-between">
             {/* Left - Search and Search Type */}
             <div className="w-1/2 flex items-center gap-3">

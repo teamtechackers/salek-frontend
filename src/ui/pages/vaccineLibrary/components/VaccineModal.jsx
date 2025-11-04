@@ -4,6 +4,13 @@ import { vaccineFields } from "./AddFormlabels";
 import { COLORS } from "../../../theme/colors/colors";
 import { useAddVaccineMutation, useUpdateVaccineMutation } from "../../../../core/services/api/vaccineApi";
 import CircularProgress from "@mui/material/CircularProgress"; // Import CircularProgress
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  TextField
+} from "@mui/material";
 
 export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   const initialFormData = {
@@ -145,49 +152,81 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   const renderField = (field) => {
     if (field.type === "text") {
       return (
-        <input
-          type={field.type}
+        <TextField
+          fullWidth
+          variant="outlined"
+          size="small"
           value={formData[field.key] || ""}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full  border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           required
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px',
+            },
+          }}
         />
       );
     } else if (field.type === "number") {
       return (
-        <input
-          type={field.type}
+        <TextField
+          fullWidth
+          variant="outlined"
+          size="small"
+          type="number"
           value={formData[field.key]}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full  border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-       required
-          />
+          required
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px',
+            },
+          }}
+        />
       );
     } else if (field.type === "select") {
       return (
-        <select
+        <Select
           value={formData[field.key] || ""}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-         required
-       >
-          <option value="">Select</option>
+          displayEmpty
+          fullWidth
+          variant="outlined"
+          size="small"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px !important',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '10px !important',
+            },
+          }}
+        >
+          <MenuItem value="">
+            <em>Select</em>
+          </MenuItem>
           {field.options.map((opt) => (
-            <option key={opt} value={opt}>
+            <MenuItem key={opt} value={opt}>
               {opt}
-            </option>
+            </MenuItem>
           ))}
-        </select>
+        </Select>
       );
     } else if (field.type === "textarea") {
       return (
-        <textarea
-          rows="3"
+        <TextField
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={3}
           value={formData[field.key] || ""}
           onChange={(e) => handleChange(field.key, e.target.value)}
-          className="w-full border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-       required
-          />
+          required
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px',
+            },
+          }}
+        />
       );
     }
     return null;

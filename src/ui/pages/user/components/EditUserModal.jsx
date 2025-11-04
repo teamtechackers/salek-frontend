@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useUpdateUserMutation, useUpdateDependentMutation } from "../../../../core/services/api/userApi"; // Import both mutations
 import CircularProgress from "@mui/material/CircularProgress";
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  TextField
+} from "@mui/material";
 
 const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetchUserDetails, refetchDependentDetails, onSuccessfulEditAndClose }) => {
   console.log("EditUserModal - user:", user);
@@ -26,6 +33,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
   const [formData, setFormData] = useState(initialFormData);
   const [updateUser, { isLoading: isUpdatingUser, error: userUpdateError }] = useUpdateUserMutation();
   const [updateDependent, { isLoading: isUpdatingDependent, error: dependentUpdateError }] = useUpdateDependentMutation();
+  const [isProcessing, setIsProcessing] = useState(false); // State for processing indicator
 
   const adminId = localStorage.getItem('adminId');
 
@@ -51,7 +59,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
     }
   }, [user, open]); // Depend on 'user' (passed data) and 'open'
 
-  const isLoading = isUpdatingUser || isUpdatingDependent;
+  const isLoading = isUpdatingUser || isUpdatingDependent || isProcessing;
   const error = userUpdateError || dependentUpdateError;
 
   const confirmRef = useRef(null);
@@ -89,6 +97,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsProcessing(true); // Set processing state
     try {
       const adminId = localStorage.getItem("adminId");
       const genderValue = formData.gender === 'Male' ? 'male' : formData.gender === 'Female' ? 'female' : formData.gender;
@@ -120,9 +129,35 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
         };
         console.log("Sending dependent update payload:", dependentUpdatePayload);
         result = await updateDependent(dependentUpdatePayload).unwrap();
-        if (refetchDependentDetails) {
-          refetchDependentDetails();
-        }
+        // For dependents, we need to refetch both the dependent details and the user details
+        // Use the exposed refetch functions with error handling
+        setTimeout(() => {
+          try {
+            if (window.userListRefetchDependentDetails) {
+              window.userListRefetchDependentDetails();
+            }
+          } catch (e) {
+            console.warn("Could not refetch dependent details:", e);
+          }
+          
+          try {
+            if (window.userListRefetchUserDetails) {
+              window.userListRefetchUserDetails();
+            }
+          } catch (e) {
+            console.warn("Could not refetch user details:", e);
+          }
+          
+          // Only close modal after data is updated
+          setIsProcessing(false); // Reset processing state
+          
+          // Call the success callback or close the modal
+          if (onSuccessfulEditAndClose) {
+            onSuccessfulEditAndClose(); // Call the callback to close modal and handle any additional logic
+          } else {
+            onClose(); // Fallback to just closing the modal
+          }
+        }, 150); // Slightly longer delay to ensure data is updated
       } else {
         const userUpdatePayload = {
           admin_user_id: adminId,
@@ -131,19 +166,32 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
         };
         console.log("Sending user update payload:", userUpdatePayload);
         result = await updateUser(userUpdatePayload).unwrap();
-        if (refetchUserDetails) {
-          refetchUserDetails();
-        }
+        // Use the exposed refetch function with error handling
+        setTimeout(() => {
+          try {
+            if (window.userListRefetchUserDetails) {
+              window.userListRefetchUserDetails();
+            }
+          } catch (e) {
+            console.warn("Could not refetch user details:", e);
+          }
+          
+          // Only close modal after data is updated
+          setIsProcessing(false); // Reset processing state
+          
+          // Call the success callback or close the modal
+          if (onSuccessfulEditAndClose) {
+            onSuccessfulEditAndClose(); // Call the callback to close modal and handle any additional logic
+          } else {
+            onClose(); // Fallback to just closing the modal
+          }
+        }, 150); // Slightly longer delay to ensure data is updated
       }
 
       console.log("Update successful:", result);
-      if (onSuccessfulEditAndClose) {
-        onSuccessfulEditAndClose(); // Call the new callback to close modal, navigate to main table, and refetch
-      } else {
-        onClose(); // Fallback to just closing the modal
-      }
     } catch (err) {
       console.error("Failed to update:", err);
+      setIsProcessing(false); // Reset processing state on error
       alert(`Failed to update ${isDependent ? 'dependent' : 'user'}. Please try again.`);
     }
   };
@@ -155,211 +203,311 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
           <h2 className="text-lg font-semibold">{isDependent ? "Edit Dependent" : "Edit User"}</h2>
           <button
             onClick={onClose}
-            className="text-white hover:bg-blue-700 rounded-full w-7 h-7 flex items-center justify-center"
+            className="text-white text-2xl leading-none focus:outline-none"
+            ref={confirmRef}
           >
-            ✕
+            &times;
           </button>
         </div>
 
-        <hr className="border-gray-200 mb-4" />
-
-        {error ? (
-          <p className="text-red-500 p-5">Error: {error.message}</p>
-        ) : (
-          <form onSubmit={handleSubmit} className="p-5 max-h-[80vh] overflow-y-auto space-y-4">
-            {/* Name */}
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-             required
-             />
-            </div>
-
-            {/* Relation (for dependents) */}
-            {isDependent && (
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Relation</label>
-                <input
-                  type="text"
-                  name="relation"
-                  value={formData.relation}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                required
-                />
-              </div>
-            )}
-
-            {/* DOB & Gender */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Date of Birth</label>
-                <input
-                  type="date"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-              disabled
-              />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Gender</label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          {/* Name (for both user and dependent) */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              {isDependent ? "Dependent Name" : "Full Name"}
+            </label>
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               required
-              >
-                  <option value="">Select Gender</option>
-                  <option value="Female">Female</option>
-                  <option value="Male">Male</option>
-                </select>
-              </div>
-            </div>
+              disabled={isLoading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '10px',
+                },
+              }}
+            />
+          </div>
 
-            {/* Country & Address */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Country</label>
-                <select
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-               required
-               >
-                  <option value="">Select Country</option>
-                  <option value="India">India</option>
-                  <option value="Pakistan">Pakistan</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Address</label>
-                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="flex-1 outline-none bg-transparent"
-                 required
-                 />
-                  <span className="text-gray-500 cursor-pointer">✏️</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Phone Number */}
+          {/* Relation (for dependents) */}
+          {isDependent && (
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Phone Number</label>
-              <input
-                type="text"
-                name="phoneNumber"
-                value={formData.phoneNumber}
+              <label className="text-sm font-medium text-gray-700">Relation</label>
+              <TextField
+                fullWidth
+                variant="outlined"
+                size="small"
+                name="relation"
+                value={formData.relation}
                 onChange={handleChange}
-                className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-                required={!isDependent} 
-                disabled={!isDependent}          
-                 />
-            </div>
-
-            {/* Marital & Children */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Marital Status</label>
-                <select
-                  name="maritalStatus"
-                  value={formData.maritalStatus}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-               required
-               >
-                  <option value="">Select Status</option>
-                  <option value="Married">Married</option>
-                  <option value="Single">Single</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Children</label>
-                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-                  <input
-                    type="number"
-                    name="children"
-                    value={formData.children}
-                    onChange={handleChange}
-                    className="flex-1 outline-none bg-transparent"
-                 />
-                  <span className="text-gray-500 cursor-pointer">✏️</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Pregnancy & Trimester */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Pregnancy</label>
-                <select
-                  name="pregnancy"
-                  value={formData.pregnancy}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-               >
-                  <option value="">Select</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Trimester</label>
-                <select
-                  name="trimester"
-                  value={formData.trimester}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
-               >
-                  <option value="">Select Trimester</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex justify-between pt-4 gap-3">
-              <button
-                type="submit"
+                required
                 disabled={isLoading}
-                className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <div className="flex justify-center items-center">
-                    <CircularProgress size={24} color="inherit" />
-                  </div>
-                ) : (
-                  "Save Changes"
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-1/2 bg-[#444951] text-white py-2 rounded-lg hover:bg-gray-400 transition"
-              >
-                Cancel
-              </button>
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                }}
+              />
             </div>
-          </form>
-        )}
+          )}
+
+          {/* DOB & Gender */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Date of Birth</label>
+              <TextField
+                fullWidth
+                variant="outlined"
+                size="small"
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                disabled
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                }}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Gender</label>
+              <Select
+                name="gender"
+                value={formData.gender}
+                onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                displayEmpty
+                fullWidth
+                size="small"
+                required
+                disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px !important',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderRadius: '10px !important',
+                  },
+                }}
+              >
+                <MenuItem value="">
+                  <em>Select Gender</em>
+                </MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Male">Male</MenuItem>
+              </Select>
+            </div>
+          </div>
+
+          {/* Country & Address */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Country</label>
+              <Select
+                name="country"
+                value={formData.country}
+                onChange={(e) => setFormData({...formData, country: e.target.value})}
+                displayEmpty
+                fullWidth
+                size="small"
+                required
+                disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px !important',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderRadius: '10px !important',
+                  },
+                }}
+              >
+                <MenuItem value="">
+                  <em>Select Country</em>
+                </MenuItem>
+                <MenuItem value="India">India</MenuItem>
+                <MenuItem value="Pakistan">Pakistan</MenuItem>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Address</label>
+              <TextField
+                fullWidth
+                variant="outlined"
+                size="small"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Phone Number</label>
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              required={!isDependent} 
+              disabled={!isDependent || isLoading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '10px',
+                },
+              }}
+            />
+          </div>
+
+          {/* Marital & Children */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Marital Status</label>
+              <Select
+                name="maritalStatus"
+                value={formData.maritalStatus}
+                onChange={(e) => setFormData({...formData, maritalStatus: e.target.value})}
+                displayEmpty
+                fullWidth
+                size="small"
+                required
+                disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px !important',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderRadius: '10px !important',
+                  },
+                }}
+              >
+                <MenuItem value="">
+                  <em>Select Status</em>
+                </MenuItem>
+                <MenuItem value="Married">Married</MenuItem>
+                <MenuItem value="Single">Single</MenuItem>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Children</label>
+              <TextField
+                fullWidth
+                variant="outlined"
+                size="small"
+                type="number"
+                name="children"
+                value={formData.children}
+                onChange={handleChange}
+                disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Pregnancy & Trimester */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Pregnancy</label>
+              <Select
+                name="pregnancy"
+                value={formData.pregnancy}
+                onChange={(e) => setFormData({...formData, pregnancy: e.target.value})}
+                displayEmpty
+                fullWidth
+                size="small"
+                disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px !important',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderRadius: '10px !important',
+                  },
+                }}
+              >
+                <MenuItem value="">
+                  <em>Select</em>
+                </MenuItem>
+                <MenuItem value="Yes">Yes</MenuItem>
+                <MenuItem value="No">No</MenuItem>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Trimester</label>
+              <Select
+                name="trimester"
+                value={formData.trimester}
+                onChange={(e) => setFormData({...formData, trimester: e.target.value})}
+                displayEmpty
+                fullWidth
+                size="small"
+                disabled={isLoading}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px !important',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderRadius: '10px !important',
+                  },
+                }}
+              >
+                <MenuItem value="">
+                  <em>Select Trimester</em>
+                </MenuItem>
+                <MenuItem value="1">1</MenuItem>
+                <MenuItem value="2">2</MenuItem>
+                <MenuItem value="3">3</MenuItem>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex justify-between pt-4 gap-3">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center"
+            >
+              {isLoading ? (
+                <div className="flex items-center">
+                  <CircularProgress size={20} color="inherit" className="mr-2" />
+                  <span>Saving...</span>
+                </div>
+              ) : (
+                "Save Changes"
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="w-1/2 bg-[#444951] text-white py-2 rounded-lg hover:bg-gray-400 transition disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

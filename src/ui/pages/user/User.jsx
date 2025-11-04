@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Add useNavigate hook
 import SearchBar from "../../components/Searchbar";
 // import DateDropdown from "./components/DateDropdown"; // Removed DateDropdown
 import PaginationDropdown from "./components/PaginationDropdown";
@@ -9,8 +10,10 @@ import UserTable from "./components/UserTable";
 import { useGetUsersQuery } from "../../../core/services/api/userApi";
 import CircularProgress from "@mui/material/CircularProgress";
 import EditUserModal from "./components/EditUserModal"; // Import the proper edit modal
+import TextField from "@mui/material/TextField";
 
 const User = () => {
+  const navigate = useNavigate(); // Add navigate hook
   const [userDetails, setUserDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
@@ -21,6 +24,7 @@ const User = () => {
   const [selectedUserForEdit, setSelectedUserForEdit] = useState(null); // State to hold user/dependent for proper edit
   const [isEditingDependent, setIsEditingDependent] = useState(false); // State to differentiate user/dependent edit
   const [parentUserIdForDependent, setParentUserIdForDependent] = useState(null); // State to hold parent user ID for dependent edit
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Trigger for data refresh
 
   const { data, error, isLoading, refetch } = useGetUsersQuery({
     page: currentPage - 1, // API expects 0-indexed page
@@ -51,13 +55,14 @@ const User = () => {
   };
 
   const handleSuccessfulEditAndClose = () => {
-    console.log("User.jsx - handleSuccessfulEditAndClose called. Navigating to main table and refetching.");
+    console.log("User.jsx - handleSuccessfulEditAndClose called. Refreshing data.");
     setOpenEditModal(false); // Close the modal
     setSelectedUserForEdit(null);
     setIsEditingDependent(false);
     setParentUserIdForDependent(null);
-    setUserDetails(false); // Go back to the main user list view
-    refetch(); // Refetch the main user list
+    
+    // Trigger a refresh of all data
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const allUsers = data?.data?.users || [];
@@ -98,6 +103,27 @@ const User = () => {
     setCurrentPage(1); // Reset page when filters change
   }, [pageSize, selectedDate]);
 
+  // Effect to refetch data when refresh trigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      // Refresh main user list
+      try {
+        refetch();
+      } catch (e) {
+        console.warn("Could not refetch main user list:", e);
+      }
+      
+      // Refresh user details if available
+      if (userDetailsRefetch) {
+        try {
+          userDetailsRefetch();
+        } catch (e) {
+          console.warn("Could not refetch user details:", e);
+        }
+      }
+    }
+  }, [refreshTrigger, refetch, userDetailsRefetch]);
+
   const handlePageSizeChange = (value) => {
     setPageSize(value);
     setCurrentPage(1);
@@ -130,12 +156,19 @@ const User = () => {
                
                 <div className="w-1/2 flex items-center justify-end gap-3">
                   {/* Search type dropdown removed as per request */}
-                  <input
+                  <TextField
                     type="date"
-                    className="rounded-lg py-2 px-3 bg-white shadow-sm border border-gray-100"
+                    variant="outlined"
+                    size="small"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    placeholder="Select Date of Birth"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '10px',
+                        backgroundColor: 'white',
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                      },
+                    }}
                   />
                 </div>
               </div>
@@ -181,7 +214,7 @@ const User = () => {
         isDependent={isEditingDependent}
         parentUserId={parentUserIdForDependent} // Pass parent user ID
         refetchUserDetails={userDetailsRefetch} // Pass refetch for user details
-        refetchDependentDetails={null} // This will be handled in UserList for dependent specific refetch
+        refetchDependentDetails={userDetailsRefetch} // Pass the same refetch function for dependents
         onSuccessfulEditAndClose={handleSuccessfulEditAndClose} // Pass the new callback
       />
     </>

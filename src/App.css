@@ -1,0 +1,36 @@
+.custom-select-arrow {
+  -webkit-appearance: none !important; /* Remove default arrow for Chrome/Safari */
+  -moz-appearance: none !important;    /* Remove default arrow for Firefox */
+  appearance: none !important;         /* Remove default arrow for other browsers */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C114.7L159.1%2C287.1c-2.9%2C3.2-7%2C4.9-11.2%2C4.9c-4.2%2C0-8.4-1.7-11.2-4.9L5.4%2C114.7c-6.1-6.1-6.1-16.1%2C0-22.2l22.2-22.2c6.1-6.1%2C16.1-6.1%2C22.2%2C0l100.4%2C100.4l100.4-100.4c6.1-6.1%2C16.1-6.1%2C22.2%2C0l22.2%2C22.2C293.1%2C98.6%2C293.1%2C108.6%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat !important;
+  background-position: right 1.5rem center !important;
+  background-size: 0.8em auto !important;
+  padding-right: 3rem !important;
+}
+
+/* More specific selector to override any default styles */
+select.custom-select-arrow {
+  padding-right: 4rem !important;
+  background-position: right 2rem center !important;
+  padding-left: 0.75rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+/* Additional browser-specific styles */
+select.custom-select-arrow::-ms-expand {
+  display: none; /* Hide default arrow in IE */
+}
+
+/* Very specific selector to ensure override */
+div select.custom-select-arrow {
+  padding-right: 4rem !important;
+  background-position: right 2rem center !important;
+}
+
+/* Even more specific selector */
+form div select.custom-select-arrow {
+  padding-right: 4rem !important;
+  background-position: right 2rem center !important;
+}
