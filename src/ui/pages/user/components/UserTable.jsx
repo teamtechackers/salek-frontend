@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Corrected import
+import React, { useState } from "react"; // Removed useEffect
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
 import UserList from "./UserList";
 import EditUserShortModal from "./EditUserShortModal";
@@ -17,17 +17,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
   const [isViewOnly, setIsViewOnly] = useState(false); // State to track if modal is in view-only mode
   const [isSaving, setIsSaving] = useState(false); // State for saving indicator
 
-  useEffect(() => {
-    if (openEditShort && selectedUser) {
-      // Find the updated user in the 'users' prop based on the ID
-      const updatedUserInList = users.find(user => user.id === selectedUser.id);
-      // Always update selectedUser if a matching user is found in the updated 'users' list
-      // This ensures the modal always gets the latest data, even if object reference didn't change
-      if (updatedUserInList) {
-        setSelectedUser(updatedUserInList);
-      }
-    }
-  }, [users, openEditShort, selectedUser]); // Keep selectedUser in dependency array to re-run if selectedUser itself changes
+  // Removed useEffect that was causing issues with user updates
 
   const [deleteUser] = useDeleteUserMutation();
   const [updateUser] = useUpdateUserMutation();

@@ -20,6 +20,7 @@ const User = () => {
   const [search, setSearch] = useState("");
   // const [searchType, setSearchType] = useState("username"); // Default search type for users - REMOVED
   const [selectedDate, setSelectedDate] = useState(""); // Single state for selected date
+  const [appliedDateFilter, setAppliedDateFilter] = useState(""); // State for applied date filter
   const [openEditModal, setOpenEditModal] = useState(false); // State for proper edit modal
   const [selectedUserForEdit, setSelectedUserForEdit] = useState(null); // State to hold user/dependent for proper edit
   const [isEditingDependent, setIsEditingDependent] = useState(false); // State to differentiate user/dependent edit
@@ -29,6 +30,7 @@ const User = () => {
   const { data, error, isLoading, refetch } = useGetUsersQuery({
     page: currentPage - 1, // API expects 0-indexed page
     limit: pageSize,
+    search: search || undefined, // Add search filter to API call
   });
   
   // State to hold the refetch function for user details
@@ -67,7 +69,6 @@ const User = () => {
 
   const allUsers = data?.data?.users || [];
 
-  // Client-side filtering for selectedDate
   // Client-side filtering for search across multiple fields
   const filteredUsersBySearch = allUsers.filter((user) => {
     if (!search) return true; // If no search term, return all users
@@ -83,16 +84,20 @@ const User = () => {
 
   // Client-side filtering for selectedDate
   const filteredUsersByDate = filteredUsersBySearch.filter((user) => {
-    let matchesDOB = true;
-    if (selectedDate && user.DOB) {
+    if (!selectedDate || !user.DOB) return true; // If no date selected or user has no DOB, return all users
+    
+    try {
       const userDOB = new Date(user.DOB);
       const filterDate = new Date(selectedDate);
+      
       // Compare only year, month, and day
-      matchesDOB = userDOB.getFullYear() === filterDate.getFullYear() &&
-                   userDOB.getMonth() === filterDate.getMonth() &&
-                   userDOB.getDate() === filterDate.getDate();
+      return userDOB.getFullYear() === filterDate.getFullYear() &&
+             userDOB.getMonth() === filterDate.getMonth() &&
+             userDOB.getDate() === filterDate.getDate();
+    } catch (e) {
+      console.error("Error comparing dates:", e);
+      return true; // If there's an error, return the user
     }
-    return matchesDOB;
   });
 
   const usersData = filteredUsersByDate || [];
@@ -100,8 +105,9 @@ const User = () => {
   const totalPages = data?.data?.pagination?.pages || 1;
 
   useEffect(() => {
-    setCurrentPage(1); // Reset page when filters change
-  }, [pageSize, selectedDate]);
+    // Only reset page when pageSize or search changes
+    setCurrentPage(1);
+  }, [pageSize, search]);
 
   // Effect to refetch data when refresh trigger changes
   useEffect(() => {
@@ -151,7 +157,14 @@ const User = () => {
               <div className="mt-4 flex w-full items-center justify-between">
                 <div className="w-1/2 flex items-center justify-start gap-3">
                  
-                  <SearchBar value={search} onChange={setSearch} onSearch={() => { /* client-side filtering handled by state update */ }} />
+                  <SearchBar 
+                    value={search} 
+                    onChange={(newSearch) => {
+                      setSearch(newSearch);
+                      // Don't reset page when search changes
+                    }} 
+                    onSearch={() => { /* client-side filtering handled by state update */ }} 
+                  />
                 </div>
                
                 <div className="w-1/2 flex items-center justify-end gap-3">
@@ -161,7 +174,9 @@ const User = () => {
                     variant="outlined"
                     size="small"
                     value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
+                    onChange={(e) => {
+                      setSelectedDate(e.target.value);
+                    }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         borderRadius: '10px',
@@ -170,6 +185,25 @@ const User = () => {
                       },
                     }}
                   />
+                  {/* <button
+                    className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition text-sm"
+                    onClick={() => {
+                      // Apply the date filter and reset to first page
+                      setCurrentPage(1);
+                    }}
+                  >
+                    Apply
+                  </button> */}
+                  <button
+                    className="bg-gray-500 rounded-lg text-white py-2 px-4 hover:bg-gray-600 transition text-sm"
+                    onClick={() => {
+                      // Clear the date filter and reset to first page
+                      setSelectedDate("");
+                      setCurrentPage(1);
+                    }}
+                  >
+                    Clear
+                  </button>
                 </div>
               </div>
             )}
