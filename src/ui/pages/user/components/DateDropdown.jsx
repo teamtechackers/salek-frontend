@@ -38,7 +38,7 @@ export default function DateDropdown() {
           }}
         >
           <MenuItem value="">
-            <em>Select a date</em>
+            <div>Select a date</div>
           </MenuItem>
           {dates.map((date, index) => {
             const formatted = formatDate(date);
