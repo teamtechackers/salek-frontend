@@ -32,7 +32,7 @@ export default function CategoryDropdown({ selectedCategory, onCategoryChange })
         }}
       >
         <MenuItem value="">
-          <em>Select a category</em>
+          <div>Select a category</div>
         </MenuItem>
         {categories.map((category, index) => (
           <MenuItem key={index} value={category}>

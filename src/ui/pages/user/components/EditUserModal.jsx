@@ -297,7 +297,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 }}
               >
                 <MenuItem value="">
-                  <em>Select Gender</em>
+                  <div>Select Gender</div>
                 </MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
                 <MenuItem value="Male">Male</MenuItem>
@@ -328,7 +328,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 }}
               >
                 <MenuItem value="">
-                  <em>Select Country</em>
+                  <div>Select Country</div>
                 </MenuItem>
                 <MenuItem value="India">India</MenuItem>
                 <MenuItem value="Pakistan">Pakistan</MenuItem>
@@ -398,7 +398,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 }}
               >
                 <MenuItem value="">
-                  <em>Select Status</em>
+                  <div>Select Status</div>
                 </MenuItem>
                 <MenuItem value="Married">Married</MenuItem>
                 <MenuItem value="Single">Single</MenuItem>
@@ -447,7 +447,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 }}
               >
                 <MenuItem value="">
-                  <em>Select</em>
+                  <div>Select</div>
                 </MenuItem>
                 <MenuItem value="Yes">Yes</MenuItem>
                 <MenuItem value="No">No</MenuItem>
@@ -474,7 +474,7 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
                 }}
               >
                 <MenuItem value="">
-                  <em>Select Trimester</em>
+                  <div>Select Trimester</div>
                 </MenuItem>
                 <MenuItem value="1">1</MenuItem>
                 <MenuItem value="2">2</MenuItem>

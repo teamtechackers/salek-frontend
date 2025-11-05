@@ -202,7 +202,7 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
           }}
         >
           <MenuItem value="">
-            <em>Select</em>
+            <div>Select</div>
           </MenuItem>
           {field.options.map((opt) => (
             <MenuItem key={opt} value={opt}>

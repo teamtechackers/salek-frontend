@@ -3,8 +3,11 @@ import { apiSlice } from './apiSlice';
 export const userApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: ({ page = 0, limit = 8 } = {}) => {
+      query: ({ page = 0, limit = 8, search } = {}) => {
         let url = `/admin/users?page=${page}&limit=${limit}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
         return url;
       },
     }),

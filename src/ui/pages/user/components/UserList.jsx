@@ -244,7 +244,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <img src={fullUserDetails.user.profileImage || "https://i.pravatar.cc/100?img=4"} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    <img src={fullUserDetails.user.image || "https://i.pravatar.cc/100?img=4"} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
                     <div>
                       <h2 className="text-lg font-semibold text-gray-800">{fullUserDetails.user.full_name || fullUserDetails.user.phone_number}</h2>
                       <p className="text-sm text-gray-500">{fullUserDetails.user.phone_number || "N/A"}</p>
@@ -302,7 +302,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
                       className="flex items-center gap-2 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition cursor-pointer"
                       onClick={() => handleDependentDetails(dep)}
                     >
-                      <img src={dep.img || "https://i.pravatar.cc/100?img=1"} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
+                      <img src={dep.image || "https://i.pravatar.cc/100?img=1"} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
                       <div>
                         <p className="font-medium text-gray-800">{dep.full_name || dep.relation_type}</p>
                         <p className="text-sm text-gray-500">{dep.relation_type || "N/A"}</p>

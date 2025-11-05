@@ -24,9 +24,8 @@ const VaccineLibrary = () => {
     admin_user_id: adminId,
     page: currentPage - 1, // API expects 0-indexed page
     limit: pageSize,
-    // Pass search and category to the API for initial filtering
+    // Pass search to the API for initial filtering
     search: search, // Keep search for API if backend supports it
-    category: category,
   });
 
   const allVaccines = data?.data?.vaccines || [];
@@ -55,8 +54,9 @@ const VaccineLibrary = () => {
   const totalPages = data?.data?.pagination?.pages || 1;
 
   useEffect(() => {
-    setCurrentPage(1); // Reset page when filters change
-  }, [category, pageSize]);
+    // Only reset page when pageSize changes, not when filters change
+    setCurrentPage(1);
+  }, [pageSize]);
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -73,13 +73,26 @@ const VaccineLibrary = () => {
             {/* Left - Search and Search Type */}
             <div className="w-1/2 flex items-center gap-3">
             
-              <SearchBar value={search} onChange={setSearch} onSearch={refetch} />
+              <SearchBar 
+                value={search} 
+                onChange={(newSearch) => {
+                  setSearch(newSearch);
+                  // Don't reset page when search changes
+                }} 
+                onSearch={refetch} 
+              />
             </div>
 
             {/* Right - Category + Add Button */}
             <div className="w-1/2 flex items-center justify-end gap-3">
               {/* Search type dropdown removed as per request */}
-              <CategoryDropdown selectedCategory={category} onCategoryChange={setCategory} />
+              <CategoryDropdown 
+                selectedCategory={category} 
+                onCategoryChange={(newCategory) => {
+                  setCategory(newCategory);
+                  // Don't reset page when category changes
+                }} 
+              />
               <button
                 className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition"
                 onClick={() => {
