@@ -19,7 +19,7 @@ const CardBox = ({ totals }) => { // Accept totals prop
 
   return (
     <div className="flex-1 max-h-[48%] bg-[#EDF5FF] rounded-2xl shadow-md p-4 flex flex-col">
-        <h2 className="text-lg font-semibold mb-2">Dashboard</h2>
+        {/* <h2 className="text-lg font-semibold mb-2">Dashboard</h2> */}
         <h3 className="text-md  mb-4">
         From reminders to records, everything you need at a glance.
         </h3>
