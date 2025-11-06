@@ -289,7 +289,15 @@ const UserList = ({
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <img src={fullUserDetails.user.image || "https://i.pravatar.cc/100?img=4"} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    {fullUserDetails.user.image ? (
+                      <img src={fullUserDetails.user.image} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500 font-bold text-xl">
+                          {fullUserDetails.user.full_name ? fullUserDetails.user.full_name.charAt(0).toUpperCase() : 'U'}
+                        </span>
+                      </div>
+                    )}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-800">{fullUserDetails.user.full_name || fullUserDetails.user.phone_number}</h2>
                       <p className="text-sm text-gray-500">{fullUserDetails.user.phone_number || "N/A"}</p>
@@ -347,7 +355,15 @@ const UserList = ({
                       className="flex items-center gap-2 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition cursor-pointer"
                       onClick={() => handleDependentDetails(dep)}
                     >
-                      <img src={dep.image || "https://i.pravatar.cc/100?img=1"} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
+                      {dep.image ? (
+                        <img src={dep.image} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-500 font-bold">
+                            {dep.full_name ? dep.full_name.charAt(0).toUpperCase() : 'D'}
+                          </span>
+                        </div>
+                      )}
                       <div>
                         <p className="font-medium text-gray-800">{dep.full_name || dep.relation_type}</p>
                         <p className="text-sm text-gray-500">{dep.relation_type || "N/A"}</p>
@@ -370,7 +386,15 @@ const UserList = ({
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <img src={fullDependentDetails.dependent.profileImage || "https://i.pravatar.cc/100?img=1"} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    {fullDependentDetails.dependent.image ? (
+                      <img src={fullDependentDetails.dependent.image} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500 font-bold text-xl">
+                          {fullDependentDetails.dependent.full_name ? fullDependentDetails.dependent.full_name.charAt(0).toUpperCase() : 'D'}
+                        </span>
+                      </div>
+                    )}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-800">{fullDependentDetails.dependent.full_name || fullDependentDetails.dependent.relation_type}</h2>
                       <p className="text-sm text-gray-500">{fullDependentDetails.dependent.phone_number || "N/A"}</p>

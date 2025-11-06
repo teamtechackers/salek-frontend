@@ -8,6 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onRefetchUserDetails, onOpenFullEdit }) {
   console.log("UserTable.jsx - onOpenFullEdit received:", onOpenFullEdit);
+  const [dependentDetails, setDependentDetails] = useState(false); // Add missing state
   const [openDelete, setOpenDelete] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -95,6 +96,8 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
           }}
           userDetails={userDetails}
           setUserDetails={setUserDetails}
+          dependentDetails={dependentDetails} // Pass dependentDetails state
+          setDependentDetails={setDependentDetails} // Pass setDependentDetails function
           onOpenFullEdit={onOpenFullEdit} // Pass onOpenFullEdit for proper modal
         />
       </div>
