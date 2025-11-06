@@ -13,16 +13,34 @@ import NotificationsTab from "./NotificationsTab"; // Import the new Notificatio
 import RemindersTab from "./RemindersTab"; // Import the new RemindersTab component
 import CircularProgress from "@mui/material/CircularProgress";
 
-const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpenFullEdit }) => {
-  console.log("UserList.jsx - onOpenFullEdit received:", onOpenFullEdit);
-  const location = useLocation(); // Add location hook
-  const [dependentDetails, setDependentDetails] = useState(false);
+const UserList = ({
+  items = [],
+  onEdit,
+  onDelete,
+  userDetails,
+  setUserDetails,
+  dependentDetails,
+  setDependentDetails,
+  onOpenFullEdit,
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
+  const location = useLocation();
+  const adminId = localStorage.getItem('adminId');
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedDependentId, setSelectedDependentId] = useState(null);
   const [currentDependentData, setCurrentDependentData] = useState(null);
-
-  // State for Main Tabs
   const [activeMainTab, setActiveMainTab] = useState("Logged Vaccines");
+  const [activeTab, setActiveTab] = useState("Completed");
+  
+  // State to track when we're actively fetching new data (not just showing cached data)
+  const [isFetchingUserData, setIsFetchingUserData] = useState(false);
+  const [isFetchingDependentData, setIsFetchingDependentData] = useState(false);
+
+  // Track when we're switching between different users/dependents
+  const [lastSelectedUserId, setLastSelectedUserId] = useState(null);
+  const [lastSelectedDependentId, setLastSelectedDependentId] = useState(null);
 
   // State for Reminder Modal
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
@@ -31,10 +49,8 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
 
   // State for Dependent Deletion
   const [openDeleteDependent, setOpenDeleteDependent] = useState(false);
-  const [dependentToDelete, setDependentToDelete] = useState(null);
   const [openDependentDeleteConfirm, setOpenDependentDeleteConfirm] = useState(false);
-
-  const adminId = localStorage.getItem('adminId');
+  const [dependentToDelete, setDependentToDelete] = useState({ user_id: null, dependent_id: null });
 
   const [deleteDependent] = useDeleteDependentMutation();
 
@@ -55,6 +71,34 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
     { skip: skipDependentQuery }
   );
   const fullDependentDetails = dependentDetailsResponse?.data;
+
+  // Update fetching states when selection changes
+  useEffect(() => {
+    if (selectedUserId && selectedUserId !== lastSelectedUserId) {
+      setIsFetchingUserData(true);
+      setLastSelectedUserId(selectedUserId);
+    }
+  }, [selectedUserId, lastSelectedUserId]);
+
+  useEffect(() => {
+    if (selectedDependentId && selectedDependentId !== lastSelectedDependentId) {
+      setIsFetchingDependentData(true);
+      setLastSelectedDependentId(selectedDependentId);
+    }
+  }, [selectedDependentId, lastSelectedDependentId]);
+
+  // Reset fetching states when data is loaded
+  useEffect(() => {
+    if (!loadingUserDetails && fullUserDetails) {
+      setIsFetchingUserData(false);
+    }
+  }, [loadingUserDetails, fullUserDetails]);
+
+  useEffect(() => {
+    if (!loadingDependentDetails && fullDependentDetails) {
+      setIsFetchingDependentData(false);
+    }
+  }, [loadingDependentDetails, fullDependentDetails]);
 
   console.log("UserList - selectedUserId:", selectedUserId);
   console.log("UserList - selectedDependentId:", selectedDependentId);
@@ -105,6 +149,15 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
     };
   }, [refetchUserDetailsQuery, refetchDependentDetails]);
 
+  // Show loader when actively fetching new data
+  if (isFetchingUserData || isFetchingDependentData || loadingUserDetails || loadingDependentDetails) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <CircularProgress />
+      </div>
+    );
+  }
+
   const handleUserDetails = (user) => {
     setSelectedUserId(user.id);
     setUserDetails(user); // Pass the user object
@@ -130,7 +183,6 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
     setActiveMainTab("Logged Vaccines"); // Reset to default tab
   };
 
-  const [activeTab, setActiveTab] = useState("Completed");
   const tabs = ["Completed", "Upcoming", "Due Soon", "Overdue"];
 
   const handleBackToUserDetails = () => {
@@ -160,6 +212,7 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
     setOpenDeleteDependent(true);
   };
 
+  // Confirm dependent deletion
   const confirmDeleteDependent = async () => {
     try {
       await deleteDependent({
@@ -176,14 +229,6 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
       console.error('Failed to delete dependent:', error);
     }
   };
-
-  if (loadingUserDetails || loadingDependentDetails) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <CircularProgress />
-      </div>
-    );
-  }
 
   const loggedVaccinesCount = (fullUserDetails?.vaccines?.completed?.length || 0) +
                               (fullUserDetails?.vaccines?.upcoming?.length || 0) +
@@ -244,7 +289,15 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <img src={fullUserDetails.user.image || "https://i.pravatar.cc/100?img=4"} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    {fullUserDetails.user.image ? (
+                      <img src={fullUserDetails.user.image} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500 font-bold text-xl">
+                          {fullUserDetails.user.full_name ? fullUserDetails.user.full_name.charAt(0).toUpperCase() : 'U'}
+                        </span>
+                      </div>
+                    )}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-800">{fullUserDetails.user.full_name || fullUserDetails.user.phone_number}</h2>
                       <p className="text-sm text-gray-500">{fullUserDetails.user.phone_number || "N/A"}</p>
@@ -302,7 +355,15 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
                       className="flex items-center gap-2 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition cursor-pointer"
                       onClick={() => handleDependentDetails(dep)}
                     >
-                      <img src={dep.image || "https://i.pravatar.cc/100?img=1"} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
+                      {dep.image ? (
+                        <img src={dep.image} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-500 font-bold">
+                            {dep.full_name ? dep.full_name.charAt(0).toUpperCase() : 'D'}
+                          </span>
+                        </div>
+                      )}
                       <div>
                         <p className="font-medium text-gray-800">{dep.full_name || dep.relation_type}</p>
                         <p className="text-sm text-gray-500">{dep.relation_type || "N/A"}</p>
@@ -325,7 +386,15 @@ const UserList = ({ items, userDetails, setUserDetails, onEdit, onDelete, onOpen
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <img src={fullDependentDetails.dependent.profileImage || "https://i.pravatar.cc/100?img=1"} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    {fullDependentDetails.dependent.image ? (
+                      <img src={fullDependentDetails.dependent.image} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500 font-bold text-xl">
+                          {fullDependentDetails.dependent.full_name ? fullDependentDetails.dependent.full_name.charAt(0).toUpperCase() : 'D'}
+                        </span>
+                      </div>
+                    )}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-800">{fullDependentDetails.dependent.full_name || fullDependentDetails.dependent.relation_type}</h2>
                       <p className="text-sm text-gray-500">{fullDependentDetails.dependent.phone_number || "N/A"}</p>

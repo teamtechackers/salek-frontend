@@ -22,7 +22,17 @@ const UserListItem = ({ item, handleFunction, onEdit, onDelete }) => {
       onClick={handleFunction}
     >
       <div className="flex justify-center items-center w-[14%]">
-        <img src={item.image || "https://i.pravatar.cc/100?img=4"} alt={item.username || "User"} className="w-10 h-10 rounded-full object-cover" />
+        {/* <img src={item.image || "https://i.pravatar.cc/100?img=4"} alt={item.username || "User"} className="w-10 h-10 rounded-full object-cover" /> */}
+       {item.image? (
+                      <img src={item.image} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full object-cover bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500 font-bold text-l">
+                          {item.username ? item.username.charAt(0).toUpperCase() : 'D'}
+                        </span>
+                      </div>
+                    )}
+     
       </div>
       <div className="flex justify-center items-center w-[18%] text-[#2F3339] font-medium">{item.username || "N/A"}</div>
       <div className="flex justify-center items-center w-[26%] text-[#2F3339]">{item.email !== null ? item.email : item.phoneNo || "N/A"}</div>
