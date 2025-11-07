@@ -66,7 +66,7 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick, userId, isDependent, r
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="flex h-[50px] bg-[#245FFF] text-white font-semibold w-full">
+            <tr className="flex h-[50px] bg-[#245FFF] text-white font-semibold w-full rounded-lg">
               <th className="flex items-center justify-center rounded-l-lg w-[25%]">Vaccine Name</th>
               <th className="flex items-center justify-center w-[10%]">Dose</th>
               <th className="flex items-center justify-center w-[15%]">Scheduled Date</th>
@@ -81,7 +81,7 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick, userId, isDependent, r
               displayVaccines.map((v, i) => (
                 <tr
                   key={i}
-                  className={`flex h-[50px] text-black font-semibold w-full transition`}
+                  className={`flex h-[50px] text-black font-semibold w-full border border-blue-300 rounded-2xl shadow-sm hover:bg-blue-100 transition mt-2`}
                 >
                   <td className="flex items-center justify-center rounded-l-lg w-[25%]">{v.vaccine_name}</td>
                   <td className="flex items-center justify-center w-[10%]">{v.dose_number}</td>

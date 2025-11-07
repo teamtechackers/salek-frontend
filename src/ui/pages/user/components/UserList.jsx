@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; // Add useLocation hook
+import { Navigate, useLocation, useNavigate } from "react-router-dom"; // Add useLocation hook
 import { ICONS } from "../../../constants/assets";
 import VaccineTableDisplay from "./VaccineTable";
 import UserListItem from "./UserListItem";
@@ -225,6 +225,7 @@ const UserList = ({
       refetchUserDetailsQuery(); // Refresh user details to update dependent list
       setDependentDetails(false); // Go back to user details view
       setSelectedDependentId(null); // Clear selected dependent
+      
     } catch (error) {
       console.error('Failed to delete dependent:', error);
     }
