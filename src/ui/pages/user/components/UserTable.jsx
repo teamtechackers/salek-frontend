@@ -5,9 +5,11 @@ import EditUserShortModal from "./EditUserShortModal";
 import { useUpdateUserMutation, useDeleteUserMutation } from "../../../../core/services/api/userApi";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom"; // Add useNavigate hook
 
 export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onRefetchUserDetails, onOpenFullEdit }) {
   console.log("UserTable.jsx - onOpenFullEdit received:", onOpenFullEdit);
+  const navigate = useNavigate(); // Add navigate hook
   const [dependentDetails, setDependentDetails] = useState(false); // Add missing state
   const [openDelete, setOpenDelete] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -34,6 +36,11 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
       setOpenConfirm(true);
       setOpenDelete(false);
       refetch();
+      
+      // Navigate back to user list after successful deletion
+      setTimeout(() => {
+        navigate('/app/user'); // Adjust the path according to your routing setup
+      }, 1500); // Delay to show confirmation message
     } catch (error) {
       console.error('Failed to delete user:', error);
     }
@@ -130,7 +137,11 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
         onClose={() => setOpenConfirm(false)}
         title="User Deleted"
         description="The user has been successfully deleted."
-        onConfirm={() => setOpenConfirm(false)}
+        onConfirm={() => {
+          setOpenConfirm(false);
+          // Navigate to user list immediately when user clicks OK
+          navigate('/app/user'); // Adjust the path according to your routing setup
+        }}
       />
     </div>
   );

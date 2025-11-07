@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom"; // Add useLocation hook
+import { Navigate, useLocation, useNavigate } from "react-router-dom"; // Add useNavigate hook
 import { ICONS } from "../../../constants/assets";
 import VaccineTableDisplay from "./VaccineTable";
 import UserListItem from "./UserListItem";
 import ReminderModal from "./ReminderModal"; // Import the new modal
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox"; // Import ConfirmDeleteModal
 import ConfirmationModal from "../../../components/ConfirmationModal"; // Import ConfirmationModal
-import { useGetUserDetailsQuery, useGetDependentDetailsQuery, useDeleteDependentMutation } from "/src/core/services/api/userApi";
+import { useGetUserDetailsQuery, useGetDependentDetailsQuery, useDeleteDependentMutation, useDeleteUserMutation } from "/src/core/services/api/userApi";
 import { useGetNotificationsQuery } from "../../../../core/services/api/notificationApi";
 import { useGetRemindersByUserIdQuery } from "../../../../core/services/api/vaccineApi";
 import NotificationsTab from "./NotificationsTab"; // Import the new NotificationsTab component
@@ -27,6 +27,7 @@ const UserList = ({
   onPageChange,
 }) => {
   const location = useLocation();
+  const navigate = useNavigate(); // Add navigate hook
   const adminId = localStorage.getItem('adminId');
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedDependentId, setSelectedDependentId] = useState(null);
@@ -52,7 +53,13 @@ const UserList = ({
   const [openDependentDeleteConfirm, setOpenDependentDeleteConfirm] = useState(false);
   const [dependentToDelete, setDependentToDelete] = useState({ user_id: null, dependent_id: null });
 
+  // State for User Deletion from Detail View
+  const [openDeleteUser, setOpenDeleteUser] = useState(false);
+  const [openUserDeleteConfirm, setOpenUserDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+
   const [deleteDependent] = useDeleteDependentMutation();
+  const [deleteUser] = useDeleteUserMutation(); // Add deleteUser mutation
 
   const { data: userDetailsResponse, isLoading: loadingUserDetails, refetch: refetchUserDetailsQuery } = useGetUserDetailsQuery(
     { user_id: selectedUserId, admin_user_id: adminId },
@@ -212,6 +219,30 @@ const UserList = ({
     setOpenDeleteDependent(true);
   };
 
+  // Handle user deletion from detail view
+  const handleDeleteUserFromDetail = (userId) => {
+    setUserToDelete(userId);
+    setOpenDeleteUser(true);
+  };
+
+  // Confirm user deletion from detail view
+  const confirmDeleteUser = async () => {
+    try {
+      await deleteUser({
+        user_id: userToDelete,
+        admin_user_id: adminId
+      }).unwrap();
+      setOpenDeleteUser(false);
+      setOpenUserDeleteConfirm(true);
+      // Navigate back to user list after successful deletion
+      setTimeout(() => {
+        navigate('/app/user'); // Adjust the path according to your routing setup
+      }, 1500); // Delay to show confirmation message
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+    }
+  };
+
   // Confirm dependent deletion
   const confirmDeleteDependent = async () => {
     try {
@@ -311,7 +342,7 @@ const UserList = ({
                     }}>
                       <img src={ICONS.edituser} alt="Edit" />
                     </button>
-                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => onDelete(fullUserDetails.user.id)}>
+                    <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => handleDeleteUserFromDetail(fullUserDetails.user.id)}>
                       <img src={ICONS.delete} alt="Delete" />
                     </button>
                   </div>
@@ -531,6 +562,32 @@ const UserList = ({
         title="Dependent Deleted"
         description="The dependent has been successfully deleted."
         onConfirm={() => setOpenDependentDeleteConfirm(false)}
+      />
+
+      {/* User Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        open={openDeleteUser}
+        title="Delete User"
+        description="Are you sure you want to delete this user? This action cannot be undone."
+        onClose={() => setOpenDeleteUser(false)}
+        onConfirm={confirmDeleteUser}
+      />
+
+      {/* User Delete Success Modal */}
+      <ConfirmationModal
+        open={openUserDeleteConfirm}
+        onClose={() => {
+          setOpenUserDeleteConfirm(false);
+          // Navigate to user list immediately when user clicks OK
+          navigate('/app/user'); // Adjust the path according to your routing setup
+        }}
+        title="User Deleted"
+        description="The user has been successfully deleted."
+        onConfirm={() => {
+          setOpenUserDeleteConfirm(false);
+          // Navigate to user list immediately when user clicks OK
+          navigate('/app/user'); // Adjust the path according to your routing setup
+        }}
       />
     </div>
   );
