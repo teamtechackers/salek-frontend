@@ -3,11 +3,15 @@ import { apiSlice } from './apiSlice';
 export const vaccineApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getVaccines: builder.query({
-      query: ({ page = 0, limit = 8 } = {}) => {
+      query: ({ page = 0, limit = 8, search } = {}) => {
         const adminId = localStorage.getItem('adminId');
         let url = `/admin/vaccines?page=${page}&limit=${limit}`;
         if (adminId) {
           url += `&admin_user_id=${adminId}`;
+        }
+        // Add search parameter if provided
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
         }
         return url;
       },
