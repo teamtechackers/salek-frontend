@@ -11,6 +11,7 @@ import {
   InputLabel,
   TextField
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   const initialFormData = {
@@ -108,6 +109,14 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
       alert("Sub-category is a required field.");
       return;
     }
+     if (!formData.category) {
+      alert("Category is a required field.");
+      return;
+    }
+     if (!formData.type) {
+      alert("Type is a required field.");
+      return;
+    }
 
     try {
       const adminId = localStorage.getItem("adminId");
@@ -141,9 +150,9 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
         refetch(); // Ensure refetch is called if provided
       }
     } catch (err) {
-      console.error("Failed to save vaccine:", err);
-      // Optionally, display a user-friendly error message
-      alert("Failed to save vaccine. Please try again.");
+            console.error("Failed to save vaccine:", addError.data.message);
+
+      alert(addError.data.message);
     }
   };
 

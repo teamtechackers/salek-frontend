@@ -12,27 +12,25 @@ import CircularProgress from "@mui/material/CircularProgress";
 const VaccineLibrary = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
-  const [openModal, setOpenModal] = useState(false); // Renamed from openAdd
-  const [selectedVaccine, setSelectedVaccine] = useState(null); // To pass to VaccineModal for editing
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedVaccine, setSelectedVaccine] = useState(null);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
-  // const [searchType, setSearchType] = useState("name"); // Default search type - REMOVED
 
   const adminId = localStorage.getItem("adminId");
 
   const { data, error, isLoading, refetch } = useGetVaccinesQuery({
     admin_user_id: adminId,
-    page: currentPage - 1, // API expects 0-indexed page
+    page: currentPage - 1,
     limit: pageSize,
-    // Pass search to the API for initial filtering
-    search: search, // Keep search for API if backend supports it
+    search: search || undefined, // Pass search to API
   });
 
   const allVaccines = data?.data?.vaccines || [];
 
   // Client-side filtering for search across multiple fields
   const filteredVaccinesBySearch = allVaccines.filter((vaccine) => {
-    if (!search) return true; // If no search term, return all vaccines
+    if (!search) return true;
 
     const searchValue = search.toLowerCase();
     // Search across name, site, and type
@@ -45,18 +43,18 @@ const VaccineLibrary = () => {
 
   // Client-side filtering for category
   const filteredVaccinesByCategory = filteredVaccinesBySearch.filter((vaccine) => {
-    if (!category || category === "") return true; // If no category selected, return all vaccines
+    if (!category || category === "") return true;
     return String(vaccine.category).toLowerCase() === String(category).toLowerCase();
   });
 
-  const vaccinesData = filteredVaccinesByCategory; // Use client-side filtered data
-  const totalItems = data?.data?.pagination?.total || 0; // Total from API, not filtered count
+  const vaccinesData = filteredVaccinesByCategory;
+  const totalItems = data?.data?.pagination?.total || 0;
   const totalPages = data?.data?.pagination?.pages || 1;
 
   useEffect(() => {
-    // Only reset page when pageSize changes, not when filters change
+    // Reset page when pageSize or search changes
     setCurrentPage(1);
-  }, [pageSize]);
+  }, [pageSize, search]);
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -68,35 +66,29 @@ const VaccineLibrary = () => {
   return (
     <>
       <PageContainer
-          topSection={
-          <div className="flex w-full items-center justify-between">
-            {/* Left - Search and Search Type */}
+        topSection={
+          <div className="flex w-full items-center justify-between mt-4">
             <div className="w-1/2 flex items-center gap-3">
-            
               <SearchBar 
                 value={search} 
                 onChange={(newSearch) => {
                   setSearch(newSearch);
-                  // Don't reset page when search changes
                 }} 
                 onSearch={refetch} 
               />
             </div>
 
-            {/* Right - Category + Add Button */}
             <div className="w-1/2 flex items-center justify-end gap-3">
-              {/* Search type dropdown removed as per request */}
               <CategoryDropdown 
                 selectedCategory={category} 
                 onCategoryChange={(newCategory) => {
                   setCategory(newCategory);
-                  // Don't reset page when category changes
                 }} 
               />
               <button
                 className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition"
                 onClick={() => {
-                  setSelectedVaccine(null); // Clear selected vaccine for "Add New"
+                  setSelectedVaccine(null);
                   setOpenModal(true);
                 }}
               >
@@ -116,7 +108,7 @@ const VaccineLibrary = () => {
                 currentPage={currentPage}
                 itemsPerPage={pageSize}
                 refetch={refetch}
-                onEdit={(vaccine) => { // Pass onEdit handler to VaccineTable
+                onEdit={(vaccine) => {
                   setSelectedVaccine(vaccine);
                   setOpenModal(true);
                 }}
@@ -138,7 +130,7 @@ const VaccineLibrary = () => {
         open={openModal}
         onClose={() => setOpenModal(false)}
         refetch={refetch}
-        vaccine={selectedVaccine} // Pass selected vaccine for editing
+        vaccine={selectedVaccine}
       />
     </>
   );
