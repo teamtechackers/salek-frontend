@@ -7,7 +7,7 @@ import ConfirmationModal from "../../../components/ConfirmationModal";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom"; // Add useNavigate hook
 
-export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onRefetchUserDetails, onOpenFullEdit }) {
+export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onRefetchUserDetails, onOpenFullEdit, onReturnToTable }) {
   console.log("UserTable.jsx - onOpenFullEdit received:", onOpenFullEdit);
   const navigate = useNavigate(); // Add navigate hook
   const [dependentDetails, setDependentDetails] = useState(false); // Add missing state
@@ -37,10 +37,23 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
       setOpenDelete(false);
       refetch();
       
+      // If we're in user detail view, reset the state to go back to user list
+      if (userDetails) {
+        setUserDetails(false);
+      }
+      
       // Navigate back to user list after successful deletion
       setTimeout(() => {
-        navigate('/app/user'); // Adjust the path according to your routing setup
-      }, 1500); // Delay to show confirmation message
+        // Refetch user data before navigating
+        if (refetch) {
+          refetch();
+        }
+        // Also trigger the return to table refetch if provided
+        if (onReturnToTable) {
+          onReturnToTable();
+        }
+        navigate('/app/user');
+      }, 1500);
     } catch (error) {
       console.error('Failed to delete user:', error);
     }
@@ -106,6 +119,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
           dependentDetails={dependentDetails} // Pass dependentDetails state
           setDependentDetails={setDependentDetails} // Pass setDependentDetails function
           onOpenFullEdit={onOpenFullEdit} // Pass onOpenFullEdit for proper modal
+          parentRefetchUserDetails={refetchUserDetails} // Pass refetch function with new name
         />
       </div>
 
@@ -134,13 +148,41 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
       {/* Success Modal */}
       <ConfirmationModal
         open={openConfirm}
-        onClose={() => setOpenConfirm(false)}
+        onClose={() => {
+          setOpenConfirm(false);
+          // If we're in user detail view, reset the state to go back to user list
+          if (userDetails) {
+            setUserDetails(false);
+          }
+          // Refetch user data before navigating
+          if (refetch) {
+            refetch();
+          }
+          // Also trigger the return to table refetch if provided
+          if (onReturnToTable) {
+            onReturnToTable();
+          }
+          // Navigate to user list immediately when user clicks OK
+          navigate('/app/user');
+        }}
         title="User Deleted"
         description="The user has been successfully deleted."
         onConfirm={() => {
           setOpenConfirm(false);
+          // If we're in user detail view, reset the state to go back to user list
+          if (userDetails) {
+            setUserDetails(false);
+          }
+          // Refetch user data before navigating
+          if (refetch) {
+            refetch();
+          }
+          // Also trigger the return to table refetch if provided
+          if (onReturnToTable) {
+            onReturnToTable();
+          }
           // Navigate to user list immediately when user clicks OK
-          navigate('/app/user'); // Adjust the path according to your routing setup
+          navigate('/app/user');
         }}
       />
     </div>

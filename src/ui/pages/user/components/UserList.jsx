@@ -25,6 +25,7 @@ const UserList = ({
   currentPage,
   totalPages,
   onPageChange,
+  parentRefetchUserDetails, // Rename this prop to avoid conflict
 }) => {
   const location = useLocation();
   const navigate = useNavigate(); // Add navigate hook
@@ -188,6 +189,10 @@ const UserList = ({
     setSelectedVaccineForReminder(null); // Clear selected vaccine
     setSelectedVaccineNameForReminder("");
     setActiveMainTab("Logged Vaccines"); // Reset to default tab
+    // Refetch user data when going back to user list
+    if (parentRefetchUserDetails) {
+      parentRefetchUserDetails();
+    }
   };
 
   const tabs = ["Completed", "Upcoming", "Due Soon", "Overdue"];
@@ -234,10 +239,19 @@ const UserList = ({
       }).unwrap();
       setOpenDeleteUser(false);
       setOpenUserDeleteConfirm(true);
-      // Navigate back to user list after successful deletion
+      // Reset the userDetails state to go back to user list
       setTimeout(() => {
-        navigate('/app/user'); // Adjust the path according to your routing setup
-      }, 1500); // Delay to show confirmation message
+        setUserDetails(false);
+        setSelectedUserId(null);
+        setDependentDetails(false);
+        setSelectedDependentId(null);
+        // Refetch user data
+        if (parentRefetchUserDetails) {
+          parentRefetchUserDetails();
+        }
+        // Navigate to user list
+        navigate('/app/user');
+      }, 1500);
     } catch (error) {
       console.error('Failed to delete user:', error);
     }
@@ -578,15 +592,33 @@ const UserList = ({
         open={openUserDeleteConfirm}
         onClose={() => {
           setOpenUserDeleteConfirm(false);
-          // Navigate to user list immediately when user clicks OK
-          navigate('/app/user'); // Adjust the path according to your routing setup
+          // Reset the userDetails state to go back to user list
+          setUserDetails(false);
+          setSelectedUserId(null);
+          setDependentDetails(false);
+          setSelectedDependentId(null);
+          // Refetch user data
+          if (parentRefetchUserDetails) {
+            parentRefetchUserDetails();
+          }
+          // Navigate to user list
+          navigate('/app/user');
         }}
         title="User Deleted"
         description="The user has been successfully deleted."
         onConfirm={() => {
           setOpenUserDeleteConfirm(false);
-          // Navigate to user list immediately when user clicks OK
-          navigate('/app/user'); // Adjust the path according to your routing setup
+          // Reset the userDetails state to go back to user list
+          setUserDetails(false);
+          setSelectedUserId(null);
+          setDependentDetails(false);
+          setSelectedDependentId(null);
+          // Refetch user data
+          if (parentRefetchUserDetails) {
+            parentRefetchUserDetails();
+          }
+          // Navigate to user list
+          navigate('/app/user');
         }}
       />
     </div>
