@@ -1,6 +1,6 @@
-import { apiSlice } from './apiSlice';
+import { apiSliceWithAuth } from './apiSlice';
 
-export const dashboardApi = apiSlice.injectEndpoints({
+export const dashboardApi = apiSliceWithAuth.injectEndpoints({
   endpoints: (builder) => ({
     getDashboard: builder.query({
       query: (adminId) => `/admin/dashboard?user_id=${adminId}`, // Modified to accept userId as a query parameter

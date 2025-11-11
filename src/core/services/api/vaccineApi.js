@@ -1,6 +1,6 @@
-import { apiSlice } from './apiSlice';
+import { apiSliceWithAuth } from './apiSlice';
 
-export const vaccineApi = apiSlice.injectEndpoints({
+export const vaccineApi = apiSliceWithAuth.injectEndpoints({
   endpoints: (builder) => ({
     getVaccines: builder.query({
       query: ({ page = 0, limit = 8, search } = {}) => {

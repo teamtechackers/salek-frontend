@@ -1,6 +1,6 @@
-import { apiSlice } from './apiSlice';
+import { apiSliceWithAuth } from './apiSlice';
 
-export const userApi = apiSlice.injectEndpoints({
+export const userApi = apiSliceWithAuth.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: ({ page = 0, limit = 8, search } = {}) => {
