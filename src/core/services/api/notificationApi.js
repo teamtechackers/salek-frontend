@@ -1,6 +1,6 @@
-import { apiSlice } from './apiSlice';
+import { apiSliceWithAuth } from './apiSlice';
 
-export const notificationApi = apiSlice.injectEndpoints({
+export const notificationApi = apiSliceWithAuth.injectEndpoints({
   endpoints: (builder) => ({
     getNotifications: builder.query({
       query: () => '/admin/notifications',

@@ -67,6 +67,12 @@ const User = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  // Function to trigger refetch when navigating back to user list
+  const handleRefetchOnReturn = () => {
+    // Trigger a refresh of all data
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   const allUsers = data?.data?.users || [];
 
   // Client-side filtering for search across multiple fields
@@ -223,6 +229,7 @@ const User = () => {
                      refetchUserDetails={userDetailsRefetch}
                      onRefetchUserDetails={handleRefetchUserDetails}
                      onOpenFullEdit={handleOpenFullEdit} // Pass the new handler
+                     onReturnToTable={handleRefetchOnReturn} // Pass refetch function
                    />
                  ) : (
                    <div className="text-center py-8 text-gray-500">No Data Found</div>

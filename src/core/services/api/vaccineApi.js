@@ -1,6 +1,6 @@
-import { apiSlice } from './apiSlice';
+import { apiSliceWithAuth } from './apiSlice';
 
-export const vaccineApi = apiSlice.injectEndpoints({
+export const vaccineApi = apiSliceWithAuth.injectEndpoints({
   endpoints: (builder) => ({
     getVaccines: builder.query({
       query: ({ page = 0, limit = 8, search } = {}) => {
@@ -66,6 +66,18 @@ export const vaccineApi = apiSlice.injectEndpoints({
         body: JSON.stringify({ admin_user_id, user_vaccine_id }),
       }),
     }),
+    getCategories: builder.query({
+      query: (admin_user_id) => `/vaccines/categories?admin_user_id=${admin_user_id}`,
+      transformResponse: (response) => response.data?.categories || [],
+    }),
+    getSubCategories: builder.query({
+      query: ({ category, admin_user_id }) => `/vaccines/sub-categories?category=${category}&admin_user_id=${admin_user_id}`,
+      transformResponse: (response) => response.data?.sub_categories || [],
+    }),
+    getTypes: builder.query({
+      query: (admin_user_id) => `/vaccines/types?admin_user_id=${admin_user_id}`,
+      transformResponse: (response) => response.data?.types || [],
+    }),
   }),
 });
 
@@ -78,4 +90,7 @@ export const {
   useGetRemindersByUserIdQuery,
   useDeleteDependentUserVaccineMutation,
   useDeleteUserVaccineMutation,
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+  useGetTypesQuery,
 } = vaccineApi;

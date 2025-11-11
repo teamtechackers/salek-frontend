@@ -12,9 +12,9 @@ const UserListItem = ({ item, handleFunction, onEdit, onDelete }) => {
   };
 
   const status = item.is_active === true ? "Active" : "Inactive";
-  const statusColorClass = item.profile_completed
-    ? "bg-green-100 text-green-700 border-green-700"
-    : "bg-red-100 text-red-700 border-red-700";
+  const statusColorClass = item.is_active === false
+    ? "bg-[#D322204D] text-[#D32220] border-[#D32220]"
+    : "bg-[#28BC3933] text-[#28BC39] border-[#28BC39]";
 
   return (
     <div
@@ -38,7 +38,7 @@ const UserListItem = ({ item, handleFunction, onEdit, onDelete }) => {
       <div className="flex justify-center items-center w-[26%] text-[#2F3339]">{item.email !== null ? item.email : item.phoneNo || "N/A"}</div>
       <div className="flex justify-center items-center w-[14%] text-[#2F3339]">{formatDate(item.DOB)}</div>
       <div className="flex justify-center items-center w-[14%]">
-        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusColorClass}`}>
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold border w-20 text-center ${statusColorClass}`}>
           {status}
         </span>
       </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ICONS } from "../../../constants/assets";
 import { vaccineFields } from "./AddFormlabels";
 import { COLORS } from "../../../theme/colors/colors";
-import { useAddVaccineMutation, useUpdateVaccineMutation } from "../../../../core/services/api/vaccineApi";
+import { useAddVaccineMutation, useUpdateVaccineMutation, useGetCategoriesQuery, useGetSubCategoriesQuery, useGetTypesQuery } from "../../../../core/services/api/vaccineApi";
 import CircularProgress from "@mui/material/CircularProgress"; // Import CircularProgress
 import {
   Select,
@@ -31,6 +31,15 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const adminId = localStorage.getItem("adminId");
+
+  // Fetch categories, subcategories, and types
+  const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery(adminId, { skip: !adminId });
+  const { data: subCategories, isLoading: isLoadingSubCategories } = useGetSubCategoriesQuery(
+    { category: formData.category, admin_user_id: adminId }, 
+    { skip: !formData.category || !adminId }
+  );
+  const { data: types, isLoading: isLoadingTypes } = useGetTypesQuery(adminId, { skip: !adminId });
 
   useEffect(() => {
     if (vaccine) {
@@ -69,12 +78,17 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
 
   const handleChange = (key, value) => {
     setFormData((prevData) => {
-      const fieldDefinition = vaccineFields.find((field) => field.key === key);
-      const processedValue =
-        fieldDefinition && fieldDefinition.type === "number"
-          ? Number(value) || 0 // Convert to number, default to 0 if empty or invalid
-          : value;
-      return { ...prevData, [key]: processedValue };
+      const newData = { ...prevData, [key]: value };
+      
+      // Reset dependent fields when parent field changes
+      if (key === "category") {
+        newData.subCategory = "";
+        newData.type = "";
+      } else if (key === "subCategory") {
+        newData.type = "";
+      }
+      
+      return newData;
     });
   };
 
@@ -159,7 +173,106 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   const isLoading = isAdding || isUpdating; // Combine loading states for buttons
 
   const renderField = (field) => {
-    if (field.type === "text") {
+    // Handle the dependent dropdowns for category, subCategory, and type
+    if (field.key === "category") {
+      return (
+        <Select
+          value={formData[field.key] || ""}
+          onChange={(e) => handleChange(field.key, e.target.value)}
+          displayEmpty
+          fullWidth
+          variant="outlined"
+          size="small"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px !important',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '10px !important',
+            },
+          }}
+        >
+          <MenuItem value="">
+            <div>Select Category</div>
+          </MenuItem>
+          {isLoadingCategories ? (
+            <MenuItem value="">Loading...</MenuItem>
+          ) : (
+            categories?.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))
+          )}
+        </Select>
+      );
+    } else if (field.key === "subCategory") {
+      return (
+        <Select
+          value={formData[field.key] || ""}
+          onChange={(e) => handleChange(field.key, e.target.value)}
+          displayEmpty
+          fullWidth
+          variant="outlined"
+          size="small"
+          disabled={!formData.category} // Disable if category is not selected
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px !important',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '10px !important',
+            },
+          }}
+        >
+          <MenuItem value="">
+            <div>Select Sub-category</div>
+          </MenuItem>
+          {isLoadingSubCategories ? (
+            <MenuItem value="">Loading...</MenuItem>
+          ) : (
+            subCategories?.map((subCategory) => (
+              <MenuItem key={subCategory} value={subCategory}>
+                {subCategory}
+              </MenuItem>
+            ))
+          )}
+        </Select>
+      );
+    } else if (field.key === "type") {
+      return (
+        <Select
+          value={formData[field.key] || ""}
+          onChange={(e) => handleChange(field.key, e.target.value)}
+          displayEmpty
+          fullWidth
+          variant="outlined"
+          size="small"
+          disabled={!formData.subCategory} // Disable if subCategory is not selected
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px !important',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '10px !important',
+            },
+          }}
+        >
+          <MenuItem value="">
+            <div>Select Type</div>
+          </MenuItem>
+          {isLoadingTypes ? (
+            <MenuItem value="">Loading...</MenuItem>
+          ) : (
+            types?.map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))
+          )}
+        </Select>
+      );
+    } else if (field.type === "text") {
       return (
         <TextField
           fullWidth

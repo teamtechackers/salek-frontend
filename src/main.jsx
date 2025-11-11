@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./core/store/store";
 import "./index.css";
@@ -13,8 +13,16 @@ import Notifications from "./ui/pages/notifications/Notifications";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ProtectedRoute from "./core/components/ProtectedRoute";
 
 const theme = createTheme();
+
+// Check if user is authenticated
+const isAuthenticated = () => {
+  const token = localStorage.getItem('token');
+  const adminId = localStorage.getItem('adminId');
+  return !!(token && adminId);
+};
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -22,12 +30,22 @@ createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <Routes>
-            {/* Public route */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Login />} />
+            {/* Public routes */}
+            <Route 
+              path="/login" 
+              element={isAuthenticated() ? <Navigate to="/app/dashboard" replace /> : <Login />} 
+            />
+            <Route 
+              path="/" 
+              element={isAuthenticated() ? <Navigate to="/app/dashboard" replace /> : <Login />} 
+            />
 
             {/* Protected layout routes */}
-            <Route path="/app" element={<Layout />}>
+            <Route path="/app" element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="user" element={<User />} />
               <Route path="vaccine-library" element={<VaccineLibrary />} />

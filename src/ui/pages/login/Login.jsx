@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import login_labels from "../../constants/pages/loginConstants"
 import { ROUTES } from "../../constants/layout/SidebarConstants"
@@ -16,6 +16,16 @@ export default function LoginPage() {
   const [login, { isLoading, error }] = useLoginMutation() // Initialize the login mutation
   const navigate = useNavigate()
 
+  // Check if user is already authenticated
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const adminId = localStorage.getItem('adminId');
+    
+    if (token && adminId) {
+      navigate(ROUTES.DASHBOARD, { replace: true });
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
@@ -29,7 +39,7 @@ export default function LoginPage() {
       if (actualAdminId && actualToken) {
         localStorage.setItem('adminId', actualAdminId); // Store userId in local storage
         localStorage.setItem('token', actualToken); // Store token in local storage
-        navigate(ROUTES.DASHBOARD);
+        navigate(ROUTES.DASHBOARD, { replace: true });
       } else {
         console.error("Login response did not contain adminId or token:", response);
         // Handle case where userId or token are missing from response
@@ -40,6 +50,7 @@ export default function LoginPage() {
       // You might want to set an error state here to display to the user
     }
   }
+  
   return (
     <div className="flex min-h-screen">
       {/* Left side image */}
