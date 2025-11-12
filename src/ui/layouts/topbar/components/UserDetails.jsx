@@ -5,14 +5,9 @@ import { IMAGES } from "../../../constants/assets";
 import useAuth from "../../../../core/hooks/useAuth";
 
 const UserDetails = () => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const navigate = useNavigate();
-  const { logout } = useAuth();
+ 
 
-  const handleLogout = () => {
-    // Use the logout function from the auth hook
-    logout();
-  };
+  // Removed handleLogout function since we're removing logout from header
 
   return (
     <div className="relative flex items-center gap-4">
@@ -25,8 +20,8 @@ const UserDetails = () => {
       </div>
 
       <div 
-        className="w-14 h-14 rounded-full overflow-hidden cursor-pointer"
-        onClick={() => setShowDropdown(!showDropdown)}
+        className="w-14 h-14 rounded-full overflow-hidden"
+        // onClick={() => setShowDropdown(!showDropdown)}
       >
         <img
           src={IMAGES.topbarTempUserImage}
@@ -40,25 +35,11 @@ const UserDetails = () => {
         <span className="text-sm text-gray-500">Admin</span>
       </div>
 
-      {/* Dropdown menu */}
-      {showDropdown && (
-        <div className="absolute right-0 top-16 bg-white rounded-lg shadow-lg py-2 w-48 z-10">
-          <button
-            onClick={handleLogout}
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Logout
-          </button>
-        </div>
-      )}
+      {/* Dropdown menu - removed logout option */}
+     
 
       {/* Click outside to close dropdown */}
-      {showDropdown && (
-        <div 
-          className="fixed inset-0 z-0" 
-          onClick={() => setShowDropdown(false)}
-        />
-      )}
+     
     </div>
   );
 };
