@@ -35,8 +35,10 @@ const UserList = ({
   const [currentDependentData, setCurrentDependentData] = useState(null);
   const [activeMainTab, setActiveMainTab] = useState("Logged Vaccines");
   const [activeTab, setActiveTab] = useState("Completed");
+  const [userImageError, setUserImageError] = useState(false);
+  const [dependentImageError, setDependentImageError] = useState(false);
+  const [currentDependentImageError, setCurrentDependentImageError] = useState(false);
   
-  // State to track when we're actively fetching new data (not just showing cached data)
   const [isFetchingUserData, setIsFetchingUserData] = useState(false);
   const [isFetchingDependentData, setIsFetchingDependentData] = useState(false);
 
@@ -85,6 +87,8 @@ const UserList = ({
     if (selectedUserId && selectedUserId !== lastSelectedUserId) {
       setIsFetchingUserData(true);
       setLastSelectedUserId(selectedUserId);
+      // Reset image error state when switching users
+      setUserImageError(false);
     }
   }, [selectedUserId, lastSelectedUserId]);
 
@@ -92,6 +96,9 @@ const UserList = ({
     if (selectedDependentId && selectedDependentId !== lastSelectedDependentId) {
       setIsFetchingDependentData(true);
       setLastSelectedDependentId(selectedDependentId);
+      // Reset image error state when switching dependents
+      setDependentImageError(false);
+      setCurrentDependentImageError(false);
     }
   }, [selectedDependentId, lastSelectedDependentId]);
 
@@ -250,7 +257,7 @@ const UserList = ({
           parentRefetchUserDetails();
         }
         // Navigate to user list
-        navigate('/app/user');
+        navigate('/user');
       }, 1500);
     } catch (error) {
       console.error('Failed to delete user:', error);
@@ -335,8 +342,13 @@ const UserList = ({
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    {fullUserDetails.user.image ? (
-                      <img src={fullUserDetails.user.image} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    {fullUserDetails.user.image && !userImageError ? (
+                      <img 
+                        src={fullUserDetails.user.image} 
+                        alt="Profile" 
+                        className="w-14 h-14 rounded-full object-cover" 
+                        onError={() => setUserImageError(true)}
+                      />
                     ) : (
                       <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
                         <span className="text-gray-500 font-bold text-xl">
@@ -401,8 +413,13 @@ const UserList = ({
                       className="flex items-center gap-2 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition cursor-pointer"
                       onClick={() => handleDependentDetails(dep)}
                     >
-                      {dep.image ? (
-                        <img src={dep.image} alt={dep.full_name} className="w-10 h-10 rounded-full object-cover" />
+                      {dep.image && !currentDependentImageError ? (
+                        <img 
+                          src={dep.image} 
+                          alt={dep.full_name} 
+                          className="w-10 h-10 rounded-full object-cover" 
+                          onError={() => setCurrentDependentImageError(true)}
+                        />
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                           <span className="text-gray-500 font-bold">
@@ -432,8 +449,13 @@ const UserList = ({
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    {fullDependentDetails.dependent.image ? (
-                      <img src={fullDependentDetails.dependent.image} alt="Profile" className="w-14 h-14 rounded-full object-cover" />
+                    {fullDependentDetails.dependent.image && !dependentImageError ? (
+                      <img 
+                        src={fullDependentDetails.dependent.image} 
+                        alt="Profile" 
+                        className="w-14 h-14 rounded-full object-cover" 
+                        onError={() => setDependentImageError(true)}
+                      />
                     ) : (
                       <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
                         <span className="text-gray-500 font-bold text-xl">
@@ -592,17 +614,15 @@ const UserList = ({
         open={openUserDeleteConfirm}
         onClose={() => {
           setOpenUserDeleteConfirm(false);
-          // Reset the userDetails state to go back to user list
           setUserDetails(false);
           setSelectedUserId(null);
           setDependentDetails(false);
           setSelectedDependentId(null);
-          // Refetch user data
           if (parentRefetchUserDetails) {
             parentRefetchUserDetails();
           }
           // Navigate to user list
-          navigate('/app/user');
+          navigate('/user');
         }}
         title="User Deleted"
         description="The user has been successfully deleted."
@@ -617,8 +637,7 @@ const UserList = ({
           if (parentRefetchUserDetails) {
             parentRefetchUserDetails();
           }
-          // Navigate to user list
-          navigate('/app/user');
+          navigate('/user');
         }}
       />
     </div>

@@ -8,7 +8,7 @@ const Topbar = () => {
   const path = location.pathname;
 
   const pageTitle = path
-    .replace("/app/", "") // remove leading slash
+    .replace("/", "") // remove leading slash
     .split("-") // split words by "-"
     .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
     .join(" ") || "Dashboard"; // default title
