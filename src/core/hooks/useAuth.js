@@ -11,7 +11,7 @@ const useAuth = () => {
 
     // If we're on the login page and have a valid token, redirect to dashboard
     if (window.location.pathname === '/login' && token && adminId) {
-      navigate('/app/dashboard');
+      navigate('/dashboard');
     }
   }, [navigate]);
 

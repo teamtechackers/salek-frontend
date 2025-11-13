@@ -52,7 +52,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
         if (onReturnToTable) {
           onReturnToTable();
         }
-        navigate('/app/user');
+        navigate('/user');
       }, 1500);
     } catch (error) {
       console.error('Failed to delete user:', error);
@@ -163,7 +163,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
             onReturnToTable();
           }
           // Navigate to user list immediately when user clicks OK
-          navigate('/app/user');
+          navigate('/user');
         }}
         title="User Deleted"
         description="The user has been successfully deleted."
@@ -182,7 +182,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
             onReturnToTable();
           }
           // Navigate to user list immediately when user clicks OK
-          navigate('/app/user');
+          navigate('/user');
         }}
       />
     </div>

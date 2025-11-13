@@ -17,7 +17,6 @@ import ProtectedRoute from "./core/components/ProtectedRoute";
 
 const theme = createTheme();
 
-// Check if user is authenticated
 const isAuthenticated = () => {
   const token = localStorage.getItem('token');
   const adminId = localStorage.getItem('adminId');
@@ -33,15 +32,15 @@ createRoot(document.getElementById("root")).render(
             {/* Public routes */}
             <Route 
               path="/login" 
-              element={isAuthenticated() ? <Navigate to="/app/dashboard" replace /> : <Login />} 
+              element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />} 
             />
             <Route 
               path="/" 
-              element={isAuthenticated() ? <Navigate to="/app/dashboard" replace /> : <Login />} 
+              element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />} 
             />
 
             {/* Protected layout routes */}
-            <Route path="/app" element={
+            <Route path="/" element={
               <ProtectedRoute>
                 <Layout />
               </ProtectedRoute>
