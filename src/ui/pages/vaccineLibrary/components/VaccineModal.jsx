@@ -80,7 +80,6 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
     setFormData((prevData) => {
       const newData = { ...prevData, [key]: value };
       
-      // Reset dependent fields when parent field changes
       if (key === "category") {
         newData.subCategory = "";
         newData.type = "";
