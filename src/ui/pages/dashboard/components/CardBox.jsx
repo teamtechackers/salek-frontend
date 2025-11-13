@@ -1,7 +1,7 @@
 import Card from "./Card";
 import { DASHBOARD_CARDS } from "../../../constants/pages/DashboardConstants";
 
-const CardBox = ({ totals }) => { // Accept totals prop
+const CardBox = ({ totals }) => { 
   const getCardValue = (title) => {
     switch (title) {
       case "Total Users":
@@ -9,9 +9,9 @@ const CardBox = ({ totals }) => { // Accept totals prop
       case "Vaccine Logged":
         return totals.completed_vaccines;
       case "Active Users":
-        return totals.total_users_with_dependents; // Assuming this maps to active users
+        return totals.active_users; 
       case "Notifications":
-        return DASHBOARD_CARDS.find(card => card.title === "Notifications")?.value; // Keep existing value if no API data
+        return DASHBOARD_CARDS.find(card => card.title === "Notifications")?.value; 
       default:
         return "N/A";
     }
