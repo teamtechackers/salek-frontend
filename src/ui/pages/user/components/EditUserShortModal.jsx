@@ -8,6 +8,7 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave, i
     login: user.phoneNo || "",
     dob: user.DOB ? new Date(user.DOB).toISOString().split('T')[0] : "",
   });
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -17,10 +18,20 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave, i
         login: user.phoneNo || "",
         dob: user.DOB ? new Date(user.DOB).toISOString().split('T')[0] : "",
       });
+      // Reset image error state when user changes
+      setImageError(false);
     }
   }, [user, open]);
 
   if (!open) return null;
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  // Determine which image to show
+  const imageUrl = user.avatar || user.image;
+  const shouldShowImage = imageUrl && !imageError;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -48,12 +59,20 @@ export default function EditUserShortModal({ open, onClose, user = {}, onSave, i
           {/* Avatar */}
           <div className="flex justify-center -mt-12">
             <div className="relative">
-              <img
-                src={user.avatar || "https://images.unsplash.com/photo-1603415526960-f7e0328c6f1b?q=80&w=256&auto=format&fit=crop&ixlib=rb-4.0.3&s=0d8b9f7f3d6e1c0b"}
-                alt="avatar"
-                className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-md"
-              />
-
+              {shouldShowImage ? (
+                <img
+                  src={imageUrl}
+                  alt="avatar"
+                  className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-md"
+                  onError={handleImageError}
+                />
+              ) : (
+                <div className="h-28 w-28 rounded-full border-4 border-white shadow-md bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500 font-bold text-2xl">
+                    {form.full_name ? form.full_name.charAt(0).toUpperCase() : 'U'}
+                  </span>
+                </div>
+              )}
               <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-white bg-green-500" />
             </div>
           </div>
