@@ -3,12 +3,15 @@ import { Select, MenuItem, FormControl } from "@mui/material";
 
 export default function CategoryDropdown({ selectedCategory, onCategoryChange }) {
   const categories = [
-    "Pregnancy",
-    "Infant",
-    "Child",
+    "Adolescent",
     "Adult",
+    "Birth",
+    "Child",
     "Elderly",
-    "Travel",
+    "Infant",
+    "Prenatal",
+    "Routine",
+    "Travel"
   ];
 
   return (

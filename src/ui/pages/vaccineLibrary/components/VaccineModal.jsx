@@ -118,12 +118,12 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.category) {
+     alert("Category is a required field.");
+     return;
+   }
     if (!formData.subCategory) {
       alert("Sub-category is a required field.");
-      return;
-    }
-     if (!formData.category) {
-      alert("Category is a required field.");
       return;
     }
      if (!formData.type) {
