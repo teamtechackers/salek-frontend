@@ -43,29 +43,24 @@ export default function VaccineModal({ open, onClose, refetch, vaccine }) {
 
   useEffect(() => {
     if (vaccine) {
-      const getOptionValue = (fieldKey, value) => {
-        const field = vaccineFields.find(f => f.key === fieldKey);
-        if (field && field.options && field.options.includes(value)) {
-          return value;
-        }
-        return ""; // Default to empty string if value is not in options
-      };
-
-      setFormData({
+      
+      const vaccineData = {
         name: vaccine.name || "",
-        type: getOptionValue("type", vaccine.type),
-        category: getOptionValue("category", vaccine.category),
-        subCategory: getOptionValue("subCategory", vaccine.sub_category),
+        type: vaccine.type || "",
+        category: vaccine.category || "",
+        subCategory: vaccine.sub_category || "",
         minAge: vaccine.age_range?.min_age_months || 0,
         maxAge: vaccine.age_range?.max_age_months || 0,
         totalDoses: vaccine.doses?.total_doses || 0,
         frequency: vaccine.doses?.frequency || "",
         whenToGive: vaccine.details?.when_to_give || "",
         dose: vaccine.details?.dose || "",
-        route: getOptionValue("route", vaccine.details?.route),
-        site: getOptionValue("site", vaccine.details?.site),
+        route: vaccine.details?.route || "",
+        site: vaccine.details?.site || "",
         notes: vaccine.details?.notes || "",
-      });
+      };
+      
+      setFormData(vaccineData);
     } else {
       setFormData(initialFormData);
     }
