@@ -18,19 +18,27 @@ const User = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [search, setSearch] = useState("");
-  // const [searchType, setSearchType] = useState("username"); // Default search type for users - REMOVED
   const [selectedDate, setSelectedDate] = useState(""); // Single state for selected date
-  const [appliedDateFilter, setAppliedDateFilter] = useState(""); // State for applied date filter
+  const [apiSearch, setApiSearch] = useState(""); // Search parameter for API
+  const [apiDate, setApiDate] = useState(""); // Date parameter for API
   const [openEditModal, setOpenEditModal] = useState(false); // State for proper edit modal
   const [selectedUserForEdit, setSelectedUserForEdit] = useState(null); // State to hold user/dependent for proper edit
   const [isEditingDependent, setIsEditingDependent] = useState(false); // State to differentiate user/dependent edit
   const [parentUserIdForDependent, setParentUserIdForDependent] = useState(null); // State to hold parent user ID for dependent edit
   const [refreshTrigger, setRefreshTrigger] = useState(0); // Trigger for data refresh
+  const [searchTrigger, setSearchTrigger] = useState(0); // Trigger for search refresh
+
+  // Debug search trigger changes
+  useEffect(() => {
+    console.log('searchTrigger changed to:', searchTrigger);
+  }, [searchTrigger]);
 
   const { data, error, isLoading, refetch } = useGetUsersQuery({
     page: currentPage - 1, // API expects 0-indexed page
     limit: pageSize,
-    search: search || undefined, // Add search filter to API call
+    search: apiSearch || undefined, // Send name in search parameter
+    date: apiDate || undefined, // Send DOB from calendar
+    searchTrigger, // Add search trigger to force re-fetch
   });
   
   // State to hold the refetch function for user details
@@ -75,45 +83,16 @@ const User = () => {
 
   const allUsers = data?.data?.users || [];
 
-  // Client-side filtering for search across multiple fields
-  const filteredUsersBySearch = allUsers.filter((user) => {
-    if (!search) return true; // If no search term, return all users
-
-    const searchValue = search.toLowerCase();
-    // Search across username, phoneNo, and email
-    return (
-      String(user.username).toLowerCase().includes(searchValue) ||
-      String(user.phoneNo).toLowerCase().includes(searchValue) ||
-      String(user.email).toLowerCase().includes(searchValue)
-    );
-  });
-
-  // Client-side filtering for selectedDate
-  const filteredUsersByDate = filteredUsersBySearch.filter((user) => {
-    if (!selectedDate || !user.DOB) return true; // If no date selected or user has no DOB, return all users
-    
-    try {
-      const userDOB = new Date(user.DOB);
-      const filterDate = new Date(selectedDate);
-      
-      // Compare only year, month, and day
-      return userDOB.getFullYear() === filterDate.getFullYear() &&
-             userDOB.getMonth() === filterDate.getMonth() &&
-             userDOB.getDate() === filterDate.getDate();
-    } catch (e) {
-      console.error("Error comparing dates:", e);
-      return true; // If there's an error, return the user
-    }
-  });
-
-  const usersData = filteredUsersByDate || [];
+  // Since we're now using backend filtering, we don't need client-side filtering
+  const usersData = allUsers || [];
   const totalItems = data?.data?.pagination?.total || 0; // Total from API, not filtered count
   const totalPages = data?.data?.pagination?.pages || 1;
 
   useEffect(() => {
-    // Only reset page when pageSize or search changes
-    setCurrentPage(1);
-  }, [pageSize, search]);
+    // Only reset page when pageSize changes
+    // Don't reset page when search or date changes to prevent unwanted API calls
+    console.log('useEffect triggered - dependencies changed');
+  }, [pageSize]);
 
   // Effect to refetch data when refresh trigger changes
   useEffect(() => {
@@ -166,10 +145,17 @@ const User = () => {
                   <SearchBar 
                     value={search} 
                     onChange={(newSearch) => {
+                      console.log('Search onChange triggered with:', newSearch);
                       setSearch(newSearch);
                       // Don't reset page when search changes
                     }} 
-                    onSearch={() => { /* client-side filtering handled by state update */ }} 
+                    onSearch={(searchValue) => {
+                      console.log('SearchBar onSearch triggered with search:', searchValue);
+                      // Update API parameters and trigger search
+                      setApiSearch(searchValue);
+                      setApiDate(selectedDate);
+                      setSearchTrigger(prev => prev + 1);
+                    }} 
                   />
                 </div>
                
@@ -181,7 +167,10 @@ const User = () => {
                     size="small"
                     value={selectedDate}
                     onChange={(e) => {
+                      console.log('Date onChange triggered with:', e.target.value);
                       setSelectedDate(e.target.value);
+                      // Don't trigger search automatically, let user click search
+                      // setCurrentPage(1);
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
@@ -191,21 +180,26 @@ const User = () => {
                       },
                     }}
                   />
-                  {/* <button
+                  <button
                     className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition text-sm"
                     onClick={() => {
-                      // Apply the date filter and reset to first page
-                      setCurrentPage(1);
+                      console.log('Search button clicked');
+                      // Update API parameters and trigger search
+                      setApiSearch(search);
+                      setApiDate(selectedDate);
+                      setSearchTrigger(prev => prev + 1);
                     }}
                   >
-                    Apply
-                  </button> */}
+                    Search
+                  </button>
                   <button
                     className="bg-gray-500 rounded-lg text-white py-2 px-4 hover:bg-gray-600 transition text-sm"
                     onClick={() => {
                       // Clear the date filter and reset to first page
                       setSelectedDate("");
+                      setApiDate("");
                       setCurrentPage(1);
+                      setSearchTrigger(prev => prev + 1);
                     }}
                   >
                     Clear

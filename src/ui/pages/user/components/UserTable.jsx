@@ -33,27 +33,12 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
         return;
       }
       await deleteUser({ 'user_id': deleteId, 'admin_user_id': adminId }).unwrap();
-      setOpenConfirm(true);
       setOpenDelete(false);
-      refetch();
-      
-      // If we're in user detail view, reset the state to go back to user list
-      if (userDetails) {
-        setUserDetails(false);
+      setOpenConfirm(true);
+      // Use the parent refetch mechanism
+      if (refetch) {
+        refetch();
       }
-      
-      // Navigate back to user list after successful deletion
-      setTimeout(() => {
-        // Refetch user data before navigating
-        if (refetch) {
-          refetch();
-        }
-        // Also trigger the return to table refetch if provided
-        if (onReturnToTable) {
-          onReturnToTable();
-        }
-        navigate('/user');
-      }, 1500);
     } catch (error) {
       console.error('Failed to delete user:', error);
     }
@@ -120,6 +105,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
           setDependentDetails={setDependentDetails} // Pass setDependentDetails function
           onOpenFullEdit={onOpenFullEdit} // Pass onOpenFullEdit for proper modal
           parentRefetchUserDetails={refetchUserDetails} // Pass refetch function with new name
+          onReturnToTable={onReturnToTable} // Pass the return to table function
         />
       </div>
 
@@ -150,11 +136,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
         open={openConfirm}
         onClose={() => {
           setOpenConfirm(false);
-          // If we're in user detail view, reset the state to go back to user list
-          if (userDetails) {
-            setUserDetails(false);
-          }
-          // Refetch user data before navigating
+          // Use the parent refetch mechanism
           if (refetch) {
             refetch();
           }
@@ -162,18 +144,12 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
           if (onReturnToTable) {
             onReturnToTable();
           }
-          // Navigate to user list immediately when user clicks OK
-          navigate('/user');
         }}
         title="User Deleted"
         description="The user has been successfully deleted."
         onConfirm={() => {
           setOpenConfirm(false);
-          // If we're in user detail view, reset the state to go back to user list
-          if (userDetails) {
-            setUserDetails(false);
-          }
-          // Refetch user data before navigating
+          // Use the parent refetch mechanism
           if (refetch) {
             refetch();
           }
@@ -181,8 +157,6 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
           if (onReturnToTable) {
             onReturnToTable();
           }
-          // Navigate to user list immediately when user clicks OK
-          navigate('/user');
         }}
       />
     </div>
