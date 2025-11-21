@@ -26,6 +26,7 @@ const UserList = ({
   totalPages,
   onPageChange,
   parentRefetchUserDetails, // Rename this prop to avoid conflict
+  onReturnToTable, // Add this prop to trigger table refresh
 }) => {
   const location = useLocation();
   const navigate = useNavigate(); // Add navigate hook
@@ -618,8 +619,13 @@ const UserList = ({
           setSelectedUserId(null);
           setDependentDetails(false);
           setSelectedDependentId(null);
+          // Trigger a full refresh using the refresh trigger mechanism
           if (parentRefetchUserDetails) {
             parentRefetchUserDetails();
+          }
+          // Also trigger the return to table refetch if provided
+          if (onReturnToTable) {
+            onReturnToTable();
           }
           // Navigate to user list
           navigate('/user');
@@ -633,9 +639,13 @@ const UserList = ({
           setSelectedUserId(null);
           setDependentDetails(false);
           setSelectedDependentId(null);
-          // Refetch user data
+          // Trigger a full refresh using the refresh trigger mechanism
           if (parentRefetchUserDetails) {
             parentRefetchUserDetails();
+          }
+          // Also trigger the return to table refetch if provided
+          if (onReturnToTable) {
+            onReturnToTable();
           }
           navigate('/user');
         }}

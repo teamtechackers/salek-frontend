@@ -77,23 +77,6 @@ export default function ConfirmationModal({
             <p className="max-w-[36ch] text-balance text-sm text-muted-foreground">{description}</p>
           </div>
 
-          {/* <div className="mt-6 grid grid-cols-2 gap-3">
-  <button
-    ref={confirmRef}
-    onClick={onConfirm}
-    className={STYLES.deleteButton}
-  >
-    {dashboardlabels.delete}
-  </button>
-
-  <button
-    onClick={onClose}
-    className={STYLES.cancelButton}
-  >
-    {dashboardlabels.cancel}
-  </button>
-</div> */}
-
         </div>
       </div>
     </div>

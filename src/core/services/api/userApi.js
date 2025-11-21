@@ -3,11 +3,19 @@ import { apiSliceWithAuth } from './apiSlice';
 export const userApi = apiSliceWithAuth.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: ({ page = 0, limit = 8, search } = {}) => {
+      query: ({ page = 0, limit = 8, search, date, searchTrigger } = {}) => {
         let url = `/admin/users?page=${page}&limit=${limit}`;
+        
+        // Add search parameter (name)
         if (search) {
           url += `&search=${encodeURIComponent(search)}`;
         }
+        
+        // Add date parameter (DOB)
+        if (date) {
+          url += `&date=${encodeURIComponent(date)}`;
+        }
+        
         return url;
       },
     }),
