@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Add useNavigate hook
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/Searchbar";
-// import DateDropdown from "./components/DateDropdown"; // Removed DateDropdown
 import PaginationDropdown from "./components/PaginationDropdown";
 import PageContainer from "../../components/PageContainer";
 import TotalSection from "../../components/TotalSection";
@@ -9,24 +8,27 @@ import Pagination from "../../components/Pagination";
 import UserTable from "./components/UserTable";
 import { useGetUsersQuery } from "../../../core/services/api/userApi";
 import CircularProgress from "@mui/material/CircularProgress";
-import EditUserModal from "./components/EditUserModal"; // Import the proper edit modal
+import EditUserModal from "./components/EditUserModal";
 import TextField from "@mui/material/TextField";
 
 const User = () => {
-  const navigate = useNavigate(); // Add navigate hook
+  const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [search, setSearch] = useState("");
-  const [selectedDate, setSelectedDate] = useState(""); // Single state for selected date
-  const [apiSearch, setApiSearch] = useState(""); // Search parameter for API
-  const [apiDate, setApiDate] = useState(""); // Date parameter for API
-  const [openEditModal, setOpenEditModal] = useState(false); // State for proper edit modal
-  const [selectedUserForEdit, setSelectedUserForEdit] = useState(null); // State to hold user/dependent for proper edit
-  const [isEditingDependent, setIsEditingDependent] = useState(false); // State to differentiate user/dependent edit
-  const [parentUserIdForDependent, setParentUserIdForDependent] = useState(null); // State to hold parent user ID for dependent edit
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // Trigger for data refresh
-  const [searchTrigger, setSearchTrigger] = useState(0); // Trigger for search refresh
+  const [selectedDate, setSelectedDate] = useState("");
+  const [apiSearch, setApiSearch] = useState("");
+  const [apiDate, setApiDate] = useState("");
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedUserForEdit, setSelectedUserForEdit] = useState(null);
+  const [isEditingDependent, setIsEditingDependent] = useState(false);
+  const [parentUserIdForDependent, setParentUserIdForDependent] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [searchTrigger, setSearchTrigger] = useState(0);
+
+  // Debounce timer ref
+  const searchDebounceTimer = useRef(null);
 
   // Debug search trigger changes
   useEffect(() => {
@@ -34,11 +36,11 @@ const User = () => {
   }, [searchTrigger]);
 
   const { data, error, isLoading, refetch } = useGetUsersQuery({
-    page: currentPage - 1, // API expects 0-indexed page
+    page: currentPage - 1,
     limit: pageSize,
-    search: apiSearch || undefined, // Send name in search parameter
-    date: apiDate || undefined, // Send DOB from calendar
-    searchTrigger, // Add search trigger to force re-fetch
+    search: apiSearch || undefined,
+    date: apiDate || undefined,
+    searchTrigger,
   });
   
   // State to hold the refetch function for user details
@@ -53,7 +55,7 @@ const User = () => {
     console.log("User.jsx - handleOpenFullEdit called with:", userOrDependent, "isDependent:", isDependent, "parentUserId:", parentUserId);
     setSelectedUserForEdit(userOrDependent);
     setIsEditingDependent(isDependent);
-    setParentUserIdForDependent(parentUserId); // Set parent user ID
+    setParentUserIdForDependent(parentUserId);
     setOpenEditModal(true);
   };
 
@@ -61,12 +63,12 @@ const User = () => {
     setOpenEditModal(false);
     setSelectedUserForEdit(null);
     setIsEditingDependent(false);
-    setParentUserIdForDependent(null); // Clear parent user ID
+    setParentUserIdForDependent(null);
   };
 
   const handleSuccessfulEditAndClose = () => {
     console.log("User.jsx - handleSuccessfulEditAndClose called. Refreshing data.");
-    setOpenEditModal(false); // Close the modal
+    setOpenEditModal(false);
     setSelectedUserForEdit(null);
     setIsEditingDependent(false);
     setParentUserIdForDependent(null);
@@ -85,7 +87,7 @@ const User = () => {
 
   // Since we're now using backend filtering, we don't need client-side filtering
   const usersData = allUsers || [];
-  const totalItems = data?.data?.pagination?.total || 0; // Total from API, not filtered count
+  const totalItems = data?.data?.pagination?.total || 0;
   const totalPages = data?.data?.pagination?.pages || 1;
 
   useEffect(() => {
@@ -120,11 +122,35 @@ const User = () => {
     setCurrentPage(1);
   };
 
-  // const searchOptions = [ // REMOVED
-  //   { value: "username", label: "Username" },
-  //   { value: "phoneNo", label: "Phone Number" },
-  //   { value: "email", label: "Email" },
-  // ];
+  // Handle search with debounce
+  const handleSearchChange = (newSearch) => {
+    console.log('Search onChange triggered with:', newSearch);
+    setSearch(newSearch);
+    
+    // Clear existing timer
+    if (searchDebounceTimer.current) {
+      clearTimeout(searchDebounceTimer.current);
+    }
+    
+    // Set new timer
+    searchDebounceTimer.current = setTimeout(() => {
+      console.log('Debounced search triggered with:', newSearch, 'and date:', selectedDate);
+      // Update API parameters and trigger search
+      setApiSearch(newSearch);
+      setApiDate(selectedDate);
+      setSearchTrigger(prev => prev + 1);
+    }, 3000); // 3 seconds delay
+  };
+
+  // Handle date change with immediate API call
+  const handleDateChange = (newDate) => {
+    console.log('Date onChange triggered with:', newDate);
+    setSelectedDate(newDate);
+    // Update API parameters and trigger search immediately
+    setApiSearch(search);
+    setApiDate(newDate);
+    setSearchTrigger(prev => prev + 1);
+  };
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -144,13 +170,13 @@ const User = () => {
                  
                   <SearchBar 
                     value={search} 
-                    onChange={(newSearch) => {
-                      console.log('Search onChange triggered with:', newSearch);
-                      setSearch(newSearch);
-                      // Don't reset page when search changes
-                    }} 
+                    onChange={handleSearchChange}
                     onSearch={(searchValue) => {
                       console.log('SearchBar onSearch triggered with search:', searchValue);
+                      // Clear the debounce timer if search is triggered manually
+                      if (searchDebounceTimer.current) {
+                        clearTimeout(searchDebounceTimer.current);
+                      }
                       // Update API parameters and trigger search
                       setApiSearch(searchValue);
                       setApiDate(selectedDate);
@@ -160,18 +186,12 @@ const User = () => {
                 </div>
                
                 <div className="w-1/2 flex items-center justify-end gap-3">
-                  {/* Search type dropdown removed as per request */}
                   <TextField
                     type="date"
                     variant="outlined"
                     size="small"
                     value={selectedDate}
-                    onChange={(e) => {
-                      console.log('Date onChange triggered with:', e.target.value);
-                      setSelectedDate(e.target.value);
-                      // Don't trigger search automatically, let user click search
-                      // setCurrentPage(1);
-                    }}
+                    onChange={(e) => handleDateChange(e.target.value)}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         borderRadius: '10px',
@@ -180,30 +200,6 @@ const User = () => {
                       },
                     }}
                   />
-                  <button
-                    className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition text-sm"
-                    onClick={() => {
-                      console.log('Search button clicked');
-                      // Update API parameters and trigger search
-                      setApiSearch(search);
-                      setApiDate(selectedDate);
-                      setSearchTrigger(prev => prev + 1);
-                    }}
-                  >
-                    Search
-                  </button>
-                  <button
-                    className="bg-gray-500 rounded-lg text-white py-2 px-4 hover:bg-gray-600 transition text-sm"
-                    onClick={() => {
-                      // Clear the date filter and reset to first page
-                      setSelectedDate("");
-                      setApiDate("");
-                      setCurrentPage(1);
-                      setSearchTrigger(prev => prev + 1);
-                    }}
-                  >
-                    Clear
-                  </button>
                 </div>
               </div>
             )}
@@ -222,8 +218,8 @@ const User = () => {
                      refetch={refetch}
                      refetchUserDetails={userDetailsRefetch}
                      onRefetchUserDetails={handleRefetchUserDetails}
-                     onOpenFullEdit={handleOpenFullEdit} // Pass the new handler
-                     onReturnToTable={handleRefetchOnReturn} // Pass refetch function
+                     onOpenFullEdit={handleOpenFullEdit}
+                     onReturnToTable={handleRefetchOnReturn}
                    />
                  ) : (
                    <div className="text-center py-8 text-gray-500">No Data Found</div>
@@ -247,10 +243,10 @@ const User = () => {
         onClose={handleCloseFullEdit}
         user={selectedUserForEdit}
         isDependent={isEditingDependent}
-        parentUserId={parentUserIdForDependent} // Pass parent user ID
-        refetchUserDetails={userDetailsRefetch} // Pass refetch for user details
-        refetchDependentDetails={userDetailsRefetch} // Pass the same refetch function for dependents
-        onSuccessfulEditAndClose={handleSuccessfulEditAndClose} // Pass the new callback
+        parentUserId={parentUserIdForDependent}
+        refetchUserDetails={userDetailsRefetch}
+        refetchDependentDetails={userDetailsRefetch}
+        onSuccessfulEditAndClose={handleSuccessfulEditAndClose}
       />
     </>
   );
