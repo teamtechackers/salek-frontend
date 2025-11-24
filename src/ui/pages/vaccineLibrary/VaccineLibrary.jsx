@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import VaccineTable from "./components/VaccineTable";
 import PageContainer from "../../components/PageContainer";
 import SearchBar from "../../components/Searchbar";
@@ -16,8 +16,11 @@ const VaccineLibrary = () => {
   const [selectedVaccine, setSelectedVaccine] = useState(null);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
-  const [apiSearch, setApiSearch] = useState(""); // Search parameter for API
-  const [apiCategory, setApiCategory] = useState(""); // Category parameter for API
+  const [apiSearch, setApiSearch] = useState("");
+  const [apiCategory, setApiCategory] = useState("");
+
+  // Debounce timer ref
+  const searchDebounceTimer = useRef(null);
 
   // Debug state changes
   useEffect(() => {
@@ -28,7 +31,7 @@ const VaccineLibrary = () => {
   useEffect(() => {
     console.log('apiSearch changed to:', apiSearch);
   }, [apiSearch]);
-  const [searchTrigger, setSearchTrigger] = useState(0); // Trigger for search refresh
+  const [searchTrigger, setSearchTrigger] = useState(0);
 
   // Debug search trigger changes
   useEffect(() => {
@@ -44,9 +47,9 @@ const VaccineLibrary = () => {
     admin_user_id: adminId,
     page: currentPage - 1,
     limit: pageSize,
-    search: apiSearch || undefined, // Send vaccine search parameter
-    category: apiCategory || undefined, // Send selected category
-    searchTrigger, // Add search trigger to force re-fetch
+    search: apiSearch || undefined,
+    category: apiCategory || undefined,
+    searchTrigger,
   });
 
   const allVaccines = data?.data?.vaccines || [];
@@ -60,6 +63,36 @@ const VaccineLibrary = () => {
     // Only reset page when pageSize changes
     // Don't reset page when search or category changes to prevent unwanted API calls
   }, [pageSize]);
+
+  // Handle search with debounce
+  const handleSearchChange = (newSearch) => {
+    console.log('Search onChange triggered with:', newSearch);
+    setSearch(newSearch);
+    
+    // Clear existing timer
+    if (searchDebounceTimer.current) {
+      clearTimeout(searchDebounceTimer.current);
+    }
+    
+    // Set new timer
+    searchDebounceTimer.current = setTimeout(() => {
+      console.log('Debounced search triggered with:', newSearch, 'and category:', category);
+      // Update API parameters and trigger search
+      setApiSearch(newSearch);
+      setApiCategory(category);
+      setSearchTrigger(prev => prev + 1);
+    }, 3000); // 3 seconds delay
+  };
+
+  // Handle category change with immediate API call
+  const handleCategoryChange = (newCategory) => {
+    console.log('Category onChange triggered with:', newCategory);
+    setCategory(newCategory);
+    // Update API parameters and trigger search immediately
+    setApiSearch(search);
+    setApiCategory(newCategory);
+    setSearchTrigger(prev => prev + 1);
+  };
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -76,12 +109,13 @@ const VaccineLibrary = () => {
             <div className="w-1/2 flex items-center gap-3">
               <SearchBar 
                 value={search} 
-                onChange={(newSearch) => {
-                  console.log('Search onChange triggered with:', newSearch);
-                  setSearch(newSearch);
-                }} 
+                onChange={handleSearchChange}
                 onSearch={(searchValue) => {
                   console.log('SearchBar onSearch triggered with search:', searchValue, 'category:', category);
+                  // Clear the debounce timer if search is triggered manually
+                  if (searchDebounceTimer.current) {
+                    clearTimeout(searchDebounceTimer.current);
+                  }
                   // Update API parameters and trigger search
                   console.log('Updating API parameters - search:', searchValue, 'category:', category);
                   setApiSearch(searchValue);
@@ -95,39 +129,8 @@ const VaccineLibrary = () => {
             <div className="w-1/2 flex items-center justify-end gap-3">
               <CategoryDropdown 
                 selectedCategory={category} 
-                onCategoryChange={(newCategory) => {
-                  console.log('Category onChange triggered with:', newCategory);
-                  setCategory(newCategory);
-                  // Don't trigger search automatically, let user click search
-                }} 
+                onCategoryChange={handleCategoryChange}
               />
-              <button
-                className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition"
-                onClick={() => {
-                  console.log('Search button clicked with search:', search, 'category:', category);
-                  // Update API parameters and trigger search
-                  console.log('Updating API parameters - search:', search, 'category:', category);
-                  setApiSearch(search);
-                  setApiCategory(category);
-                  console.log('Setting apiSearch to:', search);
-                  setSearchTrigger(prev => prev + 1);
-                }}
-              >
-                Search
-              </button>
-              <button
-                className="bg-gray-500 rounded-lg text-white py-2 px-4 hover:bg-gray-600 transition text-sm"
-                onClick={() => {
-                  // Clear the search and category filters
-                  setSearch("");
-                  setCategory("");
-                  setApiSearch("");
-                  setApiCategory("");
-                  setSearchTrigger(prev => prev + 1);
-                }}
-              >
-                Clear
-              </button>
               <button
                 className="bg-[#245FFF] rounded-lg text-white py-2 px-4 hover:bg-blue-600 transition"
                 onClick={() => {
