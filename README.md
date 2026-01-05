@@ -1,4 +1,4 @@
-# Salek Frontend
+# My Vaxine Frontend
 
 A modern React frontend project with Vite, ESLint, and Husky pre-commit hooks for code quality and consistency.
 
