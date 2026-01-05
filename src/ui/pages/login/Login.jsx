@@ -5,7 +5,7 @@ import { ROUTES } from "../../constants/layout/SidebarConstants"
 import { STYLES } from "../../theme/typography/styles"
 import FormField from "../../components/FormFields" // ✅ Import the reusable field
 import { LAYOUT } from "../../constants/layout/LayoutsContants"
-import { IMAGES, ICONS } from "../../constants/assets"
+import { IMAGES, ICONS, LOGOS } from "../../constants/assets"
 import { useLoginMutation } from "../../../core/services/api/userApi" // Import the login mutation
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -20,7 +20,7 @@ export default function LoginPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const adminId = localStorage.getItem('adminId');
-    
+
     if (token && adminId) {
       navigate(ROUTES.DASHBOARD, { replace: true });
     }
@@ -50,7 +50,7 @@ export default function LoginPage() {
       // You might want to set an error state here to display to the user
     }
   }
-  
+
   return (
     <div className="flex min-h-screen">
       {/* Left side image */}
@@ -65,7 +65,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
-              <img src={ICONS.brandLogo} alt="Brand Logo" />
+              <img src={LOGOS.appLogoBlue} alt="Brand Logo" />
             </div>
           </div>
 
@@ -83,7 +83,6 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-
               />
 
               {/* Password field (reusable) */}
