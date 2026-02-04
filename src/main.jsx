@@ -11,6 +11,8 @@ import User from "./ui/pages/user/User";
 import VaccineLibrary from "./ui/pages/vaccineLibrary/VaccineLibrary";
 import Notifications from "./ui/pages/notifications/Notifications";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+import Location from "./ui/pages/location/Location";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from "./core/components/ProtectedRoute";
@@ -49,6 +51,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="user" element={<User />} />
               <Route path="vaccine-library" element={<VaccineLibrary />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="settings/location" element={<Location />} />
             </Route>
           </Routes>
           <ToastContainer />
