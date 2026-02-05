@@ -6,11 +6,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 const NotificationsTab = ({ userId }) => {
   const { data, error, isLoading } = useGetNotificationsQuery();
 
-  const notifications = data?.data?.notifications || []; // Assuming API returns { data: { notifications: [...] } }
+  const notifications = data?.data?.notifications || [];
 
-  // Filter notifications by userId if the notification object has a userId field
-  // For now, displaying all notifications as the API doesn't support user-specific fetching directly.
-  // If the backend supports user-specific notifications, the query in notificationApi.js should be updated.
   const userNotifications = notifications.filter(
     (notification) => notification.userId === userId
   );

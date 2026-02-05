@@ -48,13 +48,14 @@ export const SIDEBAR_LINKS = [
         path: ROUTES.LOCATION,
         iconDefault: null, 
         iconActive: null,
+        hasDivider: true,
+      },
+      {
+        name: NAMES.NOTIFICATIONS,
+        path: ROUTES.NOTIFICATIONS,
+        iconDefault: ICONS.notificationIconWhite,
+        iconActive: ICONS.notificationIconBlue,
       }
     ]
-  },
-  {
-    name: NAMES.NOTIFICATIONS,
-    path: ROUTES.NOTIFICATIONS,
-    iconDefault: ICONS.notificationIconWhite,
-    iconActive: ICONS.notificationIconBlue,
   },
 ];

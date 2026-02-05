@@ -9,7 +9,7 @@ const Layout = () => {
 
       <div className="flex-1 flex flex-col">
         <Topbar />
-        <main className="flex-1 w-auto overflow-auto lg:overflow-hidden mx-4">
+        <main className="flex-1 w-auto overflow-auto lg:overflow-hidden mx-4 mt-[-12px]">
           <Outlet />
         </main>
       </div>

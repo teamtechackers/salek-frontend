@@ -83,23 +83,34 @@ const Sidebar = () => {
                     <ul className="bg-blue-700/30 rounded-b-xl mt-1 overflow-hidden">
                       {link.children.map((child) => (
                         <li key={child.path}>
-                             <div 
-                                onClick={() => navigate(child.path)}
-                                className={`flex items-center gap-3 p-3 pl-11 cursor-pointer transition-colors ${
-                                  isActiveLink(child.path)
-                                    ? "bg-blue-500/50 text-white font-medium"
-                                    : "text-blue-100 hover:bg-blue-600/50 hover:text-white"
-                                }`}
-                             >
-                                <div className="flex items-center gap-3">
-                                   {/* Placeholder for Location Icon */}
-                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                   </svg>
-                                   <span>{child.name}</span>
-                                </div>
-                             </div>
+                          <div 
+                            onClick={() => navigate(child.path)}
+                            className={`flex items-center gap-3 p-3 pl-11 rounded-xl cursor-pointer transition-colors ${
+                              isActiveLink(child.path)
+                                ? "bg-blue-500/50 text-white font-medium"
+                                : "text-blue-100 hover:bg-blue-600/50 hover:text-white"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              {child.iconDefault ? (
+                                <img
+                                  src={isActiveLink(child.path) ? child.iconActive : child.iconDefault}
+                                  className="w-5 h-5 object-contain"
+                                  alt={child.name}
+                                />
+                              ) : (
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                              )}
+                              <span>{child.name}</span>
+                            </div>
+                          </div>
+                          {/* Divider after this item if hasDivider is true */}
+                          {child.hasDivider && (
+                            <div className="w-full h-[1px] bg-white/50 my-2"></div>
+                          )}
                         </li>
                       ))}
                     </ul>
