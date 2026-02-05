@@ -124,16 +124,16 @@ const Location = () => {
     const DEBOUNCE_DELAY = 500;
 
     // Queries
-    const { data: countriesData, isLoading: isCountriesLoading } = useGetCountriesQuery(countryParams);
+    const { data: countriesData, isLoading: isCountriesLoading, refetch: refetchCountries } = useGetCountriesQuery(countryParams);
     
     // Fetch States only if Country is selected
-    const { data: statesData, isLoading: isStatesLoading } = useGetStatesQuery(
+    const { data: statesData, isLoading: isStatesLoading, refetch: refetchStates } = useGetStatesQuery(
         { countryId: selectedCountryId, ...stateParams }, 
         { skip: !selectedCountryId }
     );
     
     // Fetch Cities only if State is selected
-    const { data: citiesData, isLoading: isCitiesLoading } = useGetCitiesQuery(
+    const { data: citiesData, isLoading: isCitiesLoading, refetch: refetchCities } = useGetCitiesQuery(
         { stateId: selectedStateId, ...cityParams },
         { skip: !selectedStateId }
     );
@@ -217,6 +217,15 @@ const Location = () => {
 
         try {
             await toggleStatus({ type: apiType, id, is_active: !currentIsActive }).unwrap();
+            
+            // Refetch data based on type to reflect changes
+            if (type === 'Country') {
+                refetchCountries();
+            } else if (type === 'State') {
+                refetchStates();
+            } else if (type === 'City') {
+                refetchCities();
+            }
         } catch (error) {
             console.error(`Failed to toggle ${type}:`, error);
         }
