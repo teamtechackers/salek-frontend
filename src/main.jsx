@@ -13,6 +13,7 @@ import Notifications from "./ui/pages/notifications/Notifications";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import Location from "./ui/pages/location/Location";
+import Hospitals from "./ui/pages/hospitals/Hospitals";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from "./core/components/ProtectedRoute";
@@ -32,13 +33,13 @@ createRoot(document.getElementById("root")).render(
         <ThemeProvider theme={theme}>
           <Routes>
             {/* Public routes */}
-            <Route 
-              path="/login" 
-              element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />} 
+            <Route
+              path="/login"
+              element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />}
             />
-            <Route 
-              path="/" 
-              element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />} 
+            <Route
+              path="/"
+              element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />}
             />
 
             {/* Protected layout routes */}
@@ -52,6 +53,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="vaccine-library" element={<VaccineLibrary />} />
               <Route path="notifications" element={<Notifications />} />
               <Route path="settings/location" element={<Location />} />
+              <Route path="settings/hospitals" element={<Hospitals />} />
             </Route>
           </Routes>
           <ToastContainer />

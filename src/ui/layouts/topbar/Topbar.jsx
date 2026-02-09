@@ -8,10 +8,10 @@ const Topbar = () => {
   const path = location.pathname;
 
   const pageTitle = path
-    .replace("/", "") 
-    .split("-") 
+    .replace("/", "")
+    .split("-")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
-    .join(" ") || "Dashboard"; 
+    .join(" ") || "Dashboard";
 
   const isDashboard = path === "/app/dashboard" || path === "/";
 
@@ -20,7 +20,9 @@ const Topbar = () => {
       {/* {isDashboard ? (
         <SearchBar />
       ) : ( */}
-        <h2 className="text-xl font-semibold text-black ml-4">{pageTitle == "Settings/location" ? "Location" : pageTitle}</h2>
+      <h2 className="text-xl font-semibold text-black ml-4">
+        {pageTitle === "Settings/location" ? "Location" : pageTitle === "Settings/hospitals" ? "Hospital" : pageTitle}
+      </h2>
       {/* )} */}
       <UserDetails />
     </header>

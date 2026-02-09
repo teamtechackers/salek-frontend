@@ -7,6 +7,7 @@ export const ROUTES = {
   NOTIFICATIONS: "/notifications",
   SETTINGS: "/settings",
   LOCATION: "/settings/location",
+  HOSPITALS: "/settings/hospitals",
 };
 
 export const NAMES = {
@@ -16,6 +17,7 @@ export const NAMES = {
   NOTIFICATIONS: "Notifications",
   SETTINGS: "Settings",
   LOCATION: "Location",
+  HOSPITALS: "Hospitals",
 };
 
 export const SIDEBAR_LINKS = [
@@ -46,7 +48,14 @@ export const SIDEBAR_LINKS = [
       {
         name: NAMES.LOCATION,
         path: ROUTES.LOCATION,
-        iconDefault: null, 
+        iconDefault: null,
+        iconActive: null,
+        hasDivider: true,
+      },
+      {
+        name: NAMES.HOSPITALS,
+        path: ROUTES.HOSPITALS,
+        iconDefault: null,
         iconActive: null,
         hasDivider: true,
       },
