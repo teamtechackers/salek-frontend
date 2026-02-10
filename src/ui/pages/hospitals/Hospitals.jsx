@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import PageContainer from "../../components/PageContainer";
 import SearchBar from "../../components/Searchbar";
 import TotalSection from "../../components/TotalSection";
 import Pagination from "../../components/Pagination";
 import HospitalsTable from "./components/HospitalsTable";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-
-
 import EditHospitalModal from "./components/EditHospitalModal";
 import HospitalFilterModal from "./components/HospitalFilterModal";
+import {
+    useGetHospitalsQuery,
+    useDeleteHospitalMutation,
+    useToggleHospitalStatusMutation
+} from "../../../core/services/api/hospitalsApi";
 
 const Hospitals = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -27,72 +30,37 @@ const Hospitals = () => {
         city: ""
     });
 
-    // Dummy Data
-    const [hospitals, setHospitals] = useState([
-        {
-            id: 1,
-            image: "https://images.unsplash.com/photo-1587351021759-3e566b9af9ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            name: "Los Angeles General Hospital",
-            country: "USA",
-            state: "California",
-            city: "Los Angeles",
-            phone_number: "+1 213-555-0101",
-            is_active: true
-        },
-        {
-            id: 2,
-            image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            name: "Manhattan Medical Center",
-            country: "USA",
-            state: "New York",
-            city: "New York",
-            phone_number: "+1 212-555-0202",
-            is_active: false
-        },
-        {
-            id: 3,
-            image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            name: "London Central Hospital",
-            country: "UK",
-            state: "England",
-            city: "London",
-            phone_number: "+44 20 7946 0300",
-            is_active: true
-        },
-        {
-            id: 4,
-            image: "https://images.unsplash.com/photo-1587351021759-3e566b9af9ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            name: "Los Angeles General Hospital",
-            country: "USA",
-            state: "California",
-            city: "Los Angeles",
-            phone_number: "+1 213-555-0101",
-            is_active: true
-        },
-        {
-            id: 5,
-            image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            name: "Manhattan Medical Center",
-            country: "USA",
-            state: "New York",
-            city: "New York",
-            phone_number: "+1 212-555-0202",
-            is_active: false
-        },
-        {
-            id: 6,
-            image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-            name: "London Central Hospital",
-            country: "UK",
-            state: "England",
-            city: "London",
-            phone_number: "+44 20 7946 0300",
-            is_active: true
-        },
-    ]);
+    // Server-Side Search Integration (For Filter Modal Only)
+    // The backend uses a single `search` parameter.
+    // We Map the Filter Modal (City > State > Country) to this API param.
+    // The Main Search Bar is now LOCAL only.
+    const apiSearchParam = useMemo(() => {
+        if (filters.city) return filters.city;
+        if (filters.state) return filters.state;
+        if (filters.country) return filters.country;
+        return "";
+    }, [filters]);
+
+    // API Hooks
+    // We pass search param from filters only.
+    const { data: hospitalsResponse, isLoading, isError, error, refetch } = useGetHospitalsQuery(
+        { search: apiSearchParam },
+        { refetchOnMountOrArgChange: true }
+    );
+
+    React.useEffect(() => {
+        console.log("Hospitals Component Mounted/Updated");
+        console.log("Current Filters:", filters);
+        console.log("API Search Param (from Filters):", apiSearchParam);
+        console.log("Query Status:", { data: hospitalsResponse, isLoading, isError, error });
+    }, [filters, apiSearchParam, hospitalsResponse, isLoading, isError, error]);
+
+    const [deleteHospital] = useDeleteHospitalMutation();
+    const [toggleHospitalStatus] = useToggleHospitalStatusMutation();
 
     const handleSearchChange = (val) => {
         setSearch(val);
+        setCurrentPage(1);
     };
 
     const handleEdit = (item) => {
@@ -100,54 +68,73 @@ const Hospitals = () => {
         setOpenEdit(true);
     };
 
-    const handleSaveEdit = (hospitalData) => {
-        if (hospitalData.id) {
-            // Edit existing
-            setHospitals(prev => prev.map(h => h.id === hospitalData.id ? hospitalData : h));
-        } else {
-            // Add new
-            const newHospital = {
-                ...hospitalData,
-                id: Date.now(), // Simple ID generation
-            };
-            setHospitals(prev => [newHospital, ...prev]);
-        }
+    const handleModalClose = () => {
         setOpenEdit(false);
+        setSelectedHospital(null);
     };
 
-    const handleDelete = (id) => {
-        console.log("Delete item:", id);
-        setHospitals(prev => prev.filter(h => h.id !== id));
+    const handleDelete = async (id) => {
+        try {
+            await deleteHospital(id).unwrap();
+        } catch (error) {
+            console.error("Failed to delete hospital:", error);
+        }
     };
 
-    const handleToggleStatus = (id) => {
-        setHospitals(prev => prev.map(h =>
-            h.id === id ? { ...h, is_active: !h.is_active } : h
-        ));
+    const handleToggleStatus = async (id) => {
+        try {
+            await toggleHospitalStatus({ id }).unwrap();
+        } catch (error) {
+            console.error("Failed to toggle status:", error);
+        }
     }
 
     const handleAddNew = () => {
-        setSelectedHospital(null); // Clear selection for "Add" mode
+        setSelectedHospital(null);
         setOpenEdit(true);
     };
 
     const handleApplyFilters = (newFilters) => {
+        console.log("Applying filters from modal:", newFilters);
         setFilters(newFilters);
         setOpenFilter(false);
+        setCurrentPage(1);
     };
 
     const handleClearFilters = () => {
         setFilters({ country: "", state: "", city: "" });
         setOpenFilter(false);
+        setCurrentPage(1);
     };
 
-    const filteredHospitals = hospitals.filter(hospital => {
-        const matchesSearch = hospital.name.toLowerCase().includes(search.toLowerCase());
-        const matchesCountry = filters.country ? hospital.country === filters.country : true;
-        const matchesState = filters.state ? hospital.state === filters.state : true;
-        const matchesCity = filters.city ? hospital.city === filters.city : true;
-        return matchesSearch && matchesCountry && matchesState && matchesCity;
-    });
+    // Data Processing:
+    const rawHospitalsList = hospitalsResponse?.data || [];
+    const totalCount = hospitalsResponse?.total || 0;
+
+    // Local Search (Main Search Bar)
+    const filteredHospitals = useMemo(() => {
+        if (!search) return rawHospitalsList;
+        return rawHospitalsList.filter(hospital =>
+            hospital.name?.toLowerCase().includes(search.toLowerCase()) ||
+            hospital.city?.toLowerCase().includes(search.toLowerCase()) ||
+            hospital.state?.toLowerCase().includes(search.toLowerCase()) ||
+            hospital.country?.toLowerCase().includes(search.toLowerCase())
+        );
+    }, [rawHospitalsList, search]);
+
+    // Local Pagination on the *Filtered* Data
+    const totalItems = filteredHospitals.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Handle case where currentPage > totalPages after filtering
+    if (currentPage > totalPages && totalPages > 0) {
+        setCurrentPage(1);
+    }
+
+    const paginatedHospitals = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return filteredHospitals.slice(startIndex, startIndex + itemsPerPage);
+    }, [filteredHospitals, currentPage, itemsPerPage]);
 
 
     return (
@@ -160,7 +147,7 @@ const Hospitals = () => {
                                 value={search}
                                 onChange={handleSearchChange}
                                 onSearch={() => { }}
-                                placeholder="Search..." // Added placeholder if SearchBar supports it
+                                placeholder="Search..."
                             />
                         </div>
                         <div className="w-1/2 flex items-center justify-end gap-3">
@@ -201,22 +188,28 @@ const Hospitals = () => {
                         </div>
                     </div>
                 }
-                totalSection={<TotalSection label="Total Hospitals:" count={filteredHospitals.length} />}
+                totalSection={<TotalSection label="Total Hospitals:" count={totalItems} />}
                 tableSection={
                     <div className="w-full h-full">
-                        <HospitalsTable
-                            items={filteredHospitals}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                            onToggleStatus={handleToggleStatus}
-                        />
+                        {isLoading ? (
+                            <div className="flex justify-center items-center h-64">
+                                <CircularProgress />
+                            </div>
+                        ) : (
+                            <HospitalsTable
+                                items={paginatedHospitals}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                                onToggleStatus={handleToggleStatus}
+                            />
+                        )}
                     </div>
                 }
                 paginationSection={
                     <div className="flex justify-end">
                         <Pagination
                             currentPage={currentPage}
-                            totalPages={5} // Dummy total pages
+                            totalPages={totalPages || 1}
                             onPageChange={(page) => setCurrentPage(page)}
                         />
                     </div>
@@ -224,9 +217,8 @@ const Hospitals = () => {
             />
             <EditHospitalModal
                 open={openEdit}
-                onClose={() => setOpenEdit(false)}
+                onClose={handleModalClose}
                 hospital={selectedHospital}
-                onSave={handleSaveEdit}
             />
             <HospitalFilterModal
                 open={openFilter}

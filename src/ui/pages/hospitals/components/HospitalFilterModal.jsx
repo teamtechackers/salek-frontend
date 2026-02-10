@@ -22,6 +22,7 @@ export default function HospitalFilterModal({ open, onClose, onApply, onClear, i
 
     const [selectedCountryId, setSelectedCountryId] = useState(null);
     const [selectedStateId, setSelectedStateId] = useState(null);
+    const [selectedCityId, setSelectedCityId] = useState(null);
 
     const { data: countriesData } = useGetPublicCountriesQuery();
     const { data: statesData } = useGetPublicStatesQuery(selectedCountryId, { skip: !selectedCountryId });
@@ -46,6 +47,16 @@ export default function HospitalFilterModal({ open, onClose, onApply, onClear, i
             setSelectedStateId(null);
         }
     }, [filters.state, statesData]);
+
+    // Effect to set selectedCityId based on filters.city name match
+    useEffect(() => {
+        if (filters.city && citiesData?.data) {
+            const city = citiesData.data.find(c => c.city_name === filters.city);
+            if (city) setSelectedCityId(city.city_id);
+        } else {
+            setSelectedCityId(null);
+        }
+    }, [filters.city, citiesData]);
 
     // Sync IDs if filters are pre-filled (e.g. if kept in parent, though here they reset on close unless parent passes them in. 
     // But this component has local state `filters`. If it mounts fresh every time, this effect might not be needed for initial load unless props passed in.
@@ -82,11 +93,39 @@ export default function HospitalFilterModal({ open, onClose, onApply, onClear, i
             const state = statesData?.data?.find(s => s.state_name === value);
             setSelectedStateId(state ? state.state_id : null);
             setFilters(prev => ({ ...prev, city: "" }));
+            setSelectedCityId(null);
+        }
+
+        if (name === "city") {
+            const city = citiesData?.data?.find(c => c.city_name === value);
+            setSelectedCityId(city ? city.city_id : null);
         }
     };
 
     const handleApply = () => {
-        onApply(filters);
+        console.log("Search button clicked in modal. Filters:", filters);
+        // If we need to send IDs, we might need to change this. 
+        // For now, let's see what is being sent.
+        // We might want to send { country_id: ..., state_id: ..., city_id: ... }
+        // But the local state `filters` only has names found in `value`.
+        // The derived IDs are in `selectedCountryId`, etc.
+
+        const filtersToApply = {
+            ...filters,
+            // If backend needs IDs, we can pass them here if they are set.
+            // But if they are null (e.g. initial load with name pre-filled but no ID derived yet?), 
+            // the useEffects should have set them.
+            country_id: selectedCountryId,
+            state_id: selectedStateId,
+            city_id: selectedCityId // We don't have selectedCityId state matching city name yet in this file?
+            // Actually this file handles cascading. 
+            // It has `selectedCountryId` and `selectedStateId`.
+            // But it does `city` as just text? No, it has `citiesData`.
+            // Let's add `selectedCityId` state to be complete.
+        };
+        console.log("Applying Filters:", filtersToApply);
+
+        onApply(filtersToApply);
         onClose();
     };
 

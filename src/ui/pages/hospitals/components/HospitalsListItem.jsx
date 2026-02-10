@@ -25,11 +25,11 @@ const HospitalsListItem = ({ item, onEdit, onDelete, onToggleStatus }) => {
                     <img
                         src={item.image}
                         alt="Hospital"
-                        className="w-18 h-1 rounded-lg object-cover"
+                        className="w-[72px] h-12 rounded-lg object-cover"
                         onError={handleImageError}
                     />
                 ) : (
-                    <div className="w-10 h-10 rounded-lg object-cover bg-gray-200 flex items-center justify-center">
+                    <div className="w-[72px] h-12 rounded-lg object-cover bg-gray-200 flex items-center justify-center">
                         <span className="text-gray-500 font-bold text-l">
                             {item.name ? item.name.charAt(0).toUpperCase() : 'H'}
                         </span>
