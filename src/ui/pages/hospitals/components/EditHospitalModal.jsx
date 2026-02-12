@@ -13,6 +13,7 @@ import {
     useAddHospitalMutation,
     useUpdateHospitalMutation
 } from "../../../../core/services/api/hospitalsApi";
+import { toast } from 'react-toastify';
 
 export default function EditHospitalModal({ open, onClose, hospital = {} }) {
     const fileInputRef = useRef(null);
@@ -136,6 +137,10 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
     };
 
     const handleSave = async () => {
+        if (!form.name || !selectedCountryId || !selectedStateId || !selectedCityId) {
+            toast.error("Please fill all required fields: Name, Country, State, and City.");
+            return;
+        }
         const formData = new FormData();
         formData.append('name', form.name);
         // Postman screenshot shows IDs being sent, not names. 

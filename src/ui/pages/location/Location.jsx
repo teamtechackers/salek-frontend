@@ -4,7 +4,7 @@ import { Search as SearchIcon } from '@mui/icons-material';
 import { useGetCountriesQuery, useGetStatesQuery, useGetCitiesQuery, useToggleStatusMutation } from "../../../core/services/api/locationApi";
 
 // ColumnSection moved OUTSIDE the Location component to prevent re-creation on each render
-const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowClick, onToggle, onSearch, onPageChange, searchValue }) => (
+const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowClick, onToggle, onSearch, onPageChange, searchValue, customEmptyMessage }) => (
     <div className="flex flex-col w-full h-full min-w-0">
 
         {/* Search Bar */}
@@ -48,9 +48,11 @@ const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowC
             )}
             {!isLoading && items.length === 0 && (
                 <div className="text-center text-gray-400 mt-4">
-                    {title === 'State' && !selectedId ? "Select a Country" :
-                        title === 'City' && !selectedId ? "Select a State" :
-                            "No data found"}
+                    {customEmptyMessage || (
+                        title === 'State' && !selectedId ? "Select a Country" :
+                            title === 'City' && !selectedId ? "Select a State" :
+                                "No data found"
+                    )}
                 </div>
             )}
             {items.map((item, index) => {
@@ -63,8 +65,8 @@ const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowC
                         key={item.id || index}
                         onClick={() => onRowClick && onRowClick(item.id)}
                         className={`flex justify-between items-center border rounded-lg py-3 px-6 shadow-sm cursor-pointer transition-colors ${isSelected && title !== 'City'
-                                ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500'
-                                : 'bg-white border-gray-200 hover:border-blue-300'
+                            ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500'
+                            : 'bg-white border-gray-200 hover:border-blue-300'
                             }`}
                     >
                         <span className={`font-medium truncate mr-2 ${isSelected && title !== 'City' ? 'text-blue-700' : 'text-gray-700'}`}>
@@ -158,7 +160,7 @@ const Location = () => {
     }));
     const statesMeta = statesData?.pagination || { pages: 1 };
 
-    const rawCities = Array.isArray(citiesData?.data) ? citiesData.data : [];
+    const rawCities = (selectedStateId && states.some(s => s.id === selectedStateId) && Array.isArray(citiesData?.data)) ? citiesData.data : [];
     const cities = rawCities.map(c => ({
         id: c.city_id,
         name: c.city_name,
@@ -181,6 +183,8 @@ const Location = () => {
             setSelectedStateId(states[0].id);
         }
     }, [states, selectedStateId, selectedCountryId]);
+
+
 
 
     // Handlers
@@ -301,6 +305,7 @@ const Location = () => {
                         onSearch={(val) => handleSearchChange('State', val)}
                         onPageChange={(val) => handlePageChange('State', val)}
                         searchValue={stateSearch}
+                        customEmptyMessage={selectedCountryId && states.length === 0 ? "No state found" : null}
                     />
                 </div>
 
@@ -315,6 +320,7 @@ const Location = () => {
                         onSearch={(val) => handleSearchChange('City', val)}
                         onPageChange={(val) => handlePageChange('City', val)}
                         searchValue={citySearch}
+                        customEmptyMessage={!selectedStateId && states.length === 0 ? "No city found" : null}
                     />
                 </div>
             </div>
