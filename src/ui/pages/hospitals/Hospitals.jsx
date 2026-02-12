@@ -171,19 +171,20 @@ const Hospitals = () => {
                                 variant="outlined"
                                 onClick={() => setOpenFilter(true)}
                                 sx={{
-                                    borderColor: '#ccc',
+                                    borderColor: '#EDEDED',
                                     color: '#555',
                                     minWidth: '40px',
                                     padding: '8px',
                                     borderRadius: '10px',
                                     marginLeft: '10px',
+                                    backgroundColor: '#EDEDED',
                                     '&:hover': {
                                         borderColor: '#aaa',
                                         backgroundColor: '#f5f5f5',
                                     }
                                 }}
                             >
-                                <FilterListIcon />
+                                <img src="/filter.svg" alt="Filter" className="w-5 h-5 object-contain" />
                             </Button>
                         </div>
                     </div>

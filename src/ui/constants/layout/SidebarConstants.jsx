@@ -63,7 +63,7 @@ export const SIDEBAR_LINKS = [
         name: NAMES.NOTIFICATIONS,
         path: ROUTES.NOTIFICATIONS,
         iconDefault: ICONS.notificationIconWhite,
-        iconActive: ICONS.notificationIconBlue,
+        iconActive: ICONS.notificationIconWhite,
       }
     ]
   },

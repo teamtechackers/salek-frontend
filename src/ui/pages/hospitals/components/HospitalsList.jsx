@@ -19,7 +19,7 @@ const HospitalsList = ({
                 <div className="flex items-center justify-center w-[9%]">Action</div>
             </div>
 
-            <div className="flex flex-col divide-y divide-gray-100">
+            <div className="flex flex-col gap-[0.5]">
                 {items.length > 0 ? (
                     items.map((item) => (
                         <HospitalsListItem

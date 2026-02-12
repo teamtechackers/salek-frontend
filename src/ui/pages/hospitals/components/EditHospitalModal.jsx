@@ -28,7 +28,7 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
         phone_number: "",
         is_active: false,
         image: "",
-        email: "" // Added email as per Postman screenshot
+
     });
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewImage, setPreviewImage] = useState("");
@@ -52,7 +52,7 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
                 phone_number: hospital.phone_number || "",
                 is_active: hospital.is_active || false,
                 image: hospital.image || "",
-                email: hospital.email || ""
+
             });
             setPreviewImage(hospital.image || "");
         } else {
@@ -66,7 +66,7 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
                 phone_number: "",
                 is_active: false, // Default to true or false? Postman shows true usually for new items
                 image: "",
-                email: ""
+
             });
             setPreviewImage("");
         }
@@ -151,7 +151,7 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
 
         formData.append('address', form.address || 'N/A'); // Added simple address or modify form to include it
         formData.append('phone', form.phone_number); // Postman uses 'phone'
-        formData.append('email', form.email);
+
         formData.append('is_active', form.is_active);
 
         if (selectedFile) {
@@ -201,36 +201,41 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
 
                 <div className="p-6">
                     {/* Image Section */}
-                    <div className="flex flex-col items-center mb-6">
-                        <div className="relative group">
-                            <img
-                                src={previewImage || "https://via.placeholder.com/150"}
-                                alt="Hospital"
-                                className="w-48 h-32 object-cover rounded-xl shadow-sm border border-gray-200"
-                            />
-                            <div className="absolute bottom-[-14px] left-1/2 transform -translate-x-1/2">
-                                <button
-                                    onClick={handleAddImageClick}
-                                    className="bg-[#245FFF] text-white text-xs px-4 py-1.5 rounded-full flex items-center gap-1 shadow-md hover:bg-[#1a4cd2] transition whitespace-nowrap"
-                                >
-                                    <CameraAltIcon style={{ fontSize: 16 }} />
-                                    {isEditMode ? "Change Image" : "Add Image"}
-                                </button>
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    onChange={handleFileChange}
-                                    accept="image/*"
-                                    className="hidden"
+                    <div className="flex flex-col items-center mb-6 w-full">
+                        <div className="w-full h-48 bg-[#F5F5F7] rounded-2xl flex items-center justify-center overflow-hidden mb-4 border border-dashed border-gray-300">
+                            {previewImage ? (
+                                <img
+                                    src={previewImage}
+                                    alt="Hospital"
+                                    className="w-full h-full object-cover"
                                 />
-                            </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center opacity-50">
+                                    <img src="/imagepicker.svg" alt="Upload Placeholder" className="w-16 h-16 object-contain grayscale" />
+                                </div>
+                            )}
                         </div>
+
+                        <button
+                            onClick={handleAddImageClick}
+                            className="bg-[#245FFF] text-white px-8 py-3 rounded-full flex items-center gap-2 shadow-lg hover:bg-[#1a4cd2] transition font-medium text-sm"
+                        >
+                            <img src="/imagepicker.svg" alt="Add" className="w-5 h-5 object-contain brightness-0 invert" />
+                            {previewImage ? "Change Image" : "Add Image"}
+                        </button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/*"
+                            className="hidden"
+                        />
                     </div>
 
                     {/* Form Fields */}
                     <div className="space-y-4 mt-8">
                         <div>
-                            <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">Hospital Name</label>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">Hospital Name <span className="text-red-500">*</span></label>
                             <input
                                 type="text"
                                 name="name"
@@ -241,20 +246,10 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={form.email}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm text-gray-700 bg-white"
-                                placeholder="Enter hospital email"
-                            />
-                        </div>
+
 
                         <div>
-                            <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">Country</label>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">Country <span className="text-red-500">*</span></label>
                             <div className="relative">
                                 <select
                                     name="country"
@@ -277,7 +272,7 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
 
                         <div className="flex gap-4">
                             <div className="w-1/2">
-                                <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">State</label>
+                                <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">State <span className="text-red-500">*</span></label>
                                 <div className="relative">
                                     <select
                                         name="state"
@@ -299,7 +294,7 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
                                 </div>
                             </div>
                             <div className="w-1/2">
-                                <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">City</label>
+                                <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">City <span className="text-red-500">*</span></label>
                                 <div className="relative">
                                     <select
                                         name="city"

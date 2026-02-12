@@ -5,11 +5,11 @@ import { useGetCountriesQuery, useGetStatesQuery, useGetCitiesQuery, useToggleSt
 
 // ColumnSection moved OUTSIDE the Location component to prevent re-creation on each render
 const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowClick, onToggle, onSearch, onPageChange, searchValue }) => (
-    <div className="flex flex-col w-full h-full min-w-0"> 
-        
+    <div className="flex flex-col w-full h-full min-w-0">
+
         {/* Search Bar */}
         <div className="mb-3">
-             <TextField
+            <TextField
                 fullWidth
                 placeholder={`Search ${title}`}
                 variant="outlined"
@@ -27,7 +27,7 @@ const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowC
                 sx={{
                     '& .MuiOutlinedInput-root': {
                         backgroundColor: 'white',
-                        borderRadius: '12px', 
+                        borderRadius: '12px',
                     }
                 }}
             />
@@ -41,34 +41,37 @@ const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowC
 
         {/* List */}
         <div className="bg-white border-x border-gray-100 flex-1 overflow-y-auto p-4 space-y-3 relative custom-scrollbar">
-             {isLoading && (
+            {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-20">
                     <CircularProgress size={24} />
                 </div>
-             )}
-             {!isLoading && items.length === 0 && (
-                 <div className="text-center text-gray-400 mt-4">No data</div>
-             )}
+            )}
+            {!isLoading && items.length === 0 && (
+                <div className="text-center text-gray-400 mt-4">
+                    {title === 'State' && !selectedId ? "Select a Country" :
+                        title === 'City' && !selectedId ? "Select a State" :
+                            "No data found"}
+                </div>
+            )}
             {items.map((item, index) => {
-                 let isSelected = false;
-                 if (title === 'Country') isSelected = selectedId === item.id;
-                 if (title === 'State') isSelected = selectedId === item.id;
-                 
-                 return (
-                    <div 
-                        key={item.id || index} 
+                let isSelected = false;
+                if (title === 'Country') isSelected = selectedId === item.id;
+                if (title === 'State') isSelected = selectedId === item.id;
+
+                return (
+                    <div
+                        key={item.id || index}
                         onClick={() => onRowClick && onRowClick(item.id)}
-                        className={`flex justify-between items-center border rounded-lg py-3 px-6 shadow-sm cursor-pointer transition-colors ${
-                            isSelected && title !== 'City'
-                            ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500' 
-                            : 'bg-white border-gray-200 hover:border-blue-300'
-                        }`}
+                        className={`flex justify-between items-center border rounded-lg py-3 px-6 shadow-sm cursor-pointer transition-colors ${isSelected && title !== 'City'
+                                ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500'
+                                : 'bg-white border-gray-200 hover:border-blue-300'
+                            }`}
                     >
                         <span className={`font-medium truncate mr-2 ${isSelected && title !== 'City' ? 'text-blue-700' : 'text-gray-700'}`}>
-                            {item.name} 
+                            {item.name}
                         </span>
-                        <Switch 
-                            checked={item.isActive} 
+                        <Switch
+                            checked={item.isActive}
                             onClick={(e) => e.stopPropagation()}
                             onChange={() => onToggle(item.id)}
                             color="primary"
@@ -82,17 +85,17 @@ const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowC
                             }}
                         />
                     </div>
-                 );
+                );
             })}
         </div>
 
         {/* Pagination */}
         <div className="bg-white rounded-b-xl border border-t-0 border-gray-100 p-3 flex justify-center shrink-0">
-            <Pagination 
-                count={pagination?.pages || 1} 
+            <Pagination
+                count={pagination?.pages || 1}
                 page={(pagination?.page || 0) + 1}
                 onChange={(e, value) => onPageChange(value - 1)}
-                color="primary" 
+                color="primary"
                 size="small"
                 shape="rounded"
                 siblingCount={0}
@@ -125,13 +128,13 @@ const Location = () => {
 
     // Queries
     const { data: countriesData, isLoading: isCountriesLoading, refetch: refetchCountries } = useGetCountriesQuery(countryParams);
-    
+
     // Fetch States only if Country is selected
     const { data: statesData, isLoading: isStatesLoading, refetch: refetchStates } = useGetStatesQuery(
-        { countryId: selectedCountryId, ...stateParams }, 
+        { countryId: selectedCountryId, ...stateParams },
         { skip: !selectedCountryId }
     );
-    
+
     // Fetch Cities only if State is selected
     const { data: citiesData, isLoading: isCitiesLoading, refetch: refetchCities } = useGetCitiesQuery(
         { stateId: selectedStateId, ...cityParams },
@@ -203,7 +206,7 @@ const Location = () => {
     const handleToggle = async (id, type) => {
         let currentIsActive = false;
         let apiType = type.toLowerCase();
-        
+
         if (type === 'Country') {
             const item = countries.find(c => c.id === id);
             currentIsActive = item?.isActive ?? false;
@@ -217,7 +220,7 @@ const Location = () => {
 
         try {
             await toggleStatus({ type: apiType, id, is_active: !currentIsActive }).unwrap();
-            
+
             // Refetch data based on type to reflect changes
             if (type === 'Country') {
                 refetchCountries();
@@ -272,9 +275,9 @@ const Location = () => {
 
             <div className={`grid ${gridClass} gap-6 h-full overflow-hidden transition-all duration-300`}>
                 <div className="h-full overflow-hidden">
-                    <ColumnSection 
-                        title="Country" 
-                        items={countries} 
+                    <ColumnSection
+                        title="Country"
+                        items={countries}
                         selectedId={selectedCountryId}
                         pagination={{ ...countriesMeta, page: countryParams.page }}
                         isLoading={isCountriesLoading}
@@ -285,14 +288,14 @@ const Location = () => {
                         searchValue={countrySearch}
                     />
                 </div>
-                
+
                 <div className="h-full overflow-hidden">
-                    <ColumnSection 
-                        title="State" 
-                        items={states} 
+                    <ColumnSection
+                        title="State"
+                        items={states}
                         selectedId={selectedStateId}
                         pagination={{ ...statesMeta, page: stateParams.page }}
-                        isLoading={isStatesLoading || !selectedCountryId}
+                        isLoading={isStatesLoading}
                         onRowClick={(id) => handleRowClick(id, 'State')}
                         onToggle={(id) => handleToggle(id, 'State')}
                         onSearch={(val) => handleSearchChange('State', val)}
@@ -302,11 +305,11 @@ const Location = () => {
                 </div>
 
                 <div className="h-full overflow-hidden">
-                    <ColumnSection 
-                        title="City" 
-                        items={cities} 
+                    <ColumnSection
+                        title="City"
+                        items={cities}
                         pagination={{ ...citiesMeta, page: cityParams.page }}
-                        isLoading={isCitiesLoading || !selectedStateId}
+                        isLoading={isCitiesLoading}
                         onRowClick={(id) => handleRowClick(id, 'City')}
                         onToggle={(id) => handleToggle(id, 'City')}
                         onSearch={(val) => handleSearchChange('City', val)}
