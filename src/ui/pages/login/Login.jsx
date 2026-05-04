@@ -10,10 +10,11 @@ import { useLoginMutation } from "../../../core/services/api/userApi" // Import 
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("") // Changed from email to username
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [acceptTerms, setAcceptTerms] = useState(false)
-  const [login, { isLoading, error }] = useLoginMutation() // Initialize the login mutation
+  const [loginError, setLoginError] = useState("")
+  const [login, { isLoading, error }] = useLoginMutation()
   const navigate = useNavigate()
 
   // Check if user is already authenticated
@@ -28,26 +29,22 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoginError("")
     try {
-      const response = await login({ username, password }).unwrap() // Get the full response
-      console.log("Login API Response:", response); // Log the full response for debugging
+      const response = await login({ username, password }).unwrap()
 
-      // Assuming the response might be { userId, token } or { data: { userId, token } }
       const actualAdminId = response.userId || response.data?.userId;
       const actualToken = response.token || response.data?.token;
 
       if (actualAdminId && actualToken) {
-        localStorage.setItem('adminId', actualAdminId); // Store userId in local storage
-        localStorage.setItem('token', actualToken); // Store token in local storage
+        localStorage.setItem('adminId', actualAdminId);
+        localStorage.setItem('token', actualToken);
         navigate(ROUTES.DASHBOARD, { replace: true });
       } else {
-        console.error("Login response did not contain adminId or token:", response);
-        // Handle case where userId or token are missing from response
-        // e.g., set an error state to display to the user
+        setLoginError("Login failed. Unexpected response from server.");
       }
     } catch (err) {
-      console.error("Failed to login:", err);
-      // You might want to set an error state here to display to the user
+      // error is also surfaced via the RTK Query `error` state below
     }
   }
 
@@ -129,9 +126,9 @@ export default function LoginPage() {
                   login_labels.FORM.BUTTON
                 )}
               </button>
-              {error && (
+              {(error || loginError) && (
                 <p className="text-red-500 text-center mt-2">
-                  {error.data?.message || "Login failed. Please check your credentials."}
+                  {loginError || error?.data?.message || "Invalid credentials. Please try again."}
                 </p>
               )}
             </form>

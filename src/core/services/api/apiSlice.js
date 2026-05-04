@@ -16,15 +16,20 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
-  
-  if (result.error && result.error.status === 401) {
-    // Token expired or invalid
+
+  // Determine the request URL — args can be a string or an object
+  const requestUrl = typeof args === 'string' ? args : args?.url;
+  const isLoginRequest = requestUrl?.includes('/admin/login');
+
+  // Only redirect on 401 for authenticated (non-login) requests.
+  // Login failures also return 401 but should show an inline error, not a redirect.
+  if (result.error && result.error.status === 401 && !isLoginRequest) {
     localStorage.removeItem('token');
     localStorage.removeItem('adminId');
-    window.location.href = '/login';
     toast.error('Session expired. Please login again.');
+    window.location.href = '/login';
   }
-  
+
   return result;
 };
 
