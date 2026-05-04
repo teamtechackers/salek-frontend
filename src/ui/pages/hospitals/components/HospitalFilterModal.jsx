@@ -103,7 +103,6 @@ export default function HospitalFilterModal({ open, onClose, onApply, onClear, i
     };
 
     const handleApply = () => {
-        console.log("Search button clicked in modal. Filters:", filters);
         // If we need to send IDs, we might need to change this. 
         // For now, let's see what is being sent.
         // We might want to send { country_id: ..., state_id: ..., city_id: ... }
@@ -123,8 +122,6 @@ export default function HospitalFilterModal({ open, onClose, onApply, onClear, i
             // But it does `city` as just text? No, it has `citiesData`.
             // Let's add `selectedCityId` state to be complete.
         };
-        console.log("Applying Filters:", filtersToApply);
-
         onApply(filtersToApply);
         onClose();
     };

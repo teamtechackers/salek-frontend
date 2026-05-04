@@ -22,27 +22,10 @@ const VaccineLibrary = () => {
   // Debounce timer ref
   const searchDebounceTimer = useRef(null);
 
-  // Debug state changes
-  useEffect(() => {
-    console.log('VaccineLibrary state changed - search:', search, 'category:', category, 'apiSearch:', apiSearch, 'apiCategory:', apiCategory);
-  }, [search, category, apiSearch, apiCategory]);
-  
-  // Debug apiSearch changes specifically
-  useEffect(() => {
-    console.log('apiSearch changed to:', apiSearch);
-  }, [apiSearch]);
   const [searchTrigger, setSearchTrigger] = useState(0);
-
-  // Debug search trigger changes
-  useEffect(() => {
-    console.log('VaccineLibrary searchTrigger changed to:', searchTrigger);
-  }, [searchTrigger]);
 
   const adminId = localStorage.getItem("adminId");
 
-  // Log the parameters being passed to the API
-  console.log('VaccineLibrary - API parameters:', { admin_user_id: adminId, page: currentPage - 1, limit: pageSize, search: apiSearch, category: apiCategory, searchTrigger });
-  
   const { data, error, isLoading, refetch } = useGetVaccinesQuery({
     admin_user_id: adminId,
     page: currentPage - 1,
@@ -66,7 +49,6 @@ const VaccineLibrary = () => {
 
   // Handle search with debounce
   const handleSearchChange = (newSearch) => {
-    console.log('Search onChange triggered with:', newSearch);
     setSearch(newSearch);
     
     // Clear existing timer
@@ -76,7 +58,6 @@ const VaccineLibrary = () => {
     
     // Set new timer
     searchDebounceTimer.current = setTimeout(() => {
-      console.log('Debounced search triggered with:', newSearch, 'and category:', category);
       // Update API parameters and trigger search
       setApiSearch(newSearch);
       setApiCategory(category);
@@ -86,7 +67,6 @@ const VaccineLibrary = () => {
 
   // Handle category change with immediate API call
   const handleCategoryChange = (newCategory) => {
-    console.log('Category onChange triggered with:', newCategory);
     setCategory(newCategory);
     // Update API parameters and trigger search immediately
     setApiSearch(search);
@@ -111,16 +91,13 @@ const VaccineLibrary = () => {
                 value={search} 
                 onChange={handleSearchChange}
                 onSearch={(searchValue) => {
-                  console.log('SearchBar onSearch triggered with search:', searchValue, 'category:', category);
                   // Clear the debounce timer if search is triggered manually
                   if (searchDebounceTimer.current) {
                     clearTimeout(searchDebounceTimer.current);
                   }
                   // Update API parameters and trigger search
-                  console.log('Updating API parameters - search:', searchValue, 'category:', category);
                   setApiSearch(searchValue);
                   setApiCategory(category);
-                  console.log('Setting apiSearch to:', searchValue);
                   setSearchTrigger(prev => prev + 1);
                 }} 
               />

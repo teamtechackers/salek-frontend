@@ -83,7 +83,14 @@ function checkHardcodedStrings() {
   files.forEach(file => {
     const lines = fs.readFileSync(file, 'utf8').split('\n');
     lines.forEach(line => {
+      // Skip import/export lines
       if (/\bimport\b|\bexport\b/.test(line)) return;
+      // Skip multi-line import continuation lines: } from '...'
+      if (/\bfrom\s+['"\`]/.test(line)) return;
+      // Skip comment-only lines (// and /* style)
+      if (/^\s*(\/\/|\/\*|\*)/.test(line)) return;
+  // Skip lines with nested template literals (regex can't parse them correctly)
+  if ((line.match(/`/g) || []).length > 2) return;
 
       const matches = line.match(/(['"`])(.*?)\1/g);
       if (!matches) return;
@@ -92,18 +99,46 @@ function checkHardcodedStrings() {
         const s = str.slice(1, -1).trim();
         if (s.length < 5) return;
 
-        // 🚫 Skip Tailwind classes (already handled)
-        const tailwindRegex = /^[a-zA-Z0-9-_:%\[\]\s]+$/;
+        // 🚫 Skip template literal expressions (dynamic strings)
+        if (s.includes('${')) return;
+
+        // 🚫 Skip Tailwind / CSS utility classes (allow #, /, !, . for color utilities and states)
+        const tailwindRegex = /^[a-zA-Z0-9-_:%\[\]\s#/.!()]+$/;
         if (tailwindRegex.test(s)) return;
 
         // 🚫 Skip HEX colors (#fff, #4C6FFF, etc.)
         if (/^#([A-Fa-f0-9]{3,8})$/.test(s)) return;
 
-        // 🚫 Skip RGB/RGBA/HSL colors
+        // 🚫 Skip RGB/RGBA/HSL colors (including as part of box-shadow etc.)
         if (/^(rgb|rgba|hsl|hsla)\(/.test(s)) return;
+        if (s.includes('rgba(') || s.includes('rgb(') || s.includes('hsl(')) return;
 
-        // 🚫 Skip inline size units (like w-3, h-3, px-4, etc.)
-        if (/^[whpm]-\d+/.test(s)) return;
+        // 🚫 Skip MUI sx CSS selectors and pseudo-selectors
+        if (s.startsWith('& ') || s.startsWith('&.') || s.startsWith('&:')) return;
+
+        // 🚫 Skip CSS property values (px, rem, em, %, !important)
+        if (/^-?\d[\d.\s]*?(px|rem|em|%)\s*(!important)?$/.test(s)) return;
+
+        // 🚫 Skip SVG namespace URIs and path data
+        if (s.includes('www.w3.org')) return;
+        if (/^[MLHVCSQTAZmlhvcsqtaz][\d\s,.-]{10,}$/.test(s)) return;
+
+        // 🚫 Skip URL paths and API endpoints (start with /)
+        if (/^\/[a-zA-Z_$\{]/.test(s)) return;
+
+        // 🚫 Skip image and asset file references
+        if (/\.(svg|png|jpg|jpeg|gif|webp|ico|woff|ttf)$/.test(s)) return;
+
+        // 🚫 Skip HTTP standard header values and MIME types
+        if (/^application\/|^text\/|^image\/|^Bearer |^Basic /.test(s)) return;
+        // 🚫 Skip scoped npm package names and relative import paths
+        if (s.startsWith('@') || s.startsWith('../') || s.startsWith('./')) return;
+
+        // 🚫 Skip strings that are clearly multi-class Tailwind JSX className values
+        if (/\s/.test(s) && /\b(flex|grid|bg-|text-|p-\d|m-\d|w-|h-|rounded|shadow|border|items-|justify-|overflow|cursor|hover:|focus:|disabled:|absolute|relative|fixed|sticky|inline|block|hidden)\b/.test(s)) return;
+
+        // 🚫 Skip CSS comment/doc strings (contain code-like patterns from JSDoc backtick spans)
+        if (/^\w+\.\w+$/.test(s) && !s.includes(' ')) return; // e.g. "form.country"
 
         total++;
         console.warn(`⚠️ Potential hardcoded string in ${file}: ${s}`);

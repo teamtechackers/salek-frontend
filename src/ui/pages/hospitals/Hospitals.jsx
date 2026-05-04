@@ -48,12 +48,7 @@ const Hospitals = () => {
         { refetchOnMountOrArgChange: true }
     );
 
-    React.useEffect(() => {
-        console.log("Hospitals Component Mounted/Updated");
-        console.log("Current Filters:", filters);
-        console.log("API Search Param (from Filters):", apiSearchParam);
-        console.log("Query Status:", { data: hospitalsResponse, isLoading, isError, error });
-    }, [filters, apiSearchParam, hospitalsResponse, isLoading, isError, error]);
+
 
     const [deleteHospital] = useDeleteHospitalMutation();
     const [toggleHospitalStatus] = useToggleHospitalStatusMutation();
@@ -95,7 +90,6 @@ const Hospitals = () => {
     };
 
     const handleApplyFilters = (newFilters) => {
-        console.log("Applying filters from modal:", newFilters);
         setFilters(newFilters);
         setOpenFilter(false);
         setCurrentPage(1);

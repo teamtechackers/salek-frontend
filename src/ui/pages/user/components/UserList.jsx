@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom"; // Add useNavigate hook
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ICONS } from "../../../constants/assets";
+import { MESSAGES } from "../../../constants/pages/Labels";
 import VaccineTableDisplay from "./VaccineTable";
 import UserListItem from "./UserListItem";
 import ReminderModal from "./ReminderModal"; // Import the new modal
@@ -72,10 +73,6 @@ const UserList = ({
   const fullUserDetails = userDetailsResponse?.data;
 
   const skipDependentQuery = !selectedDependentId || !selectedUserId || !adminId;
-  console.log("UserList - skipDependentQuery:", skipDependentQuery);
-  console.log("UserList - dependent_id for query:", selectedDependentId);
-  console.log("UserList - user_id for dependent query:", selectedUserId);
-  console.log("UserList - admin_user_id for dependent query:", adminId);
 
   const { data: dependentDetailsResponse, isLoading: loadingDependentDetails, refetch: refetchDependentDetails } = useGetDependentDetailsQuery(
     { dependent_id: selectedDependentId, user_id: selectedUserId, admin_user_id: adminId },
@@ -116,12 +113,6 @@ const UserList = ({
     }
   }, [loadingDependentDetails, fullDependentDetails]);
 
-  console.log("UserList - selectedUserId:", selectedUserId);
-  console.log("UserList - selectedDependentId:", selectedDependentId);
-  console.log("UserList - dependentDetails state:", dependentDetails);
-  console.log("UserList - loadingDependentDetails:", loadingDependentDetails);
-  console.log("UserList - fullDependentDetails:", fullDependentDetails);
-
   // Effect to handle route-based refresh
   useEffect(() => {
     // Check if there's a refresh flag in location state
@@ -145,7 +136,6 @@ const UserList = ({
 
   // This useEffect will not trigger refetchDependentDetails because selectedDependentId will be null
   useEffect(() => {
-    console.log("UserList - Dependent refetch useEffect triggered. selectedDependentId:", selectedDependentId, "selectedUserId:", selectedUserId);
     if (selectedDependentId && selectedUserId) {
       refetchDependentDetails();
     }
@@ -215,7 +205,6 @@ const UserList = ({
   };
 
   const handleVaccineRowClick = (vaccine) => {
-    console.log("handleVaccineRowClick - vaccine:", vaccine);
     setSelectedVaccineForReminder(vaccine);
     setSelectedVaccineNameForReminder(vaccine.vaccine_name);
     setIsReminderModalOpen(true);
@@ -364,7 +353,6 @@ const UserList = ({
                   </div>
                   <div className="flex items-center gap-3">
                     <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => {
-                      console.log("UserList.jsx - Edit User button clicked. Calling onOpenFullEdit with:", fullUserDetails.user);
                       onOpenFullEdit(fullUserDetails.user, false, selectedUserId); // Pass selectedUserId for user edit
                     }}>
                       <img src={ICONS.edituser} alt="Edit" />
@@ -471,7 +459,6 @@ const UserList = ({
                   </div>
                   <div className="flex items-center gap-3">
                     <button className="p-2 rounded-full bg-blue-50 hover:bg-blue-200" onClick={() => {
-                      console.log("UserList.jsx - Edit Dependent button clicked. Calling onOpenFullEdit with:", fullDependentDetails.dependent);
                       onOpenFullEdit(fullDependentDetails.dependent, true, selectedUserId); // Pass selectedUserId for dependent edit
                     }}>
                       <img src={ICONS.edituser} alt="Edit" />
@@ -587,7 +574,7 @@ const UserList = ({
       <ConfirmDeleteModal
         open={openDeleteDependent}
         title="Delete Dependent"
-        description="Are you sure you want to delete this dependent? This action cannot be undone."
+        description={MESSAGES.DELETE_CONFIRM_DEPENDENT}
         onClose={() => setOpenDeleteDependent(false)}
         onConfirm={confirmDeleteDependent}
       />
@@ -605,7 +592,7 @@ const UserList = ({
       <ConfirmDeleteModal
         open={openDeleteUser}
         title="Delete User"
-        description="Are you sure you want to delete this user? This action cannot be undone."
+        description={MESSAGES.DELETE_CONFIRM_USER}
         onClose={() => setOpenDeleteUser(false)}
         onConfirm={confirmDeleteUser}
       />

@@ -10,12 +10,6 @@ import {
 } from "@mui/material";
 
 const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetchUserDetails, refetchDependentDetails, onSuccessfulEditAndClose }) => {
-  console.log("EditUserModal - user:", user);
-  console.log("EditUserModal - isDependent:", isDependent);
-  console.log("EditUserModal - parentUserId:", parentUserId);
-  console.log("EditUserModal - refetchUserDetails:", refetchUserDetails);
-  console.log("EditUserModal - refetchDependentDetails:", refetchDependentDetails);
-
   const initialFormData = {
     name: "",
     dob: "", // Added DOB field
@@ -39,7 +33,6 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
 
   useEffect(() => {
     if (user && open) {
-      console.log("EditUserModal - Setting form data for user/dependent:", user);
       setFormData({
         name: user.full_name || user.username || user.relation_type || "", // Use full_name or relation_type for dependents
         dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : "", // Format DOB for input type="date"
@@ -54,7 +47,6 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
         relation: user.relation_type || "", // For dependents
       });
     } else {
-      console.log("EditUserModal - No user/dependent data or modal closed, setting initial form data");
       setFormData(initialFormData);
     }
   }, [user, open]); // Depend on 'user' (passed data) and 'open'
@@ -101,8 +93,6 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
     try {
       const adminId = localStorage.getItem("adminId");
       const genderValue = formData.gender === 'Male' ? 'male' : formData.gender === 'Female' ? 'female' : formData.gender;
-      console.log("Form gender:", formData.gender);
-      console.log("Converted gender:", genderValue);
 
       let basePayload = {
         full_name: formData.name || null,
@@ -127,7 +117,6 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
           ...basePayload,
           relation_type: formData.relation || null, // For dependents
         };
-        console.log("Sending dependent update payload:", dependentUpdatePayload);
         result = await updateDependent(dependentUpdatePayload).unwrap();
         // For dependents, we need to refetch both the dependent details and the user details
         // Use the exposed refetch functions with error handling
@@ -164,7 +153,6 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
           user_id: user.id, // User's ID
           ...basePayload,
         };
-        console.log("Sending user update payload:", userUpdatePayload);
         result = await updateUser(userUpdatePayload).unwrap();
         // Use the exposed refetch function with error handling
         setTimeout(() => {
@@ -188,7 +176,6 @@ const EditUserModal = ({ open, onClose, user, isDependent, parentUserId, refetch
         }, 150); // Slightly longer delay to ensure data is updated
       }
 
-      console.log("Update successful:", result);
     } catch (err) {
       console.error("Failed to update:", err);
       setIsProcessing(false); // Reset processing state on error

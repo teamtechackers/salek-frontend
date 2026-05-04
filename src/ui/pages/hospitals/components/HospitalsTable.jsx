@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import HospitalsList from "./HospitalsList";
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
 import ConfirmationModal from "../../../components/ConfirmationModal";
+import { MESSAGES } from "../../../constants/pages/Labels";
 
 export default function HospitalsTable({ items, onEdit, onDelete, onToggleStatus }) {
     const [openDelete, setOpenDelete] = useState(false);
@@ -34,7 +35,7 @@ export default function HospitalsTable({ items, onEdit, onDelete, onToggleStatus
             <ConfirmDeleteModal
                 open={openDelete}
                 title="Delete Hospital"
-                description="Are you sure you want to delete this hospital? This action cannot be undone."
+                description={MESSAGES.DELETE_CONFIRM_HOSPITAL}
                 onClose={() => setOpenDelete(false)}
                 onConfirm={handleConfirmDelete}
             />

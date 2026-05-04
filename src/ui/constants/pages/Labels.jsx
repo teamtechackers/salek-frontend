@@ -24,3 +24,11 @@ export const dashboardlabels = {
     Totalvacine:"Total Vaccine",
     edit:"Edit",
   }
+
+export const MESSAGES = {
+  DELETE_CONFIRM_HOSPITAL: "Are you sure you want to delete this hospital? This action cannot be undone.",
+  DELETE_CONFIRM_USER: "Are you sure you want to delete this user? This action cannot be undone.",
+  DELETE_CONFIRM_DEPENDENT: "Are you sure you want to delete this dependent? This action cannot be undone.",
+  DELETE_CONFIRM_VACCINE: "Are you sure you want to delete the vaccine. This action cannot be undone.",
+  HOSPITAL_REQUIRED_FIELDS: "Please fill all required fields: Name, Country, State, and City.",
+}

@@ -30,7 +30,7 @@ const NotificationsTab = ({ userId }) => {
             time={notification.time}
             selected={notification.selected}
             avatarUrl={notification.avatarUrl}
-            onDelete={() => console.log("Delete notification", notification.id)} // Placeholder for delete action
+            onDelete={() => {}} // Placeholder for delete action
           />
         ))
       ) : (

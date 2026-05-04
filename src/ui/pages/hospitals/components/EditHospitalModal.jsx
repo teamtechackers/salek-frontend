@@ -1,3 +1,4 @@
+import { MESSAGES } from "../../../constants/pages/Labels";
 import React, { useState, useEffect, useRef } from "react";
 import {
     Switch,
@@ -138,7 +139,7 @@ export default function EditHospitalModal({ open, onClose, hospital = {} }) {
 
     const handleSave = async () => {
         if (!form.name || !selectedCountryId || !selectedStateId || !selectedCityId) {
-            toast.error("Please fill all required fields: Name, Country, State, and City.");
+            toast.error(MESSAGES.HOSPITAL_REQUIRED_FIELDS);
             return;
         }
         const formData = new FormData();

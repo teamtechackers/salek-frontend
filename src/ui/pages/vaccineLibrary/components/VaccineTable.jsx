@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Pagination from "../../../components/Pagination";
-import { dashboardlabels } from "../../../constants/pages/Labels";
+import { dashboardlabels, MESSAGES } from "../../../constants/pages/Labels";
 import { ICONS } from "../../../constants/assets";
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
 import VaccineList from "./VaccineList";
@@ -22,7 +22,6 @@ export default function VaccineTable({
   const [deleteVaccine] = useDeleteVaccineMutation();
 
   const handleDelete = async (id) => {
-    console.log(id, "id")
     try {
       const adminId = localStorage.getItem("adminId");
       await deleteVaccine({ vaccine_id: id, admin_user_id: adminId }).unwrap();
@@ -56,7 +55,7 @@ export default function VaccineTable({
       <ConfirmDeleteModal
         open={openDelete}
         title={"Delete Vaccine"}
-        description={"Are you sure you want to delete the vaccine. This action cannot be undone."}
+        description={MESSAGES.DELETE_CONFIRM_VACCINE}
         onClose={() => setOpenDelete(false)}
         onConfirm={() => {
             handleDelete(selectedVaccine.vaccine_id);

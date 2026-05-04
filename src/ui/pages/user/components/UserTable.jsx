@@ -1,14 +1,14 @@
-import React, { useState } from "react"; // Removed useEffect
+import React, { useState } from "react";
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
 import UserList from "./UserList";
 import EditUserShortModal from "./EditUserShortModal";
 import { useUpdateUserMutation, useDeleteUserMutation } from "../../../../core/services/api/userApi";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useNavigate } from "react-router-dom"; // Add useNavigate hook
+import { useNavigate } from "react-router-dom";
+import { MESSAGES } from "../../../constants/pages/Labels";
 
 export default function UserTable({ users, currentPage, itemsPerPage, userDetails, setUserDetails, refetch, refetchUserDetails, onRefetchUserDetails, onOpenFullEdit, onReturnToTable }) {
-  console.log("UserTable.jsx - onOpenFullEdit received:", onOpenFullEdit);
   const navigate = useNavigate(); // Add navigate hook
   const [dependentDetails, setDependentDetails] = useState(false); // Add missing state
   const [openDelete, setOpenDelete] = useState(false);
@@ -45,7 +45,6 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
   };
 
   const handleEdit = (user) => {
-    console.log("UserTable - handleEdit called with user:", user);
     setSelectedUser(user);
     setOpenEditShort(true);
   };
@@ -113,7 +112,7 @@ export default function UserTable({ users, currentPage, itemsPerPage, userDetail
       <ConfirmDeleteModal
         open={openDelete}
         title="Delete User"
-        description="Are you sure you want to delete this user? This action cannot be undone."
+        description={MESSAGES.DELETE_CONFIRM_USER}
         onClose={() => setOpenDelete(false)}
         onConfirm={handleDelete}
       />

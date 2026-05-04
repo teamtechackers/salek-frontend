@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ICONS } from "../../../constants/assets";
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteDialogBox";
+import { MESSAGES } from "../../../constants/pages/Labels";
 import {
   useDeleteDependentUserVaccineMutation,
   useDeleteUserVaccineMutation,
@@ -115,7 +116,7 @@ const VaccineTableDisplay = ({ tab, vaccines, onRowClick, userId, isDependent, r
       <ConfirmDeleteModal
         open={openDeleteModal}
         title="Confirm Vaccine Deletion"
-        description="Are you sure you want to delete this vaccine? This action cannot be undone."
+        description={MESSAGES.DELETE_CONFIRM_VACCINE}
         onConfirm={handleConfirmDelete}
         onClose={handleCloseDeleteModal}
       />

@@ -30,10 +30,7 @@ const User = () => {
   // Debounce timer ref
   const searchDebounceTimer = useRef(null);
 
-  // Debug search trigger changes
-  useEffect(() => {
-    console.log('searchTrigger changed to:', searchTrigger);
-  }, [searchTrigger]);
+
 
   const { data, error, isLoading, refetch } = useGetUsersQuery({
     page: currentPage - 1,
@@ -52,7 +49,6 @@ const User = () => {
   };
 
   const handleOpenFullEdit = (userOrDependent, isDependent = false, parentUserId = null) => {
-    console.log("User.jsx - handleOpenFullEdit called with:", userOrDependent, "isDependent:", isDependent, "parentUserId:", parentUserId);
     setSelectedUserForEdit(userOrDependent);
     setIsEditingDependent(isDependent);
     setParentUserIdForDependent(parentUserId);
@@ -67,7 +63,6 @@ const User = () => {
   };
 
   const handleSuccessfulEditAndClose = () => {
-    console.log("User.jsx - handleSuccessfulEditAndClose called. Refreshing data.");
     setOpenEditModal(false);
     setSelectedUserForEdit(null);
     setIsEditingDependent(false);
@@ -93,7 +88,6 @@ const User = () => {
   useEffect(() => {
     // Only reset page when pageSize changes
     // Don't reset page when search or date changes to prevent unwanted API calls
-    console.log('useEffect triggered - dependencies changed');
   }, [pageSize]);
 
   // Effect to refetch data when refresh trigger changes
@@ -124,7 +118,6 @@ const User = () => {
 
   // Handle search with debounce
   const handleSearchChange = (newSearch) => {
-    console.log('Search onChange triggered with:', newSearch);
     setSearch(newSearch);
     
     // Clear existing timer
@@ -134,7 +127,6 @@ const User = () => {
     
     // Set new timer
     searchDebounceTimer.current = setTimeout(() => {
-      console.log('Debounced search triggered with:', newSearch, 'and date:', selectedDate);
       // Update API parameters and trigger search
       setApiSearch(newSearch);
       setApiDate(selectedDate);
@@ -144,7 +136,6 @@ const User = () => {
 
   // Handle date change with immediate API call
   const handleDateChange = (newDate) => {
-    console.log('Date onChange triggered with:', newDate);
     setSelectedDate(newDate);
     // Update API parameters and trigger search immediately
     setApiSearch(search);
@@ -172,7 +163,6 @@ const User = () => {
                     value={search} 
                     onChange={handleSearchChange}
                     onSearch={(searchValue) => {
-                      console.log('SearchBar onSearch triggered with search:', searchValue);
                       // Clear the debounce timer if search is triggered manually
                       if (searchDebounceTimer.current) {
                         clearTimeout(searchDebounceTimer.current);
