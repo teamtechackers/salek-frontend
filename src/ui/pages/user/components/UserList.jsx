@@ -103,12 +103,14 @@ const UserList = ({
   // Reset fetching states when data is loaded
   useEffect(() => {
     if (!loadingUserDetails && fullUserDetails) {
+      console.log("DEBUG: Full User Details API Response:", fullUserDetails);
       setIsFetchingUserData(false);
     }
   }, [loadingUserDetails, fullUserDetails]);
 
   useEffect(() => {
     if (!loadingDependentDetails && fullDependentDetails) {
+      console.log("DEBUG: Full Dependent Details API Response:", fullDependentDetails);
       setIsFetchingDependentData(false);
     }
   }, [loadingDependentDetails, fullDependentDetails]);

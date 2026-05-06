@@ -4,7 +4,7 @@ import { Search as SearchIcon } from '@mui/icons-material';
 import { useGetCountriesQuery, useGetStatesQuery, useGetCitiesQuery, useToggleStatusMutation } from "../../../core/services/api/locationApi";
 
 // ColumnSection moved OUTSIDE the Location component to prevent re-creation on each render
-const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowClick, onToggle, onSearch, onPageChange, searchValue, customEmptyMessage }) => (
+const ColumnSection = ({ title, items, selectedIds = [], isLoading, pagination, onRowClick, onToggle, onSearch, onPageChange, searchValue, customEmptyMessage }) => (
     <div className="flex flex-col w-full h-full min-w-0">
 
         {/* Search Bar */}
@@ -49,16 +49,14 @@ const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowC
             {!isLoading && items.length === 0 && (
                 <div className="text-center text-gray-400 mt-4">
                     {customEmptyMessage || (
-                        title === 'State' && !selectedId ? "Select a Country" :
-                            title === 'City' && !selectedId ? "Select a State" :
+                        title === 'State' && selectedIds.length === 0 ? "Select a Country" :
+                            title === 'City' && selectedIds.length === 0 ? "Select a State" :
                                 "No data found"
                     )}
                 </div>
             )}
             {items.map((item, index) => {
-                let isSelected = false;
-                if (title === 'Country') isSelected = selectedId === item.id;
-                if (title === 'State') isSelected = selectedId === item.id;
+                const isSelected = selectedIds.includes(item.id);
 
                 return (
                     <div
@@ -108,9 +106,9 @@ const ColumnSection = ({ title, items, selectedId, isLoading, pagination, onRowC
 );
 
 const Location = () => {
-    // Selection State
-    const [selectedCountryId, setSelectedCountryId] = useState(null);
-    const [selectedStateId, setSelectedStateId] = useState(null);
+    // Selection State (Changed to Arrays for Multi-Select)
+    const [selectedCountryIds, setSelectedCountryIds] = useState([]);
+    const [selectedStateIds, setSelectedStateIds] = useState([]);
 
     // Search Input State (for immediate UI display)
     const [countrySearch, setCountrySearch] = useState('');
@@ -131,19 +129,7 @@ const Location = () => {
     // Queries
     const { data: countriesData, isLoading: isCountriesLoading, refetch: refetchCountries } = useGetCountriesQuery(countryParams);
 
-    // Fetch States only if Country is selected
-    const { data: statesData, isLoading: isStatesLoading, refetch: refetchStates } = useGetStatesQuery(
-        { countryId: selectedCountryId, ...stateParams },
-        { skip: !selectedCountryId }
-    );
-
-    // Fetch Cities only if State is selected
-    const { data: citiesData, isLoading: isCitiesLoading, refetch: refetchCities } = useGetCitiesQuery(
-        { stateId: selectedStateId, ...cityParams },
-        { skip: !selectedStateId }
-    );
-
-    // Data Accessors - API returns { data: [...], pagination: {...} }
+    // Data Accessors - API returns { data: [...], pagination: {...} } (Moved up to fix ReferenceError)
     const rawCountries = Array.isArray(countriesData?.data) ? countriesData.data : [];
     const countries = rawCountries.map(c => ({
         id: c.country_id,
@@ -151,6 +137,18 @@ const Location = () => {
         isActive: c.is_active === 1
     }));
     const countriesMeta = countriesData?.pagination || { pages: 1 };
+
+    // Get IDs of all Active countries to load their states automatically
+    const activeCountryIds = countries.filter(c => c.isActive).map(c => c.id);
+    const countryIdsToFetch = selectedCountryIds.length > 0 
+        ? selectedCountryIds.join(',') 
+        : activeCountryIds.join(',');
+
+    // Fetch States (Join IDs with comma for multi-select)
+    const { data: statesData, isLoading: isStatesLoading, refetch: refetchStates } = useGetStatesQuery(
+        { countryId: countryIdsToFetch, ...stateParams },
+        { skip: !countryIdsToFetch }
+    );
 
     const rawStates = Array.isArray(statesData?.data) ? statesData.data : [];
     const states = rawStates.map(s => ({
@@ -160,7 +158,19 @@ const Location = () => {
     }));
     const statesMeta = statesData?.pagination || { pages: 1 };
 
-    const rawCities = (selectedStateId && states.some(s => s.id === selectedStateId) && Array.isArray(citiesData?.data)) ? citiesData.data : [];
+    // Get IDs of all Active states to load their cities automatically
+    const activeStateIds = states.filter(s => s.isActive).map(s => s.id);
+    const stateIdsToFetch = selectedStateIds.length > 0 
+        ? selectedStateIds.join(',') 
+        : activeStateIds.join(',');
+
+    // Fetch Cities (Join IDs with comma for multi-select)
+    const { data: citiesData, isLoading: isCitiesLoading, refetch: refetchCities } = useGetCitiesQuery(
+        { stateId: stateIdsToFetch, ...cityParams },
+        { skip: !stateIdsToFetch }
+    );
+
+    const rawCities = (stateIdsToFetch && Array.isArray(citiesData?.data)) ? citiesData.data : [];
     const cities = rawCities.map(c => ({
         id: c.city_id,
         name: c.city_name,
@@ -168,39 +178,48 @@ const Location = () => {
     }));
     const citiesMeta = citiesData?.pagination || { pages: 1 };
 
-    // Auto-select first country on initial load
+    // Auto-select first country on initial load (Optional - removed to allow "Show All Active" by default)
+    /*
     useEffect(() => {
-        if (countries.length > 0 && selectedCountryId === null) {
-            // Select first country in the list
-            setSelectedCountryId(countries[0].id);
+        if (countries.length > 0 && selectedCountryIds.length === 0) {
+            setSelectedCountryIds([countries[0].id]);
         }
-    }, [countries, selectedCountryId]);
-
-    // Auto-select first state when country is selected and states load
-    useEffect(() => {
-        if (states.length > 0 && selectedStateId === null && selectedCountryId !== null) {
-            // Select first state in the list
-            setSelectedStateId(states[0].id);
-        }
-    }, [states, selectedStateId, selectedCountryId]);
+    }, [countries, selectedCountryIds]);
+    */
 
 
 
 
-    // Handlers
+    // Handlers (Updated for Multi-Select Toggling)
     const handleRowClick = (id, type) => {
         if (type === 'Country') {
-            setSelectedCountryId(id);
-            setSelectedStateId(null); // This will trigger auto-select of first state
-            setStateParams({ page: 0, search: '' });
-            setStateSearch('');
-            // Also reset city state
-            setCityParams({ page: 0, search: '' });
-            setCitySearch('');
+            setSelectedCountryIds(prev => {
+                const isSelected = prev.includes(id);
+                const newSelection = isSelected 
+                    ? prev.filter(item => item !== id) 
+                    : [...prev, id];
+                
+                // If selection changed, reset state/city params
+                setSelectedStateIds([]);
+                setStateParams({ page: 0, search: '' });
+                setStateSearch('');
+                setCityParams({ page: 0, search: '' });
+                setCitySearch('');
+                
+                return newSelection;
+            });
         } else if (type === 'State') {
-            setSelectedStateId(id);
-            setCityParams({ page: 0, search: '' });
-            setCitySearch('');
+            setSelectedStateIds(prev => {
+                const isSelected = prev.includes(id);
+                const newSelection = isSelected 
+                    ? prev.filter(item => item !== id) 
+                    : [...prev, id];
+                
+                setCityParams({ page: 0, search: '' });
+                setCitySearch('');
+                
+                return newSelection;
+            });
         }
     };
 
@@ -268,8 +287,13 @@ const Location = () => {
         if (type === 'City') setCityParams(prev => ({ ...prev, page: value }));
     };
 
-    // Layout Logic - Always 3 columns
-    const gridClass = "grid-cols-3";
+    // Layout Logic - Dynamic Columns (Strict Hierarchy)
+    const showState = countryIdsToFetch.length > 0;
+    const showCity = showState && stateIdsToFetch.length > 0;
+    
+    let gridClass = "grid-cols-1";
+    if (showState && showCity) gridClass = "grid-cols-3";
+    else if (showState) gridClass = "grid-cols-2";
 
     return (
         <div className="h-full flex flex-col gap-6 p-2">
@@ -282,7 +306,7 @@ const Location = () => {
                     <ColumnSection
                         title="Country"
                         items={countries}
-                        selectedId={selectedCountryId}
+                        selectedIds={selectedCountryIds}
                         pagination={{ ...countriesMeta, page: countryParams.page }}
                         isLoading={isCountriesLoading}
                         onRowClick={(id) => handleRowClick(id, 'Country')}
@@ -293,36 +317,41 @@ const Location = () => {
                     />
                 </div>
 
-                <div className="h-full overflow-hidden">
-                    <ColumnSection
-                        title="State"
-                        items={states}
-                        selectedId={selectedStateId}
-                        pagination={{ ...statesMeta, page: stateParams.page }}
-                        isLoading={isStatesLoading}
-                        onRowClick={(id) => handleRowClick(id, 'State')}
-                        onToggle={(id) => handleToggle(id, 'State')}
-                        onSearch={(val) => handleSearchChange('State', val)}
-                        onPageChange={(val) => handlePageChange('State', val)}
-                        searchValue={stateSearch}
-                        customEmptyMessage={selectedCountryId && states.length === 0 ? "No state found" : null}
-                    />
-                </div>
+                {showState && (
+                    <div className="h-full overflow-hidden transition-all duration-300">
+                        <ColumnSection
+                            title="State"
+                            items={states}
+                            selectedIds={selectedStateIds}
+                            pagination={{ ...statesMeta, page: stateParams.page }}
+                            isLoading={isStatesLoading}
+                            onRowClick={(id) => handleRowClick(id, 'State')}
+                            onToggle={(id) => handleToggle(id, 'State')}
+                            onSearch={(val) => handleSearchChange('State', val)}
+                            onPageChange={(val) => handlePageChange('State', val)}
+                            searchValue={stateSearch}
+                            customEmptyMessage={selectedCountryIds.length > 0 && states.length === 0 ? "No state found" : null}
+                        />
+                    </div>
+                )}
 
-                <div className="h-full overflow-hidden">
-                    <ColumnSection
-                        title="City"
-                        items={cities}
-                        pagination={{ ...citiesMeta, page: cityParams.page }}
-                        isLoading={isCitiesLoading}
-                        onRowClick={(id) => handleRowClick(id, 'City')}
-                        onToggle={(id) => handleToggle(id, 'City')}
-                        onSearch={(val) => handleSearchChange('City', val)}
-                        onPageChange={(val) => handlePageChange('City', val)}
-                        searchValue={citySearch}
-                        customEmptyMessage={!selectedStateId && states.length === 0 ? "No city found" : null}
-                    />
-                </div>
+                {showCity && (
+                    <div className="h-full overflow-hidden transition-all duration-300">
+                        <ColumnSection
+                            title="City"
+                            items={cities}
+                            selectedIds={[]} // Cities don't need selection highlight in this view
+                            pagination={{ ...citiesMeta, page: cityParams.page }}
+                            isLoading={isCitiesLoading}
+                            onRowClick={(id) => handleRowClick(id, 'City')}
+                            onToggle={(id) => handleToggle(id, 'City')}
+                            onSearch={(val) => handleSearchChange('City', val)}
+                            onPageChange={(val) => handlePageChange('City', val)}
+                            searchValue={citySearch}
+                            customEmptyMessage={selectedStateIds.length > 0 && cities.length === 0 ? "No city found" : null}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
